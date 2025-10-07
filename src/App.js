@@ -505,6 +505,8 @@ function App() {
 
              <Route exact path="/Consultant/Referred Patient" element={<ReferredPatient />} />
               <Route exact path="/Consultant/Referred Patient Details" element={<ReferredPatientDetails />} />
+             <Route exact path="/hhc/Consultant/Referred Patient" element={<ReferredPatient />} />
+              <Route exact path="/hhc/Consultant/Referred Patient Details" element={<ReferredPatientDetails />} />
           </Routes>
         </div>
       </BrowserRouter>
