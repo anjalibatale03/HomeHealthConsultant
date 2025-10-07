@@ -373,48 +373,61 @@ async function handleConsultantApproval(event, status) {
                             <CardContent style={{ flex: 1 }}>
                               <Typography variant="subtitle2">{user.clg_address || '-'}</Typography>
                             </CardContent>
-  <CardContent style={{ flex: 1.2, display: "flex", justifyContent: "center", gap: "6px" }}>
-
-  <Button
-    variant="contained"
-    sx={{
-      flex: 0, // auto width
-      minWidth: "80px", // chhota min width
-      padding: "4px 8px", // button ke andar padding chhoti
-      backgroundColor: "#7AB8EE",
-      borderRadius: "10px",
-      textTransform: "capitalize",
-      fontSize: "12px", // text chhota
-    }}
-     onClick={() => {
-    setProfID(user.id);        // set current consultant ID
-    setApproveRejectStatus(1); // 1 = Approve
-    handleOpenRModal();
+  <CardContent
+  style={{
+    flex: 1.2,
+    display: "flex",
+    justifyContent: "center",
+    gap: "6px"
   }}
-  >
-    Approve
-  </Button>
+>
+  {/* Always show Approve button if not already approved */}
+  {user.is_approved_status !== 1 && (
+    <Button
+      variant="contained"
+      sx={{
+        flex: 0,
+        minWidth: "80px",
+        padding: "4px 8px",
+        backgroundColor: "#7AB8EE",
+        borderRadius: "10px",
+        textTransform: "capitalize",
+        fontSize: "12px",
+      }}
+      onClick={() => {
+        setProfID(user.id);
+        setApproveRejectStatus(1);
+        handleOpenRModal();
+      }}
+    >
+      Approve
+    </Button>
+  )}
 
-  <Button
-    variant="contained"
-    sx={{
-      flex: 0,
-      minWidth: "80px",
-      padding: "4px 8px",
-      backgroundColor: "#FD7568",
-      borderRadius: "10px",
-      textTransform: "capitalize",
-      fontSize: "12px",
-    }}
-     onClick={() => {
-    setProfID(user.id);
-    setApproveRejectStatus(2); // 2 = Reject
-    handleOpenRModal();
-  }}
-  >
-    Reject
-  </Button>
+  {/* Show Reject button always if status = 2, otherwise only if not rejected */}
+  {(user.is_approved_status === 2 || user.is_approved_status !== 2) && (
+    <Button
+      variant="contained"
+      sx={{
+        flex: 0,
+        minWidth: "80px",
+        padding: "4px 8px",
+        backgroundColor: "#FD7568",
+        borderRadius: "10px",
+        textTransform: "capitalize",
+        fontSize: "12px",
+      }}
+      onClick={() => {
+        setProfID(user.id);
+        setApproveRejectStatus(2);
+        handleOpenRModal();
+      }}
+    >
+      Reject
+    </Button>
+  )}
 </CardContent>
+
 
 
 
