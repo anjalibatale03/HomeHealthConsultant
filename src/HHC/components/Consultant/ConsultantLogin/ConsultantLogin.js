@@ -352,9 +352,9 @@ export default function ConsultantLogin() {
                 <div className="input_fields">
                     {showRegister ? (
                         <>
-                            <Grid container spacing={2} sx={{ marginTop: '3em', marginLeft: '1em', marginBottom: '15px', width: '100%' }}>
+                            <Grid container spacing={2} sx={{ marginTop: '6em', marginLeft: '1em', marginBottom: '15px', width: '100%' }}>
                                 {isSmallScreen ? null : (
-                                    <img src={logo} alt="" style={{ height: "110px", width: "160px", marginLeft: '4em' }} />
+                                    <img src={logo} alt="" style={{ height: "100px", width: "160px", marginLeft: '4em' }} />
                                 )}
                                 <Typography style={{ marginLeft: '3.5em', fontWeight: 'bold', fontSize: '18px', color: '#004C99', marginBottom: '1em' }} >
                                     Consultant Registration
@@ -487,6 +487,26 @@ export default function ConsultantLogin() {
                                                             </MenuItem>
                                                         ))}
                                                     </TextField>
+                                                </Grid>
+                                                <Grid item xs={12} sm={12}>
+                                                    <TextField
+                                                        id="adress"
+                                                        label="Address*"
+                                                        name="clg_address"
+                                                        size="small"
+                                                        fullWidth
+                                                        value={formData.address}
+                                                        onChange={handleRegisterChange}
+                                                        inputProps={{
+                                                            maxLength: 10,
+                                                            pattern: "[0-9]*",
+                                                        }}
+                                                        sx={{
+                                                            '& input': {
+                                                                fontSize: '14px',
+                                                            },
+                                                        }}
+                                                    />
                                                 </Grid>
                                             </Grid>
                                         </div>

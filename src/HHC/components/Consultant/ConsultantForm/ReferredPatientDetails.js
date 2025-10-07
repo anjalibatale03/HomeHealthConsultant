@@ -247,7 +247,7 @@ const ReferredPatientDetails = () => {
       <Box sx={{ flexGrow: 1, ml: 1, mr: 1, }}>
         <Stack direction="row" spacing={2} alignItems="center">
           <Typography sx={{ fontSize: 16, fontWeight: 600 }} color="text.secondary">
-            CONSULTANT LIST
+            PATIENT LIST
           </Typography>
 
           <Box
@@ -266,7 +266,7 @@ const ReferredPatientDetails = () => {
           >
             <InputBase
               sx={{ ml: 1, flex: 1 }}
-              placeholder="Search Consultant "
+              placeholder="Search Patient "
               inputProps={{ 'aria-label': 'search user' }}
               value={searchQuery}
               onChange={handleSearch}
