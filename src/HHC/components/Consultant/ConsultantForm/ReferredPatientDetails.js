@@ -338,13 +338,13 @@ const ReferredPatientDetails = () => {
                   <CardContent style={{ flex: 1.5, borderRight: "1px solid #FFFFFF" }}>
                     <Typography variant="subtitle2">Email ID</Typography>
                   </CardContent>
-                  <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
+                  {/* <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
                     <Typography variant="subtitle2">Hospital Name</Typography>
-                  </CardContent>
+                  </CardContent> */}
                   <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
                     <Typography variant="subtitle2">Contact Number</Typography>
                   </CardContent>
-                  <CardContent style={{ flex: 1.2, borderRight: "1px solid #FFFFFF" }}>
+                  <CardContent style={{ flex: 2, borderRight: "1px solid #FFFFFF" }}>
                     <Typography variant="subtitle2">Address</Typography>
                   </CardContent>
                 </UserCard>
@@ -376,19 +376,19 @@ const ReferredPatientDetails = () => {
                               <Typography variant="subtitle2">{index + 1 + page * rowsPerPage}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1.5 }}>
-                              <Typography variant="subtitle2">{user.clg_first_name || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.name || '-'}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1.5 }}>
-                              <Typography variant="subtitle2">{user.clg_work_email_id || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.patient_email_id || '-'}</Typography>
                             </CardContent>
-                            <CardContent style={{ flex: 1 }}>
+                            {/* <CardContent style={{ flex: 1 }}>
                               <Typography variant="subtitle2">{user.hospital_name || '-'}</Typography>
-                            </CardContent>
+                            </CardContent> */}
                             <CardContent style={{ flex: 1 }}>
-                              <Typography variant="subtitle2">{user.clg_Work_phone_number || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.phone_no || '-'}</Typography>
                             </CardContent>
-                            <CardContent style={{ flex: 1.2 }}>
-                              <Typography variant="subtitle2">{user.clg_address || '-'}</Typography>
+                            <CardContent style={{ flex: 2 }}>
+                              <Typography variant="subtitle2">{user.address || '-'}</Typography>
                             </CardContent>
 
                             {/* <CardContent style={{ flex: 1.2, display: "flex", justifyContent: "center", gap: "6px" }}>
