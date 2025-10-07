@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import logo from "../../../assets/spero_logo_3.png";
 import "./ConsultantLogin.css";
 import { useNavigate } from "react-router-dom";
@@ -211,12 +211,43 @@ export default function ConsultantLogin() {
         fetchCompanyDetails();
     }, [])
 
+    const [errors, setErrors] = useState({}); // <-- add this if not present
+    const debounceRef = useRef(null); // <-- add this
+
     const handleRegisterChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
         }));
+
+        // Only check for clg_ref_id (User Name)
+        if (name === "clg_ref_id") {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+            debounceRef.current = setTimeout(async () => {
+                try {
+                    const apiUrl = `https://hhc.hospitalguru.in/hr/clg_is_already_exists/?clg_ref_id=${value}`;
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+                    if (data.exists) {
+                        setErrors((prev) => ({
+                            ...prev,
+                            clg_ref_id: "User already exists",
+                        }));
+                    } else {
+                        setErrors((prev) => ({
+                            ...prev,
+                            clg_ref_id: "",
+                        }));
+                    }
+                } catch {
+                    setErrors((prev) => ({
+                        ...prev,
+                        clg_ref_id: "Error checking user",
+                    }));
+                }
+            }, 400);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -263,9 +294,8 @@ export default function ConsultantLogin() {
                 });
             }
 
-            // ✅ Handle response based on status code
+            // ✅ Handle API response
             if (response.status === 201) {
-                // User created successfully
                 setSnackbarMessage("User Created Successfully!");
                 setSnackbarSeverity("success");
                 setSnackbarOpen(true);
@@ -289,13 +319,11 @@ export default function ConsultantLogin() {
                     setSnackbarOpen(false);
                 }, 2000);
             } else if (response.status === 200) {
-                // User updated successfully
                 setSnackbarMessage("User Data Updated Successfully!");
                 setSnackbarSeverity("success");
                 setSnackbarOpen(true);
                 setTimeout(() => setSnackbarOpen(false), 2000);
             } else if (response.status === 409) {
-                // ✅ Conflict: user already exists — show server message
                 const errorData = await response.json();
                 setSnackbarMessage(errorData?.message || errorData?.error || "User already exists.");
                 setSnackbarSeverity("error");
@@ -491,12 +519,12 @@ export default function ConsultantLogin() {
                                 </span>
                             </Typography>
                             <Snackbar
-                                open={openSnackbar}
+                                open={snackbarOpen}
                                 autoHideDuration={3000}
                                 onClose={handleSnackbarClose}
-                                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                             >
-                                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '200%' }}>
+                                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "200%" }}>
                                     {snackbarMessage}
                                 </Alert>
                             </Snackbar>
