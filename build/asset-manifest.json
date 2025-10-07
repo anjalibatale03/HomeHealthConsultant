@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "/static/css/main.df891d9a.css",
+    "main.js": "/static/js/main.e46f8c63.js",
+    "static/js/703.e00dba4c.chunk.js": "/static/js/703.e00dba4c.chunk.js",
+    "static/js/598.e6f20f36.chunk.js": "/static/js/598.e6f20f36.chunk.js",
+    "static/js/787.a3c2cdac.chunk.js": "/static/js/787.a3c2cdac.chunk.js",
+    "static/media/login_bg.png": "/static/media/login_bg.0594bccffab913af8be6.png",
+    "static/media/healthcare.png": "/static/media/healthcare.cf83fde70e7c3508f4fd.png",
+    "static/media/mixkit-software-interface-start-2574.wav": "/static/media/mixkit-software-interface-start-2574.5b9ecb195741da638d9c.wav",
+    "static/media/image (15).png": "/static/media/image (15).d845b0a0e26c890ef46f.png",
+    "static/media/not_found.png": "/static/media/not_found.13151fabb42d14d76e29.png",
+    "static/media/login_bg_m2.png": "/static/media/login_bg_m2.1657e6c779d40ac03896.png",
+    "static/media/spero_logo_3.png": "/static/media/spero_logo_3.48804ce744c9b50a616e.png",
+    "static/media/icon with a check mark.png": "/static/media/icon with a check mark.ac0dd660273c9086b35a.png",
+    "static/media/smile.png": "/static/media/smile.065d2fc2177d5e3891fe.png",
+    "static/media/Filter.png": "/static/media/Filter.57fb27ddaaf493fdeb17.png",
+    "static/media/home.png": "/static/media/home.8a368a6b498cb1ee124e.png",
+    "static/media/spritesheet.svg": "/static/media/spritesheet.a4e0eb7ad904a4858361.svg",
+    "index.html": "/index.html",
+    "main.df891d9a.css.map": "/static/css/main.df891d9a.css.map",
+    "main.e46f8c63.js.map": "/static/js/main.e46f8c63.js.map",
+    "703.e00dba4c.chunk.js.map": "/static/js/703.e00dba4c.chunk.js.map",
+    "598.e6f20f36.chunk.js.map": "/static/js/598.e6f20f36.chunk.js.map",
+    "787.a3c2cdac.chunk.js.map": "/static/js/787.a3c2cdac.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.df891d9a.css",
+    "static/js/main.e46f8c63.js"
+  ]
+}

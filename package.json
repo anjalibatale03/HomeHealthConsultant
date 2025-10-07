@@ -1,0 +1,84 @@
+{
+  "name": "aggrigation_client",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emoji-mart/data": "^1.2.1",
+    "@emoji-mart/react": "^1.1.1",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@fullcalendar/core": "^6.1.8",
+    "@fullcalendar/daygrid": "^6.1.8",
+    "@fullcalendar/react": "^6.1.8",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/joy": "^5.0.0-alpha.82",
+    "@mui/lab": "^5.0.0-alpha.130",
+    "@mui/material": "^5.13.1",
+    "@mui/system": "^5.13.2",
+    "@mui/x-data-grid": "^7.12.0",
+    "@mui/x-date-pickers": "^6.5.0",
+    "@mui/x-date-pickers-pro": "^6.11.0",
+    "@react-google-maps/api": "^2.19.3",
+    "@reduxjs/toolkit": "^1.9.3",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
+    "apexcharts": "^3.41.0",
+    "axios": "^1.7.8",
+    "build": "^0.1.4",
+    "date-fns": "^2.30.0",
+    "dayjs": "^1.11.7",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
+    "jspdf-autotable": "^5.0.2",
+    "jspdf-html2canvas": "^1.5.1",
+    "leaflet": "^1.9.4",
+    "leaflet-pip": "^1.1.0",
+    "leaflet.markercluster": "^1.5.3",
+    "react": "^18.2.0",
+    "react-apexcharts": "^1.4.0",
+    "react-big-calendar": "^1.8.1",
+    "react-chat-ui": "^0.4.0",
+    "react-date-picker": "^10.5.2",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
+    "react-leaflet": "^4.2.1",
+    "react-leaflet-draw": "^0.20.4",
+    "react-leaflet-markercluster": "^4.1.1",
+    "react-multi-date-picker": "^4.5.1",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.11.2",
+    "react-scripts": "5.0.1",
+    "react-signature-canvas": "^1.0.6",
+    "react-time-picker": "^6.5.2",
+    "react-zoom-pan-pinch": "^3.7.0",
+    "run": "^1.5.0",
+    "sweetalert2": "^11.12.4",
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
