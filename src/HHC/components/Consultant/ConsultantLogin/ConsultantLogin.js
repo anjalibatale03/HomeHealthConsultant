@@ -94,7 +94,7 @@ export default function ConsultantLogin() {
                     localStorage.setItem('permissions', JSON.stringify(data.token.permissions));
                     localStorage.setItem('companyID', data.token.colleague.prof_compny);
 
-                    if (data.token.user_group === "hd") {
+                    if (data.token.user_group === "Consultant") {
                         navigate("/dashboard");
                         handleAuth();
                         window.location.reload();
