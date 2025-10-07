@@ -471,11 +471,11 @@ const ReferredPatient = () => {
         }
 
         try {
-            const response = await fetch(`${port}/web/agg_hhc_add_service_form_api/`, {
+            const response = await fetch(`${port}/doc_cons/refer_service_const_wise/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Accept: "application/json",
+                    'Authorization': `Bearer ${accessToken}`,
                 },
                 body: JSON.stringify(requestData),
             });
