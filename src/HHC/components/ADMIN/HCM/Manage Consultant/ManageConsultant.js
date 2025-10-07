@@ -87,9 +87,9 @@ const ManageConsultant = () => {
     .filter((item) => {
       const searchLower = searchQuery.toLowerCase();
       return (
-        (item.prof_fullname || '').toLowerCase().includes(searchLower) ||
-        (item.email_id || '').toLowerCase().includes(searchLower) ||
-        (item.phone_no ? item.phone_no.toString().toLowerCase().includes(searchLower) : false)
+        (item.clg_first_name || '').toLowerCase().includes(searchLower) ||
+        (item.clg_work_email_id || '').toLowerCase().includes(searchLower) ||
+        (item.clg_Work_phone_number ? item.clg_Work_phone_number.toString().toLowerCase().includes(searchLower) : false)
       );
     });
 
@@ -102,81 +102,78 @@ const ManageConsultant = () => {
     setPage(0);
   }
 
-  const profIDRequest = (eveId) => {
-    const selectedRequest = tableData.find(item => item.srv_prof_id === eveId);
-    console.log("Selected Event", selectedRequest);
-    if (selectedRequest) {
-      console.log("Selected Event ID:", selectedRequest.srv_prof_id);
-      setProfID(selectedRequest.srv_prof_id);
-    }
-  };
+ 
 
-  useEffect(() => {
-    const fetchProfDetails = async () => {
-      setLoading(true);
-      if (profID) {
-        try {
-          const response = await fetch(`${port}/hr/Exter_Prof_Action_Get/${profID}/`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${accessToken}`
-            }
-          });
-          const data = await response.json();
-          console.log('Fetching Data kkkkkkkkkkk', data);
-          setProfData(data);
-          setLoading(false);
-        }
-        catch (error) {
-          console.log('Error fetching Data');
-        }
-      }
-    }
-    fetchProfDetails();
-  }, [profID])
 
-  async function handleRemarkSubmit(event, status) {
-    event.preventDefault();
-    const requestData = {
-      extr_pro_ap_re: 1,
-      srv_prof_id: profID,
-      Remark: remark,
-      approve_reject: status,
-      last_modified_by: addedby,
-      added_by: addedby,
-    };
-    console.log("POST API Hitting......", requestData)
-    try {
-      const response = await fetch(`${port}/hr/External_prof_accept_reject/${profID}/`, {
-        method: "POST",
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
-      if (!response.ok) {
-        console.error(`HTTP error! Status: ${response.status}`);
-        return;
-      }
-      const result = await response.json();
-      console.log("Remark", result);
-      setOpenSnackbar(true);
-      setSnackbarMessage('Data submitted successfully!');
-      // onClose();
-      window.location.reload();
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
+async function handleConsultantApproval(event, status) {
+  event.preventDefault();
+
+  if (!remark.trim()) {
+    setSnackbarMessage("Please enter a remark!");
+    setSnackbarSeverity("warning");
+    setOpenSnackbar(true);
+    return;
   }
 
-  const handleDocumentDownload = (docPath) => {
-    const documentUrl = decodeURIComponent(docPath);
-    const fileUrl = `${documentUrl}`;
-    window.open(fileUrl, '_blank');
+  const isApproved = status === 1; // 1 = Approve, 2 = Reject
+  const url = isApproved
+    ? `${port}/hhc_admin/consultant_approve/${profID}/`
+    : `${port}/hhc_admin/consultant_reject/${profID}/`;
+
+  const requestData = {
+    is_approved: isApproved,
+    remark: remark,
   };
+
+  console.log("Submitting:", url, requestData);
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestData),
+    });
+
+    if (!response.ok) {
+      console.error(`HTTP error! Status: ${response.status}`);
+      setSnackbarMessage("Failed to submit!");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+      return;
+    }
+
+    const result = await response.json();
+    console.log("Response:", result);
+
+    // ✅ Show success message first
+    setSnackbarMessage(
+      isApproved
+        ? "Consultant approved successfully!"
+        : "Consultant rejected successfully!"
+    );
+    setSnackbarSeverity("success");
+    setOpenSnackbar(true);
+
+    // ✅ Close modal
+    handleCloseRModal();
+
+
+    setTimeout(() => {
+      FetchConsultantList(); // Refresh the table data
+    }, 1000);
+  } catch (error) {
+    console.error("Error:", error);
+    setSnackbarMessage("Something went wrong!");
+    setSnackbarSeverity("error");
+    setOpenSnackbar(true);
+  }
+}
+
+
+
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -209,7 +206,7 @@ const ManageConsultant = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            // "Authorization": `Bearer ${accessToken}`, // if required
+             "Authorization": `Bearer ${accessToken}`, 
           },
         });
   
@@ -226,6 +223,9 @@ const ManageConsultant = () => {
     useEffect(() => {
       FetchConsultantList();
     }, []);
+
+
+    
 
   return (
     <div>
@@ -262,7 +262,7 @@ const ManageConsultant = () => {
             </IconButton>
           </Box>
 
-          <Box
+          {/* <Box
             component="form"
             sx={{
               ml: 2,
@@ -307,7 +307,7 @@ const ManageConsultant = () => {
                 </MenuItem>
               ))}
             </TextField>
-          </Box>
+          </Box> */}
         </Stack>
 
         <TableContainer sx={{ height: "68vh" }}>
@@ -362,16 +362,16 @@ const ManageConsultant = () => {
                               <Typography variant="subtitle2">{index + 1 + page * rowsPerPage}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1.5 }}>
-                              <Typography variant="subtitle2">{user.prof_fullname || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.clg_first_name || '-'}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1.5 }}>
-                              <Typography variant="subtitle2">{user.email_id || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.clg_work_email_id || '-'}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1 }}>
-                              <Typography variant="subtitle2">{user.phone_no || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.clg_Work_phone_number || '-'}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1 }}>
-                              <Typography variant="subtitle2">{user.srv_id || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.clg_address || '-'}</Typography>
                             </CardContent>
   <CardContent style={{ flex: 1.2, display: "flex", justifyContent: "center", gap: "6px" }}>
 
@@ -386,10 +386,11 @@ const ManageConsultant = () => {
       textTransform: "capitalize",
       fontSize: "12px", // text chhota
     }}
-    onClick={() => {
-      setApproveRejectStatus(1);
-      handleOpenRModal(profIDRequest);
-    }}
+     onClick={() => {
+    setProfID(user.id);        // set current consultant ID
+    setApproveRejectStatus(1); // 1 = Approve
+    handleOpenRModal();
+  }}
   >
     Approve
   </Button>
@@ -405,10 +406,11 @@ const ManageConsultant = () => {
       textTransform: "capitalize",
       fontSize: "12px",
     }}
-    onClick={() => {
-      setApproveRejectStatus(2);
-      handleOpenRModal(profIDRequest);
-    }}
+     onClick={() => {
+    setProfID(user.id);
+    setApproveRejectStatus(2); // 2 = Reject
+    handleOpenRModal();
+  }}
   >
     Reject
   </Button>
@@ -424,350 +426,7 @@ const ManageConsultant = () => {
             </TableBody>
           </Table>
 
-          <Modal open={openModal} onClose={handleCloseModal}>
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                width: 800,
-                height: 'auto',
-                backgroundColor: '#F2F2F2',
-                borderRadius: '5px',
-                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                padding: '10px',
-                overflowY: 'scroll',
-                maxHeight: '85%',
-              }}
-            >
-              <Box
-                sx={{
-                  width: '100%',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <AppBar
-                  position="static"
-                  sx={{
-                    background: 'linear-gradient(45deg, #1FD0C4 38.02%, #0E8FE4 100%)',
-                    width: '50.7em',
-                    height: '3rem',
-                    mt: '-10px',
-                    ml: '-10px',
-                    borderRadius: '8px 0 0 0',
-                  }}
-                >
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: '10px' }}>
-                    <Typography variant="h6" component="h4" sx={{ flexGrow: 1 }}>
-                      View Professional
-                    </Typography>
-                    <IconButton sx={{ color: 'white', mr: 1 }} onClick={handleCloseModal} aria-label="close">
-                      <CloseIcon />
-                    </IconButton>
-                  </Box>
-                </AppBar>
-              </Box>
-
-              <Grid container spacing={2} sx={{ justifyContent: 'center', marginBottom: '58px' }}>
-                <Grid item xs={12} md={6}>
-                  <Box
-                    sx={{
-                      typography: 'body1',
-                      background: "#FFFFFF",
-                      borderRadius: '10px',
-                      width: "92%",
-                      height: "100%",
-                      justifyContent: 'center',
-                      marginLeft: '8px',
-                      marginRight: '8px',
-                      padding: '10px',
-                      marginTop: '20px',
-                    }}
-                  >
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ fontWeight: 600, fontSize: "16px", marginBottom: '10px' }}
-                    >
-                      PROFESSIONAL DETAILS
-                    </Typography>
-
-                    {[
-                      { label: "Name", value: profData.prof_fullname },
-                      { label: "Phone", value: profData.phone_no },
-                      { label: "Email", value: profData.email_id },
-                      { label: "DOB", value: profData.dob },
-                      { label: "Address", value: profData.address },
-                      { label: "Home Zone", value: profData.prof_zone_id },
-                    ].map((item, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontWeight: "bold",
-                            fontSize: "14px",
-                            width: "120px",
-                            color: "#000000",
-                          }}
-                        >
-                          {item.label}:
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontSize: "15px",
-                            color: "#555555",
-                          }}
-                        >
-                          {item.value || "N/A"}
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Box>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <Box
-                    sx={{
-                      typography: 'body1',
-                      background: "#FFFFFF",
-                      borderRadius: '10px',
-                      width: "92%",
-                      height: "100%",
-                      justifyContent: 'center',
-                      marginLeft: '8px',
-                      marginRight: '8px',
-                      padding: '10px',
-                      marginTop: '20px',
-                    }}
-                  >
-                    <Typography
-                      variant="subtitle2"
-                      sx={{ fontWeight: 600, fontSize: "16px", marginBottom: '10px' }}
-                    >
-                      EDUCATIONAL DETAILS
-                    </Typography>
-                    {[
-                      { label: "Qualification", value: profData.exter_prof_Interview?.[0]?.qualification_name },
-                      { label: "Certificate Registration No", value: profData.certificate_registration_no },
-                      { label: "Specialization", value: profData.exter_prof_Interview?.[0]?.specialization_name },
-                    ].map((item, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontWeight: "bold",
-                            fontSize: "14px",
-                            width: "200px",
-                            color: "#000000",
-                          }}
-                        >
-                          {item.label}:
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontSize: "15px",
-                            color: "#555555",
-                          }}
-                        >
-                          {item.value ? item.value : '-'}
-                        </Typography>
-                      </Box>
-                    ))}
-
-                    {profData?.exter_prof_Interview?.[0]?.prof_CV && (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontWeight: "bold",
-                            fontSize: "14px",
-                            width: "200px",
-                            color: "#000000",
-                          }}
-                        >
-                          CV:
-                        </Typography>
-                        {/* <Typography
-                          variant="body1"
-                          sx={{
-                            fontSize: "15px",
-                            color: "#555555",
-                          }}
-                        >
-                          {profData?.exter_prof_Interview?.[0]?.prof_CV ?
-                            decodeURIComponent(profData?.exter_prof_Interview?.[0]?.prof_CV).split('/').pop() : 'N/A'}
-                        </Typography> */}
-                        <Button
-                          variant="contained"
-                          size="small"
-                          onClick={() => {
-                            const fileUrl = profData?.exter_prof_Interview?.[0]?.prof_CV;
-                            if (fileUrl) {
-                              window.open(fileUrl, '_blank'); // Open the CV link in a new tab
-                            } else {
-                              alert('CV not available for download.');
-                            }
-                          }}
-                          sx={{ marginLeft: '10px' }}
-                        >
-                          Download
-                        </Button>
-                      </Box>
-                    )}
-
-                    <Box>
-                      <Typography variant="body1" sx={{ fontSize: "14px", marginBottom: '8px' }}>
-                        <strong>Document:</strong>
-                      </Typography>
-                      {profData?.exter_prof_document?.length > 0 ? (
-                        profData.exter_prof_document.map((item, index) => (
-                          <Box
-                            key={index}
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              marginBottom: '10px',
-                              justifyContent: 'space-between', // Aligning the button to the right
-                            }}
-                          >
-                            <Typography variant="body1" sx={{ marginRight: '10px' }}>
-                              {`${item.doc_li_id}`}
-                            </Typography>
-                            <Button
-                              variant="contained"
-                              size="small"
-                              onClick={() => handleDocumentDownload(item.professional_document)}
-                            >
-                              Download
-                            </Button>
-                          </Box>
-                        ))
-                      ) : (
-                        <Typography variant="body2" color="textSecondary">
-                          No documents available.
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
-                </Grid>
-              </Grid>
-
-              <Box
-                sx={{
-                  typography: 'body1',
-                  background: "#FFFFFF",
-                  borderRadius: '10px',
-                  width: "96%",
-                  height: "auto",
-                  justifyContent: 'center',
-                  marginLeft: '8px',
-                  marginRight: '8px',
-                  marginTop: '10px',
-                  padding: '10px',
-                  marginBottom: '10px'
-                }}
-              >
-                <Typography
-                  variant="subtitle2"
-                  sx={{ fontWeight: 600, fontSize: "16px", marginBottom: '10px' }}
-                >
-                  SERVICE DETAILS
-                </Typography>
-
-                <Box sx={{ display: 'flex', marginBottom: '8px' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{ fontWeight: "bold", fontSize: "14px", width: "120px" }}
-                  >
-                    Service:
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: "14px" }}>
-                    {profData.srv_id || "-"}
-                  </Typography>
-                </Box>
-
-                <Box sx={{ marginBottom: '8px' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{ fontWeight: "bold", fontSize: "14px", marginBottom: '4px' }}
-                  >
-                    Sub-Service:
-                  </Typography>
-                  {profData?.prof_service_details?.length > 0 ? (
-                    <Box component="ul" sx={{ paddingLeft: '135px', margin: 0 }}>
-                      {profData.prof_service_details.map((item, index) => (
-                        <Box component="li" key={index} sx={{ marginBottom: '4px' }}>
-                          <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            sx={{ fontSize: "14px" }}
-                          >
-                            {item.sub_srv_name} [{item.prof_cost || '-'} rs]
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Box>
-                  ) : (
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      sx={{ fontSize: "14px", fontStyle: "italic" }}
-                    >
-                      No Sub-Service available.
-                    </Typography>
-                  )}
-                </Box>
-
-                <Box sx={{ display: 'flex', marginBottom: '8px' }}>
-                  <Typography
-                    variant="body1"
-                    sx={{ fontWeight: "bold", fontSize: "14px", width: "120px" }}
-                  >
-                    Job Type:
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontSize: "14px" }}>
-                    {profData.Job_type || "-"}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <div style={{ display: "flex" }}>
-                {profData.status !== 1 && (
-                  <Button variant="contained" sx={{ m: 1, width: '20ch', backgroundColor: '#7AB8EE', borderRadius: "12px", textTransform: "capitalize" }} onClick={(e) => { setApproveRejectStatus(1); handleOpenRModal(profIDRequest) }}>Approve</Button>
-                )}
-
-                <Button variant="contained" sx={{ m: 1, width: '20ch', backgroundColor: '#FD7568', borderRadius: "12px", textTransform: "capitalize" }} onClick={(e) => { setApproveRejectStatus(2); handleOpenRModal(profIDRequest) }}>Reject</Button>
-              </div>
-            </Box>
-          </Modal>
+         
 
           <Modal
             aria-labelledby="modal-modal-title"
@@ -830,24 +489,12 @@ const ManageConsultant = () => {
                   width: "20ch",
                   mt: 2
                 }}
-                onClick={(e) => handleRemarkSubmit(e, approveRejectStatus)}
+                onClick={(e) => handleConsultantApproval(e, approveRejectStatus)}
               >
                 Submit
               </Button>
 
-              <Snackbar
-                open={openSnackbar}
-                autoHideDuration={2000}
-                onClose={handleSnackbarClose}
-              >
-                <Alert variant="filled"
-                  onClose={handleSnackbarClose}
-                  severity={snackbarSeverity}
-                  sx={{ width: '100%', mb: 10 }}
-                >
-                  {snackbarMessage}
-                </Alert>
-              </Snackbar>
+             
             </Box>
           </Modal>
 
@@ -862,6 +509,20 @@ const ManageConsultant = () => {
           />
         </TableContainer>
         <Footer />
+
+         <Snackbar
+                open={openSnackbar}
+                autoHideDuration={2000}
+                onClose={handleSnackbarClose}
+              >
+                <Alert variant="filled"
+                  onClose={handleSnackbarClose}
+                  severity={snackbarSeverity}
+                  sx={{ width: '100%', mb: 10 }}
+                >
+                  {snackbarMessage}
+                </Alert>
+              </Snackbar>
       </Box>
     </div>
   )
