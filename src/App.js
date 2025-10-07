@@ -88,6 +88,7 @@ import RefundReports from "./HHC/components/ADMIN/Reports/RefunReports";
 import ClinicalReports from "./HHC/components/ADMIN/Reports/ClinicalReports";
 import PatientFeedbackReport from "./HHC/components/ADMIN/Reports/Patientfeedback/PatientFeedbackReport";
 import ProfessionalFeedbackReport from "./HHC/components/ADMIN/Reports/ProfessionalFeedbackReport";
+import ConsultantLogin from "./HHC/components/Consultant/ConsultantLogin/ConsultantLogin";
 
 function App() {
   const [isLoggIn, setIsLoggIn] = useState(
@@ -117,6 +118,11 @@ function App() {
               exact
               path="/dashboard"
               element={isLoggedIn ? <Dashboard /> : <Login />}
+            />
+            <Route
+              exact
+              path="/ConsultantLogin"
+              element={isLoggedIn ? <ConsultantLogin /> : <ConsultantLogin />}
             />
             <Route
               exact

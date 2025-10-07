@@ -572,7 +572,7 @@ const UserDetails = () => {
             // setOpenSnackbar(true);
             // setSnackbarMessage('Your form received successfully.');
             // setSnackbarSeverity('success');
-            window.location.reload();
+            // window.location.reload();
         } catch (error) {
             console.error("An error occurred:", error);
         }
