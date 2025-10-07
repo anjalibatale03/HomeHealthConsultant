@@ -164,7 +164,6 @@ export default function ConsultantLogin() {
                 const response = await fetch(`${port}/web/agg_hhc_state_api`, {
                     headers: {
                         "Content-type": "application/json",
-                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
                 const data = await response.json();
@@ -202,32 +201,8 @@ export default function ConsultantLogin() {
         getreferHospital();
     }, []);
 
-    const fetchCompanyDetails = async () => {
-        setLoading(true);
-        try {
-            const response = await fetch(`${port}/hr/get_company_details/`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-            const data = await response.json();
-            console.log('Fetching the organizationnnn data', data);
-            setCmpData(data);
-            setLoading(false);
-        }
-        catch (error) {
-            console.log('Error fetching Data');
-        }
-    }
-
-    useEffect(() => {
-        fetchCompanyDetails();
-    }, [])
-
-    const [errors, setErrors] = useState({}); // <-- add this if not present
-    const debounceRef = useRef(null); // <-- add this
+    const [errors, setErrors] = useState({});
+    const debounceRef = useRef(null);
 
     const handleRegisterChange = (e) => {
         const { name, value } = e.target;
@@ -236,30 +211,38 @@ export default function ConsultantLogin() {
             [name]: value,
         }));
 
-        // Only check for clg_ref_id (User Name)
         if (name === "clg_ref_id") {
             if (debounceRef.current) clearTimeout(debounceRef.current);
+
             debounceRef.current = setTimeout(async () => {
                 try {
-                    const apiUrl = `https://hhc.hospitalguru.in/hr/clg_is_already_exists/?clg_ref_id=${value}`;
+                    const apiUrl = `${port}/hr/clg_is_already_exists/?clg_ref_id=${value}`;
                     const response = await fetch(apiUrl);
                     const data = await response.json();
-                    if (data.exists) {
+
+                    if (response.status === 409) {
+                        setSnackbarMessage(data.message || "User with this ID already exists.");
+                        setSnackbarSeverity("error");
+                        setSnackbarOpen(true);
+
                         setErrors((prev) => ({
                             ...prev,
-                            clg_ref_id: "User already exists",
+                            clg_ref_id: data.message || "User already exists",
                         }));
-                    } else {
+                    } else if (response.ok) {
                         setErrors((prev) => ({
                             ...prev,
                             clg_ref_id: "",
                         }));
+                    } else {
+                        setSnackbarMessage(data.message || "Something went wrong.");
+                        setSnackbarSeverity("error");
+                        setSnackbarOpen(true);
                     }
                 } catch {
-                    setErrors((prev) => ({
-                        ...prev,
-                        clg_ref_id: "Error checking user",
-                    }));
+                    setSnackbarMessage("Error checking user.");
+                    setSnackbarSeverity("error");
+                    setSnackbarOpen(true);
                 }
             }, 400);
         }
@@ -309,9 +292,8 @@ export default function ConsultantLogin() {
                 });
             }
 
-            // ✅ Handle API response
             if (response.status === 201) {
-                setSnackbarMessage("User Created Successfully!");
+                setSnackbarMessage("Registered successfully. Credentials sent to email.");
                 setSnackbarSeverity("success");
                 setSnackbarOpen(true);
 
@@ -332,7 +314,10 @@ export default function ConsultantLogin() {
                         clg_district: "",
                     });
                     setSnackbarOpen(false);
+
+                    setShowRegister(false);
                 }, 2000);
+
             } else if (response.status === 200) {
                 setSnackbarMessage("User Data Updated Successfully!");
                 setSnackbarSeverity("success");
