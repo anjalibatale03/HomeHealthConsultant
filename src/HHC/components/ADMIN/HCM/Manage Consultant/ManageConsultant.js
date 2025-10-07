@@ -328,7 +328,7 @@ async function handleConsultantApproval(event, status) {
                     <Typography variant="subtitle2">Contact Number</Typography>
                   </CardContent>
                   <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
-                    <Typography variant="subtitle2">Service</Typography>
+                    <Typography variant="subtitle2">Address</Typography>
                   </CardContent>
                   <CardContent style={{ flex: 1.2, borderRight: "1px solid #FFFFFF" }}>
                     <Typography variant="subtitle2">Action</Typography>
