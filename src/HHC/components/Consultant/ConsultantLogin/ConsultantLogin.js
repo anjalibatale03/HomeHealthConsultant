@@ -95,9 +95,9 @@ export default function ConsultantLogin() {
                     localStorage.setItem('companyID', data.token.colleague.prof_compny);
 
                     if (data.token.user_group === "Consultant") {
-                        navigate("/dashboard");
+                        navigate("/hhc/Consultant/Referred Patient");
                         handleAuth();
-                        window.location.reload();
+                        // window.location.reload();
                     }
                 }
             }

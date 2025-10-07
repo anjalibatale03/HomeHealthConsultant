@@ -124,6 +124,9 @@ export default function Login() {
                     else if (data.token.user_group === "physioMilestone") {
                         navigate("/physio Quality Audit");
                     }
+                    else if (data.token.user_group === "Consultant") {
+                        navigate("/Consultant/Referred Patient");
+                    }
                 }
             }
         } catch (error) {
