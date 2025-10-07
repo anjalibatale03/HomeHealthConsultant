@@ -89,6 +89,9 @@ import ClinicalReports from "./HHC/components/ADMIN/Reports/ClinicalReports";
 import PatientFeedbackReport from "./HHC/components/ADMIN/Reports/Patientfeedback/PatientFeedbackReport";
 import ProfessionalFeedbackReport from "./HHC/components/ADMIN/Reports/ProfessionalFeedbackReport";
 import ConsultantLogin from "./HHC/components/Consultant/ConsultantLogin/ConsultantLogin";
+import ReferredPatient from "./HHC/components/Consultant/ConsultantForm/ReferredPatient";
+import ReferredPatientDetails from "./HHC/components/Consultant/ConsultantForm/ReferredPatientDetails";
+import ManageConsultant from "./HHC/components/ADMIN/HCM/Manage Consultant/ManageConsultant";
 
 function App() {
   const [isLoggIn, setIsLoggIn] = useState(
@@ -254,6 +257,8 @@ function App() {
               element={<ClosureRevalidation />}
             />
             <Route path="/hhc/HCM/insurance" element={<Insurance />} />
+
+            <Route path="/hhc/HCM/manage consultant" element={<ManageConsultant />} />
             {/* ACCOUNT Routing */}
             <Route
               path="/hhc/account/dashboard"
@@ -495,6 +500,11 @@ function App() {
               element={<PhysioMiles />}
             ></Route>
             <Route path="/AddPhysioMiles" element={<AddPhysioMiles />}></Route>
+
+            {/* Consultant module */}
+
+             <Route exact path="/hhc/Consultant/Referred Patient" element={<ReferredPatient />} />
+              <Route exact path="/hhc/Consultant/Referred Patient Details" element={<ReferredPatientDetails />} />
           </Routes>
         </div>
       </BrowserRouter>
