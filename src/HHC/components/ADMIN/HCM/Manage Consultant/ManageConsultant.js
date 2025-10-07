@@ -201,37 +201,31 @@ const ManageConsultant = () => {
     fetchCompany();
   }, [])
 
-  const fetchUserDetails = async (companyId = '') => {
-    setLoading(true);
-    try {
-      const url = companyId
-        ? `${port}/hr/external_prof_list/?prof_compny=${companyId}`
-        : `${port}/hr/external_prof_list/`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
-
-      const data = await response.json();
-      console.log('Fetched Data:', data);
-      setTableData(data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (selectedCompany) {
-      fetchUserDetails(selectedCompany); // fetch data based on selected company
-    } else {
-      fetchUserDetails(); // fetch all data if no company is selected
-    }
-  }, [selectedCompany]);
+   const FetchConsultantList = async () => {
+      setLoading(true);
+      try {
+        const url = `${port}/hhc_admin/consultant_get/`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // "Authorization": `Bearer ${accessToken}`, // if required
+          },
+        });
+  
+        const data = await response.json();
+        console.log("Fetched Consultant Data:", data);
+        setTableData(data);
+      } catch (error) {
+        console.error("Error fetching consultant data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      FetchConsultantList();
+    }, []);
 
   return (
     <div>

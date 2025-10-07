@@ -201,38 +201,40 @@ const ReferredPatientDetails = () => {
     fetchCompany();
   }, [])
 
-  const fetchUserDetails = async () => {
-  setLoading(true);
-  try {
-    const url = "http://192.168.1.109:8000/hhc_admin/consultant_get/";
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        // Add Authorization header only if your API needs it
-        // "Authorization": `Bearer ${accessToken}`,
-      },
-    });
+  const FetchConsultantList = async () => {
+    setLoading(true);
+    try {
+      const url = `${port}/hhc_admin/consultant_get/`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // "Authorization": `Bearer ${accessToken}`, // if required
+        },
+      });
 
-    const data = await response.json();
-    console.log("Fetched Consultant Data:", data);
-
-    setTableData(data); // ✅ Set API data to your table state
-  } catch (error) {
-    console.error("Error fetching consultant data:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
+      const data = await response.json();
+      console.log("Fetched Consultant Data:", data);
+      setTableData(data);
+    } catch (error) {
+      console.error("Error fetching consultant data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (selectedCompany) {
-      fetchUserDetails(selectedCompany); // fetch data based on selected company
-    } else {
-      fetchUserDetails(); // fetch all data if no company is selected
-    }
-  }, [selectedCompany]);
+    FetchConsultantList();
+  }, []);
+
+
+  // useEffect(() => {
+  //   if (selectedCompany) {
+  //     fetchUserDetails(selectedCompany); // fetch data based on selected company
+  //   } else {
+  //     fetchUserDetails(); // fetch all data if no company is selected
+  //   }
+  // }, [selectedCompany]);
 
   return (
     <div>
@@ -269,7 +271,7 @@ const ReferredPatientDetails = () => {
             </IconButton>
           </Box>
 
-          <Box
+          {/* <Box
             component="form"
             sx={{
               ml: 2,
@@ -314,7 +316,7 @@ const ReferredPatientDetails = () => {
                 </MenuItem>
               ))}
             </TextField>
-          </Box>
+          </Box> */}
         </Stack>
 
         <TableContainer sx={{ height: "68vh" }}>
@@ -332,14 +334,14 @@ const ReferredPatientDetails = () => {
                     <Typography variant="subtitle2">Email ID</Typography>
                   </CardContent>
                   <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
-                    <Typography variant="subtitle2">Contact Number</Typography>
+                    <Typography variant="subtitle2">Hospital Name</Typography>
                   </CardContent>
                   <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
-                    <Typography variant="subtitle2">Service</Typography>
+                    <Typography variant="subtitle2">Contact Number</Typography>
                   </CardContent>
-                  {/* <CardContent style={{ flex: 1.2, borderRight: "1px solid #FFFFFF" }}>
-                    <Typography variant="subtitle2">Action</Typography>
-                  </CardContent> */}
+                  <CardContent style={{ flex: 1.2, borderRight: "1px solid #FFFFFF" }}>
+                    <Typography variant="subtitle2">Address</Typography>
+                  </CardContent>
                 </UserCard>
               </TableRow>
             </TableHead>
@@ -369,17 +371,21 @@ const ReferredPatientDetails = () => {
                               <Typography variant="subtitle2">{index + 1 + page * rowsPerPage}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1.5 }}>
-                              <Typography variant="subtitle2">{user.prof_fullname || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.clg_first_name || '-'}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1.5 }}>
-                              <Typography variant="subtitle2">{user.email_id || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.clg_work_email_id || '-'}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1 }}>
-                              <Typography variant="subtitle2">{user.phone_no || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.hospital_name || '-'}</Typography>
                             </CardContent>
                             <CardContent style={{ flex: 1 }}>
-                              <Typography variant="subtitle2">{user.srv_id || '-'}</Typography>
+                              <Typography variant="subtitle2">{user.clg_Work_phone_number || '-'}</Typography>
                             </CardContent>
+                             <CardContent style={{ flex: 1.2}}>
+                              <Typography variant="subtitle2">{user.clg_address || '-'}</Typography>
+                            </CardContent>
+
   {/* <CardContent style={{ flex: 1.2, display: "flex", justifyContent: "center", gap: "6px" }}>
 
   <Button
