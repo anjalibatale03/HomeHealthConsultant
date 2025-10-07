@@ -491,7 +491,7 @@ const ReferredPatient = () => {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            // window.location.reload();
+            window.location.reload();
         } catch (error) {
             console.error("An error occurred:", error);
             setOpenSnackbar(true);
