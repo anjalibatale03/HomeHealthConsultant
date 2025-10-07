@@ -498,7 +498,7 @@ export default function ConsultantLogin() {
                                                         value={formData.address}
                                                         onChange={handleRegisterChange}
                                                         inputProps={{
-                                                            maxLength: 10,
+                                                           
                                                             pattern: "[0-9]*",
                                                         }}
                                                         sx={{
