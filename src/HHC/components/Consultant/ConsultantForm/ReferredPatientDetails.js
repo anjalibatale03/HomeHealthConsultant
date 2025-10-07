@@ -36,7 +36,12 @@ const ReferredPatientDetails = () => {
   const port = process.env.REACT_APP_API_KEY;
   const accessToken = localStorage.getItem('token');
   const addedby = localStorage.getItem('clg_id');
-
+  const clgId = localStorage.getItem('clg_id');
+  if (clgId) {
+    console.log("Consultant ID:", clgId);
+  } else {
+    console.log("No consultant ID found.");
+  }
   const [openModal, setOpenModal] = useState(false);
   const [openRModal, setOpenRModal] = useState(false);
   const [tableData, setTableData] = useState([]);
@@ -204,18 +209,18 @@ const ReferredPatientDetails = () => {
   const FetchConsultantList = async () => {
     setLoading(true);
     try {
-      const url = `${port}/hhc_admin/consultant_get/`;
+      const url = `${port}/doc_cons/services_list/${clgId}/`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          // "Authorization": `Bearer ${accessToken}`, // if required
+          "Authorization": `Bearer ${accessToken}`,
         },
       });
 
       const data = await response.json();
       console.log("Fetched Consultant Data:", data);
-      setTableData(data);
+      setTableData(data.patients || []);
     } catch (error) {
       console.error("Error fetching consultant data:", error);
     } finally {
@@ -382,11 +387,11 @@ const ReferredPatientDetails = () => {
                             <CardContent style={{ flex: 1 }}>
                               <Typography variant="subtitle2">{user.clg_Work_phone_number || '-'}</Typography>
                             </CardContent>
-                             <CardContent style={{ flex: 1.2}}>
+                            <CardContent style={{ flex: 1.2 }}>
                               <Typography variant="subtitle2">{user.clg_address || '-'}</Typography>
                             </CardContent>
 
-  {/* <CardContent style={{ flex: 1.2, display: "flex", justifyContent: "center", gap: "6px" }}>
+                            {/* <CardContent style={{ flex: 1.2, display: "flex", justifyContent: "center", gap: "6px" }}>
 
   <Button
     variant="contained"

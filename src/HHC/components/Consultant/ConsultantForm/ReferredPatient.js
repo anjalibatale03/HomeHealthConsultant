@@ -60,7 +60,12 @@ const ReferredPatient = () => {
     const navigate = useNavigate();
     const port = process.env.REACT_APP_API_KEY;
     const accessToken = localStorage.getItem('token');
-
+    const clgId = localStorage.getItem('clg_id');
+    if (clgId) {
+        console.log("Consultant ID:", clgId);
+    } else {
+        console.log("No consultant ID found.");
+    }
     const [ptnName, setPtnName] = useState('');
     const [ptnNo, setPtnNo] = useState('');
     const [ptnNoError, setPtnNoError] = useState('');
@@ -90,7 +95,7 @@ const ReferredPatient = () => {
     const [patientDetails, setPatientDetails] = useState(null);
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [selectedPtnData, setSelectedPtnData] = useState({ ...selectedPatient });
-    const [state,setState] = useState('');
+    const [state, setState] = useState('');
 
     const [isPopupOpen, setPopupOpen] = useState(false);
 
@@ -582,7 +587,7 @@ const ReferredPatient = () => {
 
     return (
         <>
-        <HRNavbar />
+            <HRNavbar />
             {/* <UserNavbar /> */}
             <Grid item xs={12} container spacing={0}>
                 <Grid item lg={4} sm={12} xs={12} md={12}>
@@ -596,9 +601,9 @@ const ReferredPatient = () => {
 
                         <Grid container spacing={3} sx={{ marginTop: "2px", paddingLeft: "30px", paddingRight: "30px" }}>
 
-                     
 
-                       
+
+
 
                             {patientDetails ? (
                                 <>
@@ -759,7 +764,7 @@ const ReferredPatient = () => {
                                                 </TextField>
                                             </Grid>
 
-                                         
+
 
                                             <Grid item lg={6} md={12} sm={12} xs={12}>
                                                 <TextField
@@ -1181,7 +1186,7 @@ const ReferredPatient = () => {
                                         </Box>
                                     </Modal>
 
-                                    
+
 
                                     <Grid item lg={6} md={12} sm={12} xs={12}>
                                         <TextField
@@ -1203,7 +1208,7 @@ const ReferredPatient = () => {
                                             helperText={errors.remark}
                                         />
                                     </Grid>
-{/* 
+                                    {/* 
                                     <Grid item lg={6} md={12} sm={12} xs={12}>
                                         <TextField
                                             required
@@ -1234,27 +1239,27 @@ const ReferredPatient = () => {
 
                                     <Grid item lg={6} md={12} sm={12} xs={12}>
                                         <Grid container spacing={1}>
-                                            
-                                     <Grid item lg={12} md={12} sm={12} xs={12}>
-                                        <TextField
-                                            required
-                                            label="State"
-                                            id="State"
-                                            name="State"
-                                            placeholder='State'
-                                            size="small"
-                                            fullWidth
-                                            value={state}
-                                            onChange={(e) => setState(e.target.value)}
-                                            sx={{
-                                                '& input': {
-                                                    fontSize: '14px',
-                                                },
-                                            }}
-                                            error={!!errors.state}
-                                            helperText={errors.state}
-                                        />
-                                    </Grid>
+
+                                            <Grid item lg={12} md={12} sm={12} xs={12}>
+                                                <TextField
+                                                    required
+                                                    label="State"
+                                                    id="State"
+                                                    name="State"
+                                                    placeholder='State'
+                                                    size="small"
+                                                    fullWidth
+                                                    value={state}
+                                                    onChange={(e) => setState(e.target.value)}
+                                                    sx={{
+                                                        '& input': {
+                                                            fontSize: '14px',
+                                                        },
+                                                    }}
+                                                    error={!!errors.state}
+                                                    helperText={errors.state}
+                                                />
+                                            </Grid>
                                             {selectedReferby === 2 && (
                                                 <Grid item xs={6}>
                                                     <TextField
@@ -1384,7 +1389,7 @@ const ReferredPatient = () => {
                                         />
                                     </Grid>
 
-                                    
+
                                 </>
                             )}
 
@@ -1393,7 +1398,7 @@ const ReferredPatient = () => {
                                 <Button variant="contained" sx={{ mt: 2, mb: 5, width: '30ch', backgroundColor: '#51DDD4', borderRadius: "12px", textTransform: "capitalize", }} type="submit" onClick={handlePatientForm}>Submit</Button>
                             </Grid>
 
-                           
+
                             <Grid item lg={12} md={12} sm={12} xs={12}>
                                 <Snackbar
                                     open={openSnackbar}
