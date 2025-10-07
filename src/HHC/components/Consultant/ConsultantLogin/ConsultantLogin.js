@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import logo from "../../../assets/spero_logo_3.png";
 import "./ConsultantLogin.css";
 import { useNavigate } from "react-router-dom";
@@ -160,18 +160,33 @@ export default function ConsultantLogin() {
 
     useEffect(() => {
         const fetchState = async () => {
-            const response = await fetch(`${port}/web/agg_hhc_state_api`, {
-                headers: {
-                    'Content-type': 'application/json',
-                    'Authorization': `Bearer ${accessToken}`
+            try {
+                const response = await fetch(`${port}/web/agg_hhc_state_api`, {
+                    headers: {
+                        "Content-type": "application/json",
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+                const data = await response.json();
+                console.log("Fetch the State Data", data);
+
+                // ✅ Make sure we set an array
+                if (Array.isArray(data)) {
+                    setState(data);
+                } else if (Array.isArray(data?.states)) {
+                    setState(data.states);
+                } else if (Array.isArray(data?.data)) {
+                    setState(data.data);
+                } else {
+                    setState([]); // fallback
                 }
-            });
-            const data = await response.json();
-            console.log('Fetch the State Data', data);
-            setState(data);
-        }
-        fetchState()
-    }, [])
+            } catch (error) {
+                console.error("Error fetching state data:", error);
+                setState([]);
+            }
+        };
+        fetchState();
+    }, []);
 
     useEffect(() => {
         const getreferHospital = async () => {
