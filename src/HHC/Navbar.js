@@ -34,13 +34,18 @@ export default function Navbar() {
   const userGroup = localStorage.getItem('user_group');
   console.log('user_groupuser_groupuser_group', userGroup);
 
-  
+
   const navigate = useNavigate();
   const { handleAuthLogout } = useAuth();
   const port = process.env.REACT_APP_API_KEY;
   const accessToken = localStorage.getItem('token');
   const addedby = localStorage.getItem('clg_id');
-
+  const group = localStorage.getItem('user_group');
+  if (group) {
+    console.log("Group IDDDDDDDDDDDD", group);
+  } else {
+    console.log("No consultant ID found.");
+  }
   const accessHospitalName = localStorage.getItem('hospitalName');
   const accessHospitalID = localStorage.getItem('hospitalID') || 0;
 
@@ -355,7 +360,7 @@ export default function Navbar() {
                 sx={{ mr: -3 }}
               >
                 <div style={{ marginBottom: isSmallScreen ? "10px" : "0px", marginTop: isSmallScreen ? "0px" : "20px" }}>
-                  Welcome, {userName} {userLastName}
+                  Welcome, {userName} {group === 'Consultant' ? "" : userLastName}
                 </div>
                 <IconButton
                   size="large"
