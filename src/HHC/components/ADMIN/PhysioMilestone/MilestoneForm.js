@@ -38,12 +38,8 @@ const MilestoneForm = ({
   const port = process.env.REACT_APP_API_KEY;
   const accessToken = localStorage.getItem("token");
   const [observership, setObservership] = useState(null);
-  console.log(observership, "observershipobservership");
-
   const [callType, setCallType] = useState("");
   const [caseDetails, setCaseDetails] = useState("");
-  console.log(caseDetails, "caseDetails");
-
   const [observation, setObservation] = useState("");
   const [recommendation, setRecommendation] = useState("");
   const [remark, setRemark] = useState("");
@@ -52,8 +48,11 @@ const MilestoneForm = ({
   const [snackbarText, setSnackbarText] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [errors, setErrors] = useState({});
+  const [data, setData] = useState([]);
 
   const navigate = useNavigate();
+  const username = localStorage.getItem("user-name");
+
   const isTableDataValid =
     Array.isArray(tableData) &&
     tableData.length > 0 &&
@@ -66,21 +65,61 @@ const MilestoneForm = ({
     !selectedProfessional ||
     !selectedPatientID;
 
-  console.log(
-    startDate,
-    endDate,
-    "datesssssssssssssssssss",
-    isSubmitDisabled,
-    "isSubmitDisabled",
-    tableData,
-    "tableData",
-    selectedProfessional,
-    "selectedProfessional",
-    selectedPatientID,
-    "selectedPatientID"
-  );
+  const validateForm = () => {
+    const newErrors = {};
 
-  const username = localStorage.getItem("user-name");
+    if (!observership && !formData?.underwent_observership) {
+      newErrors.observership = "This field is required";
+    }
+
+    if (!callType && !formData?.call_type) {
+      newErrors.callType = "This field is required";
+    }
+
+    if (
+      (!caseDetails || !caseDetails.trim()) &&
+      (!formData?.case_dtls_complaints || !formData?.case_dtls_complaints.trim())
+    ) {
+      newErrors.caseDetails = "This field is required";
+    }
+
+    if (
+      (!observation || !observation.trim()) &&
+      (!formData?.observation || !formData?.observation.trim())
+    ) {
+      newErrors.observation = "This field is required";
+    }
+
+    if (
+      (!recommendation || !recommendation.trim()) &&
+      (!formData?.recommendation || !formData?.recommendation.trim())
+    ) {
+      newErrors.recommendation = "This field is required";
+    }
+
+    if (
+      (!remark || !remark.trim()) &&
+      (!formData?.remark || !formData?.remark.trim())
+    ) {
+      newErrors.remark = "This field is required";
+    }
+
+    // ✅ At least one question must have marks entered
+    const hasAtLeastOneMark = data.some(
+      (item) =>
+        item.marks !== "" && item.marks !== null && item.marks !== undefined
+    );
+
+    if (!hasAtLeastOneMark) {
+      newErrors.questionMarks = "Please enter marks for at least one question";
+      setSnackbarText("Please enter marks for at least one question ❗");
+      setSnackbarSeverity("warning");
+      setSnackbarOpen(true);
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleFormSubmit = async () => {
     if (!validateForm()) return;
@@ -121,7 +160,7 @@ const MilestoneForm = ({
         question_id: item.id ?? i + 1,
         marks: Number(item.marks) || 0,
       });
-    });;
+    });
 
     const payload = {
       underwent_observership: observership,
@@ -199,65 +238,16 @@ const MilestoneForm = ({
     }
   }, [isEditMode, isViewMode, formData]);
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!observership && !formData?.underwent_observership) {
-      newErrors.observership = "This field is required";
-    }
-
-    if (!callType && !formData?.call_type) {
-      newErrors.callType = "This field is required";
-    }
-
-    if (
-      (!caseDetails || !caseDetails.trim()) &&
-      (!formData?.case_dtls_complaints ||
-        !formData?.case_dtls_complaints.trim())
-    ) {
-      newErrors.caseDetails = "This field is required";
-    }
-
-    if (
-      (!observation || !observation.trim()) &&
-      (!formData?.observation || !formData?.observation.trim())
-    ) {
-      newErrors.observation = "This field is required";
-    }
-
-    if (
-      (!recommendation || !recommendation.trim()) &&
-      (!formData?.recommendation || !formData?.recommendation.trim())
-    ) {
-      newErrors.recommendation = "This field is required";
-    }
-
-    if (
-      (!remark || !remark.trim()) &&
-      (!formData?.remark || !formData?.remark.trim())
-    ) {
-      newErrors.remark = "This field is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const [data, setData] = useState([]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `${port}/web/clinical_evaluation_get/`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        const response = await fetch(`${port}/web/clinical_evaluation_get/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -271,23 +261,12 @@ const MilestoneForm = ({
     };
 
     fetchData();
-  }, [accessToken]);
+  }, [accessToken, port]);
 
-  // const handleMarksChange = (index, value) => {
-  //   let num = Number(value);
-
-  //   if ((num >= 0 && num <= 10) || value === "") {
-  //     const updatedData = [...data];
-  //     updatedData[index].marks = value;
-  //     setData(updatedData);
-  //   }
-  // };
-
-  // Inside your component
   useEffect(() => {
     if (formData?.question_and_marks) {
-      const mappedData = formData.question_and_marks.map(item => {
-        const question = data.find(q => q.id === item.question_id);
+      const mappedData = formData.question_and_marks.map((item) => {
+        const question = data.find((q) => q.id === item.question_id);
         return {
           ...item,
           parameter: question ? question.parameter : `Fetching...`,
@@ -301,7 +280,7 @@ const MilestoneForm = ({
   const handleMarksChange = (index, value) => {
     const num = Number(value);
     if ((num >= 0 && num <= 10) || value === "") {
-      setData(prevData => {
+      setData((prevData) => {
         const updatedData = [...prevData];
         updatedData[index] = {
           ...updatedData[index],
@@ -320,7 +299,8 @@ const MilestoneForm = ({
           overflowY: "auto",
           overflowX: "hidden",
           paddingRight: 2,
-        }}>
+        }}
+      >
         {!isEditMode && !isViewMode && (
           <Typography
             fontWeight={600}
@@ -360,7 +340,6 @@ const MilestoneForm = ({
               select
               fullWidth
               size="small"
-              // value={callType || formData.call_type}
               value={callType}
               disabled={isViewMode}
               error={!!errors.callType}
@@ -379,8 +358,7 @@ const MilestoneForm = ({
               fullWidth
               size="small"
               multiline
-              disabled={isViewMode} // disable in view mode
-              // value={caseDetails || formData.case_dtls_complaints}
+              disabled={isViewMode}
               value={caseDetails}
               error={!!errors.caseDetails}
               helperText={errors.caseDetails}
@@ -394,9 +372,8 @@ const MilestoneForm = ({
               fullWidth
               size="small"
               multiline
-              // value={observation || formData.observation}
               value={observation}
-              disabled={isViewMode} // disable in view mode
+              disabled={isViewMode}
               error={!!errors.observation}
               helperText={errors.observation}
               onChange={(e) => setObservation(e.target.value)}
@@ -409,9 +386,8 @@ const MilestoneForm = ({
               fullWidth
               size="small"
               multiline
-              // value={recommendation || formData.recommendation}
               value={recommendation}
-              disabled={isViewMode} // disable in view mode
+              disabled={isViewMode}
               error={!!errors.recommendation}
               helperText={errors.recommendation}
               onChange={(e) => setRecommendation(e.target.value)}
@@ -424,9 +400,8 @@ const MilestoneForm = ({
               fullWidth
               size="small"
               multiline
-              // value={remark || formData.remark}
               value={remark}
-              disabled={isViewMode} // disable in view mode
+              disabled={isViewMode}
               error={!!errors.remark}
               helperText={errors.remark}
               onChange={(e) => setRemark(e.target.value)}
@@ -439,7 +414,7 @@ const MilestoneForm = ({
           sx={{
             "& .MuiTableCell-root": {
               padding: "4px 8px",
-              marginTop: '12px',
+              marginTop: "12px",
             },
             "& .MuiTableRow-root": {
               height: "30px",
@@ -525,4 +500,5 @@ const MilestoneForm = ({
     </Card>
   );
 };
+
 export default MilestoneForm;
