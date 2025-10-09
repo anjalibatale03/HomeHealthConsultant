@@ -15,7 +15,9 @@ import {
     TableRow,
     TablePagination,
     TextField,
+    Paper,
     IconButton,
+    TableCell,
     Snackbar,
     MenuItem,
     Tooltip,
@@ -26,6 +28,8 @@ import { styled } from '@mui/system';
 import Navbar from '../../../Navbar';
 import Footer from '../../../Footer';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 const EnquiryCard = styled(Card)({
     display: 'flex',
@@ -70,6 +74,9 @@ const ShiftHandover = () => {
     const [loading, setLoading] = useState(true);
     const [filterDate, setFilterDate] = useState("");
     const isSmallScreen = useMediaQuery('(max-width:600px)');
+    const [filterStartDate, setFilterStartDate] = useState("");
+    const [filterEndDate, setFilterEndDate] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
@@ -80,23 +87,29 @@ const ShiftHandover = () => {
     const [editIndex, setEditIndex] = useState(null);
     const [editRow, setEditRow] = useState({});
 
-    // Modals
     const [taskModalOpen, setTaskModalOpen] = useState(false);
     const [remarkModalOpen, setRemarkModalOpen] = useState(false);
     const [modalText, setModalText] = useState("");
 
-    // Fetch shifts from API
     const getProfRequest = async () => {
         try {
             setLoading(true);
-            const res = await fetch(`${port}/web/add_task/`, {
+            const taskType = filterStatus; 
+            const stDate = filterStartDate || new Date().toISOString().slice(0, 10);
+            const edDate = filterEndDate || new Date().toISOString().slice(0, 10);
+
+            const url = `${port}/web/add_task/?task_type=${taskType}&st_date=${stDate}&ed_date=${edDate}`;
+
+            const res = await fetch(url, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
+
             const data = await res.json();
+
             const formattedData = data.map((item) => ({
                 date_time: item.added_date || "-",
                 task_name: item.Task || "-",
@@ -106,6 +119,7 @@ const ShiftHandover = () => {
                 task_id: item.task_id,
                 is_done: item.is_done,
             }));
+
             setProfRequest(formattedData);
         } catch (error) {
             console.error("Error fetching tasks:", error);
@@ -116,10 +130,19 @@ const ShiftHandover = () => {
 
     useEffect(() => {
         getProfRequest();
-    }, []);
+    }, [filterStartDate, filterEndDate, filterStatus]); 
 
-    // Add new row in table
     const handleAddShift = () => {
+        const isAdding = profRequest.some(row => row.isNew);
+        if (isAdding) {
+            setSnackbar({
+                open: true,
+                message: "A task row is already being added.",
+                severity: "warning",
+            });
+            return;
+        }
+
         const newRow = {
             date_time: "",
             task_name: "",
@@ -137,7 +160,6 @@ const ShiftHandover = () => {
         setProfRequest(updated);
     };
 
-    // Submit new shift via POST
     const handleSubmitNewShift = async (index) => {
         const row = profRequest[index];
         if (!row.task_name || row.task_name.trim() === "") {
@@ -177,7 +199,6 @@ const ShiftHandover = () => {
         }
     };
 
-    // Edit handlers
     const handleEditClick = (index, row) => {
         setEditIndex(index);
         setEditRow({
@@ -186,6 +207,27 @@ const ShiftHandover = () => {
             remark: row.remark === "-" ? "" : row.remark,
         });
     };
+
+    const [open, setOpen] = useState(false);
+    const [remarks, setRemarks] = useState([]);
+
+    const handleShiftDetails = async (index, row) => {
+        setOpen(true);
+        setLoading(true);
+        try {
+            const response = await fetch(
+                `${port}/web/get_task_remarks/${row.task_id}/`
+            );
+            const data = await response.json();
+            setRemarks(data.data);
+        } catch (error) {
+            console.error("Error fetching remarks:", error);
+            setRemarks([]);
+        }
+        setLoading(false);
+    };
+
+    const handleClose = () => setOpen(false);
 
     const handleEditRowChange = (field, value) => {
         setEditRow(prev => ({
@@ -240,25 +282,99 @@ const ShiftHandover = () => {
     return (
         <>
             <Navbar />
-            <Box sx={{ flexGrow: 1, mt: 12.6, ml: 1, mb: 2, mr: 1 }}>
+            <Modal open={open} onClose={handleClose}>
+                <div
+                    style={{
+                        background: "white",
+                        padding: "20px",
+                        margin: "160px auto",
+                        width: "500px",
+                        borderRadius: "8px",
+                    }}
+                >
+                    <Typography variant="h6" style={{ marginBottom: "15px" }}>
+                        Task Remarks
+                    </Typography>
+
+                    {loading ? (
+                        <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+                            <CircularProgress />
+                        </div>
+                    ) : remarks.length > 0 ? (
+                        <TableContainer component={Paper}>
+                            <Table size="small">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell><strong>Sr No</strong></TableCell>
+                                        <TableCell><strong>Added By</strong></TableCell>
+                                        <TableCell><strong>Remark</strong></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {remarks.map((item, index) => (
+                                        <TableRow key={item.tr_id}>
+                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{item.added_by}</TableCell>
+                                            <TableCell>{item.remark}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    ) : (
+                        <Typography>No remarks found.</Typography>
+                    )}
+                </div>
+            </Modal>
+
+            <Box sx={{ flexGrow: 1, mt: 13.8, ml: 1, mb: 2, mr: 1 }}>
                 <Stack
                     direction={isSmallScreen ? "column" : "row"}
                     spacing={1}
-                    alignItems={isSmallScreen ? "center" : "flex-start"}
-                    sx={{ pt: 1, width: "100%", justifyContent: "space-between" }}
+                    alignItems={isSmallScreen ? "flex-start" : "center"}
+                    sx={{ pt: 1, width: "100%", justifyContent: "space-between", flexWrap: "wrap" }}
                 >
-                    <Typography
-                        style={{
-                            fontSize: 16,
-                            fontWeight: 600,
-                            marginTop: "10px",
-                            marginLeft: "10px",
-                        }}
-                        color="text.secondary"
-                        gutterBottom
-                    >
-                        SHIFT HANDOVER
-                    </Typography>
+                    <Stack direction={isSmallScreen ? "column" : "row"} spacing={1} alignItems="center">
+                        <Typography
+                            style={{
+                                fontSize: 16,
+                                fontWeight: 600,
+                                marginLeft: "10px",
+                            }}
+                            color="text.secondary"
+                            gutterBottom
+                        >
+                            SHIFT HANDOVER
+                        </Typography>
+                        <TextField
+                            type="date"
+                            size="small"
+                            label="Start Date"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterStartDate || ""}
+                            onChange={(e) => setFilterStartDate(e.target.value)}
+                        />
+                        <TextField
+                            type="date"
+                            size="small"
+                            label="End Date"
+                            InputLabelProps={{ shrink: true }}
+                            value={filterEndDate || ""}
+                            onChange={(e) => setFilterEndDate(e.target.value)}
+                        />
+                        <TextField
+                            select
+                            size="small"
+                            label="Status"
+                            value={filterStatus || ""}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            sx={{ width: "150px" }}
+                        >
+                            <MenuItem value={1}>Completed</MenuItem>
+                            <MenuItem value={2}>Pending</MenuItem>
+                        </TextField>
+
+                    </Stack>
 
                     <Button
                         variant="contained"
@@ -266,13 +382,13 @@ const ShiftHandover = () => {
                         style={{
                             textTransform: "capitalize",
                             borderRadius: "8px",
-                            marginTop: "7px",
                             background: "#1976d2",
                             color: "#fff",
-                            marginRight: "8px",
+                            marginTop: isSmallScreen ? "10px" : "0",
                         }}
                     >
-                        Add Shift
+                        <AddIcon />
+                        Add Task
                     </Button>
                 </Stack>
 
@@ -281,28 +397,28 @@ const ShiftHandover = () => {
                         <TableHead>
                             <TableRow>
                                 <EnquiryCard style={{ background: "#69A5EB", color: "#FFFFFF", borderRadius: "8px 10px 0 0" }}>
-                                    <CardContent style={{ flex: 0.3, borderRight: "1px solid #FFFFFF" }}>
+                                    <CardContent style={{ flex: 0.2, borderRight: "1px solid #FFFFFF" }}>
                                         <Typography variant="subtitle2">Sr. No</Typography>
                                     </CardContent>
-                                    <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
+                                    <CardContent style={{ flex: 1.2, borderRight: "1px solid #FFFFFF" }}>
                                         <Typography variant="subtitle2">Date Time</Typography>
                                     </CardContent>
                                     <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
                                         <Typography variant="subtitle2">Task</Typography>
                                     </CardContent>
                                     <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
-                                        <Typography variant="subtitle2">Giver Name</Typography>
+                                        <Typography variant="subtitle2">Added By</Typography>
                                     </CardContent>
                                     <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
                                         <Typography variant="subtitle2">Remark</Typography>
                                     </CardContent>
                                     <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
-                                        <Typography variant="subtitle2">Receiver Name</Typography>
+                                        <Typography variant="subtitle2">Modified By</Typography>
                                     </CardContent>
-                                    <CardContent style={{ flex: 1, borderRight: "1px solid #FFFFFF" }}>
+                                    <CardContent style={{ flex: 0.7, borderRight: "1px solid #FFFFFF" }}>
                                         <Typography variant="subtitle2">Status</Typography>
                                     </CardContent>
-                                    <CardContent style={{ flex: 0.5 }}>
+                                    <CardContent style={{ flex: 1 }}>
                                         <Typography variant="subtitle2">Action</Typography>
                                     </CardContent>
                                 </EnquiryCard>
@@ -329,8 +445,13 @@ const ShiftHandover = () => {
                                             const isEditing = editIndex === globalIndex;
                                             return (
                                                 <TableRow key={globalIndex}>
-                                                    <EnquiryCard>
-                                                        <CardContent style={{ flex: 0.3 }}>
+                                                    <EnquiryCard
+                                                        style={{
+                                                            backgroundColor: row.isNew ? "#ecb6b6" : "white",
+                                                            transition: "0.3s ease-in-out",
+                                                        }}
+                                                    >
+                                                        <CardContent style={{ flex: 0.2 }}>
                                                             <Typography variant="body2">
                                                                 {globalIndex + 1}
                                                             </Typography>
@@ -338,12 +459,20 @@ const ShiftHandover = () => {
                                                         <CardContent style={{ flex: 1 }}>
                                                             {row.isNew ? (
                                                                 <TextField
+                                                                    sx={{ width: "170px" }}
                                                                     type="datetime-local"
                                                                     size="small"
-                                                                    value={row.date_time || new Date().toISOString().slice(0, 16)}
+                                                                    value={
+                                                                        row.date_time ||
+                                                                        new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+                                                                            .toISOString()
+                                                                            .slice(0, 16)
+                                                                    }
                                                                     onChange={(e) => handleRowChange(index, "date_time", e.target.value)}
                                                                     inputProps={{
-                                                                        max: new Date().toISOString().slice(0, 16),
+                                                                        max: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+                                                                            .toISOString()
+                                                                            .slice(0, 16),
                                                                     }}
                                                                 />
                                                             ) : (
@@ -418,7 +547,7 @@ const ShiftHandover = () => {
                                                             </Typography>
                                                         </CardContent>
 
-                                                        <CardContent style={{ flex: 1 }}>
+                                                        <CardContent style={{ flex: 0.7 }}>
                                                             {row.isNew ? (
                                                                 <Typography variant="body2">&nbsp;</Typography>
                                                             ) : isEditing ? (
@@ -438,25 +567,30 @@ const ShiftHandover = () => {
                                                             )}
                                                         </CardContent>
 
-                                                        <CardContent style={{ flex: 0.5 }}>
-                                                            {row.isNew ? (
+                                                        <CardContent style={{ flex: 1 }}>
+                                                            {row.isNew ?
                                                                 <Button color="primary" onClick={() => handleSubmitNewShift(globalIndex)}>
                                                                     Submit
                                                                 </Button>
-                                                            ) : (
-                                                                row.is_done === false ? (
-                                                                    isEditing ? (
-                                                                        <Button color="primary" onClick={handleSaveEditRow}>
-                                                                            Update
-                                                                        </Button>
-                                                                    ) : (
-                                                                        <IconButton color="primary" onClick={() => handleEditClick(globalIndex, row)}>
-                                                                            <EditIcon />
-                                                                        </IconButton>
-                                                                    )
-                                                                ) : null
-                                                            )}
+                                                                :
+                                                                (row.is_done === false ? (isEditing ?
+                                                                    <Button color="primary" onClick={handleSaveEditRow}>Update</Button>
+                                                                    :
+                                                                    <IconButton color="yellow" onClick={() => handleEditClick(globalIndex, row)}>
+                                                                        <EditIcon />
+                                                                    </IconButton>
+                                                                )
+                                                                    :
+                                                                    <IconButton disabled color="yellow" onClick={() => handleEditClick(globalIndex, row)}>
+                                                                        <EditIcon />
+                                                                    </IconButton>
+                                                                )
+                                                            }
+                                                            <IconButton color="primary" onClick={() => handleShiftDetails(globalIndex, row)}>
+                                                                <RemoveRedEyeIcon />
+                                                            </IconButton>
                                                         </CardContent>
+
                                                     </EnquiryCard>
                                                 </TableRow>
                                             );
@@ -481,7 +615,6 @@ const ShiftHandover = () => {
                 />
             </Box>
 
-            {/* Task Modal */}
             <Modal
                 open={taskModalOpen}
                 onClose={() => setTaskModalOpen(false)}

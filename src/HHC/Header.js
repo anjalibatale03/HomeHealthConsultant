@@ -47,6 +47,7 @@ import ProfRequest from './components/HD/ProfRequest/ProfRequest';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import notificationMp3 from './assets/mixkit-software-interface-start-2574.wav'
 import ShiftHandover from './components/HD/ShiftHandover/ShiftHandover';
+import shift from './assets/Shift HandOver.png';
 
 const Header = () => {
   // const accessHospital = sessionStorage.getItem('selectedHospital');
@@ -547,7 +548,30 @@ const Header = () => {
               <Tab component={Link} to="/enquiries" value="/enquiries" icon={<Badge color="error" badgeContent={enqNotify} overlap="circular" ><ChatBubbleOutlineIcon style={{ fontSize: "18px", marginBottom: "18px" }} /></Badge>} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }}>Enquiries</span>} />
               <Tab component={Link} to="/prof-req" value="/prof-req" icon={<ChatBubbleOutlineIcon style={{ fontSize: "18px", marginBottom: "18px" }} />} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }}>Professional Request</span>} />
               <Tab icon={<LocalPostOfficeOutlinedIcon style={{ fontSize: "20px", marginBottom: "18px" }} disabled />} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }} onClick={handleSMSOpen}>SMS</span>} />
-              <Tab component={Link} to="/shift-handover" value="/shift-handover" icon={<ChatBubbleOutlineIcon style={{ fontSize: "18px", marginBottom: "18px" }} />} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }}>Shift HandOver</span>} />
+              <Tab
+                component={Link}
+                to="/shift-handover"
+                value="/shift-handover"
+                label={
+                  <span
+                    style={{
+                      fontSize: '1rem',
+                      textTransform: 'capitalize',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      marginBottom: '18px',
+                    }}
+                  >
+                    <img
+                      src={shift}
+                      alt="Shift Handover"
+                      style={{ width: '24px', height: '24px' }}
+                    />
+                    Shift HandOver
+                  </span>
+                }
+              />
             </TabList>
             {!isSmallScreen && (
               <>

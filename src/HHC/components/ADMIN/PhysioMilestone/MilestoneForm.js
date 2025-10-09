@@ -85,7 +85,6 @@ const MilestoneForm = ({
   const handleFormSubmit = async () => {
     if (!validateForm()) return;
 
-    // Skip this block in edit mode
     if (!isEditMode) {
       if (!selectedProfessional) {
         setSnackbarText("Please select a Professional");
@@ -116,6 +115,14 @@ const MilestoneForm = ({
       }
     }
 
+    const question_and_marks = [];
+    data.forEach((item, i) => {
+      question_and_marks.push({
+        question_id: item.id ?? i + 1,
+        marks: Number(item.marks) || 0,
+      });
+    });;
+
     const payload = {
       underwent_observership: observership,
       call_type: callType,
@@ -127,6 +134,7 @@ const MilestoneForm = ({
       remark,
       added_by: username,
       last_modified_by: username,
+      question_and_marks: question_and_marks,
     };
 
     setSubmitting(true);
@@ -265,10 +273,54 @@ const MilestoneForm = ({
     fetchData();
   }, [accessToken]);
 
+  // const handleMarksChange = (index, value) => {
+  //   let num = Number(value);
+
+  //   if ((num >= 0 && num <= 10) || value === "") {
+  //     const updatedData = [...data];
+  //     updatedData[index].marks = value;
+  //     setData(updatedData);
+  //   }
+  // };
+
+  // Inside your component
+  useEffect(() => {
+    if (formData?.question_and_marks) {
+      const mappedData = formData.question_and_marks.map(item => {
+        const question = data.find(q => q.id === item.question_id);
+        return {
+          ...item,
+          parameter: question ? question.parameter : `Fetching...`,
+          marks: item.marks ?? "",
+        };
+      });
+      setData(mappedData);
+    }
+  }, [formData]);
+
+  const handleMarksChange = (index, value) => {
+    const num = Number(value);
+    if ((num >= 0 && num <= 10) || value === "") {
+      setData(prevData => {
+        const updatedData = [...prevData];
+        updatedData[index] = {
+          ...updatedData[index],
+          marks: value === "" ? "" : num,
+        };
+        return updatedData;
+      });
+    }
+  };
 
   return (
     <Card sx={{ p: 0, boxShadow: "none", mt: 1 }}>
-      <CardContent>
+      <CardContent
+        sx={{
+          maxHeight: "40vh",
+          overflowY: "auto",
+          overflowX: "hidden",
+          paddingRight: 2,
+        }}>
         {!isEditMode && !isViewMode && (
           <Typography
             fontWeight={600}
@@ -293,9 +345,6 @@ const MilestoneForm = ({
               error={!!errors.observership}
               helperText={errors.observership}
               onChange={(e) => setObservership(e.target.value)}
-            // InputLabelProps={{
-            //   shrink: true,
-            // }}
             >
               <MenuItem value="">
                 <em>Select</em>
@@ -385,6 +434,46 @@ const MilestoneForm = ({
           </Grid>
         </Grid>
 
+        <Table
+          size="small"
+          sx={{
+            "& .MuiTableCell-root": {
+              padding: "4px 8px",
+              marginTop: '12px',
+            },
+            "& .MuiTableRow-root": {
+              height: "30px",
+            },
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Marks (10)</TableCell>
+              <TableCell>Out Of</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell>{item.parameter}</TableCell>
+                <TableCell>
+                  <TextField
+                    type="number"
+                    variant="outlined"
+                    size="small"
+                    disabled={isViewMode}
+                    value={item.marks}
+                    onChange={(e) => handleMarksChange(index, e.target.value)}
+                    inputProps={{ min: 0, max: 10, step: 1 }}
+                  />
+                </TableCell>
+                <TableCell>10</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
         <Grid container justifyContent="center" sx={{ mt: 2 }}>
           {isEditMode ? (
             <Button
@@ -417,31 +506,11 @@ const MilestoneForm = ({
             </Button>
           )}
         </Grid>
-
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Marks (10)</TableCell>
-              <TableCell>Out Of</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.marks}</TableCell>
-                <TableCell>10</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
       </CardContent>
 
       <Snackbar
         open={snackbarOpen}
-        autoHideDuration={6000} // Keep it open until closed manually
+        autoHideDuration={6000}
         onClose={() => setSnackbarOpen(false)}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >

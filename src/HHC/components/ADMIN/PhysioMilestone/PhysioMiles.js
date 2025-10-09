@@ -207,6 +207,8 @@ const PhysioMiles = () => {
       );
 
       const data = Array.isArray(res.data) ? res.data[0] : res.data;
+      console.log(data, 'fetched data');
+      
       setFormData(data);
       setObservership(data.underwent_observership);
     } catch (err) {
