@@ -69,22 +69,26 @@ const EnqDetails = ({ eveID, onClose }) => {
             <Box
                 sx={{
                     ...style,
-                    width: "70%",
-                    height: "100%",
+                    width: "auto",
+                    height: "80%",
                     overflowY: "scroll",
                     overflowX: "hidden",
+                    alignItems: "center",
+                    // display: "flex",
+                    justifyContent: "center",
+                    bgcolor: "#f1f1f1",
                     scrollbarWidth: 'thin',
                     '&::-webkit-scrollbar': {
                         width: '0.2em',
                     },
                     '&::-webkit-scrollbar-track': {
-                        background: "#DCDCDE",
+                        background: " #DCDCDE",
                     },
                     '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: '#7AB8EE',
+                        backgroundColor: ' #7AB8EE',
                     },
                     '&::-webkit-scrollbar-thumb:hover': {
-                        background: '#7AB8FF'
+                        background: ' #7AB8FF'
                     }
                 }}
             >

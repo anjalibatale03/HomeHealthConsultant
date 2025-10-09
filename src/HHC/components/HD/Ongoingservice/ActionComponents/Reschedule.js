@@ -106,6 +106,10 @@ const Reschedule = ({ eventID, eveStartDate, eveEndDate, sesCount, jobClosureSta
             // getEventIDRequest();
             getRequestAllocation();
         }
+        else if (value === '2') {
+            // getEventIDRequest();
+            window.location.reload();
+        }
     };
 
     const handleDateChange = (newValues) => {
@@ -160,8 +164,6 @@ const Reschedule = ({ eventID, eveStartDate, eveEndDate, sesCount, jobClosureSta
         }
         if (!remark) {
             newErrors.remark = 'Remark is required';
-        } else if (remark.length < 15) {
-            newErrors.remark = 'Remark must contain at least 15 characters';
         }
         // if (sesCount !== dateCount) {
         //     newErrors.values = 'Date is required';
@@ -246,10 +248,12 @@ const Reschedule = ({ eventID, eveStartDate, eveEndDate, sesCount, jobClosureSta
             setSnackbarSeverity('error');
             console.log("Selected dates do not match the date count.")
         }
+
         if (remark.trim().length < 15) {
             setErrors({ remark: 'Remark must be at least 15 characters long.' });
             return;
         }
+
         const requestData = {
             // event_id: eventID,
             // actual_StartDate_Time: startDate,
@@ -714,16 +718,29 @@ const Reschedule = ({ eventID, eveStartDate, eveEndDate, sesCount, jobClosureSta
                                 },
                             }}
                             error={!!errors.remark}
+                            // helperText={errors.remark}
                             helperText={errors.remark || "Remark must be at least 15 characters"}
+                        // onKeyDown={(e) => {
+                        //     if (e.key === 's' || e.key === 'i' || e.key === 'm') {
+                        //         e.preventDefault();
+                        //     }
+                        // }}
+                        // onKeyDown={(e) => {
+                        //     const allowedKeys = ['s', 'i', 'm'];
+                        //     if (!allowedKeys.includes(e.key.toLowerCase())) {
+                        //         return;
+                        //     }
+                        // }}
                         />
                     </Grid>
                     <Grid item lg={12} sm={12} xs={12}>
                         {selectedOption === '2' ? (
-                            <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: '#7AB8EE', borderRadius: "12px", textTransform: "capitalize", }} onClick={handleSessionSubmit}>
+                            <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: 'rgb(52, 123, 137)',":hover":{backgroundColor:"rgb(52, 123, 137)"}, borderRadius: "12px", textTransform: "capitalize", }} onClick={handleSessionSubmit}>
                                 Update Session
                             </Button>
                         ) : (
-                            <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: '#7AB8EE', borderRadius: "12px", textTransform: "capitalize", }} onClick={handleRescheduleSubmit}>
+                            <Button variant="contained" sx={{ m: 1, width: '30ch',
+                             backgroundColor: 'rgb(52, 123, 137)', ":hover": { backgroundColor: "rgb(52, 123, 137)" }, borderRadius: "12px", textTransform: "capitalize", }} onClick={handleRescheduleSubmit}>
                                 Service Reschedule
                             </Button>
                         )}

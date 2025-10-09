@@ -23,7 +23,7 @@ const canceltypes = [
     },
 ];
 
-const Cancellation = ({ eventID, subSrvID,startDT, jobClosureStatus, endDateTime, onClose, serviceID }) => {
+const Cancellation = ({ eventID, subSrvID, jobClosureStatus, endDateTime, onClose, serviceID }) => {
     const port = process.env.REACT_APP_API_KEY;
     const accessToken = localStorage.getItem('token');
     console.log(serviceID, 'serviceID');
@@ -188,17 +188,6 @@ const Cancellation = ({ eventID, subSrvID,startDT, jobClosureStatus, endDateTime
         setSelectedCancelReason(event.target.value);
     };
 
-    const isSameDate = (start, end) => {
-        if (!start || !end) return false;
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-        return (
-            startDate.getFullYear() === endDate.getFullYear() &&
-            startDate.getMonth() === endDate.getMonth() &&
-            startDate.getDate() === endDate.getDate()
-        );
-    };
-
     const formatDate = (dateString) => {
         const dateTime = new Date(dateString);
         const day = dateTime.getDate().toString().padStart(2, '0');
@@ -212,12 +201,10 @@ const Cancellation = ({ eventID, subSrvID,startDT, jobClosureStatus, endDateTime
     };
 
     // const filteredCancelTypes = canceltypes.filter(option => !(jobClosureStatus >= 1 && option.value === '1'));
-    const filteredCancelTypes = canceltypes.filter(option => {
-        const sameDay = isSameDate(startDT, endDateTime);
-        if (jobClosureStatus >= 1 && option.value === '1') return false;
-        if ((serviceID === 11 || sameDay) && option.value === '2') return false;
-        return true;
-    });
+    const filteredCancelTypes = canceltypes.filter(
+        option => !(jobClosureStatus >= 1 && option.value === '1') && !(serviceID === 11 && option.value === '2')
+    );
+
 
 
 
@@ -263,14 +250,15 @@ const Cancellation = ({ eventID, subSrvID,startDT, jobClosureStatus, endDateTime
                 }
                 const result = await response.json();
                 console.log("Successfully submitted Service Cancellation data", result);
-                setOpenSnackbar(true);
-                setSnackbarMessage('Service Cancelled successfully!');
-                setSnackbarSeverity('success');
-                onClose();
-                // window.location.reload();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 3000);
+               setOpenSnackbar(true);
+setSnackbarMessage('Service Cancelled successfully!');
+setSnackbarSeverity('success');
+
+setTimeout(() => {
+  onClose();
+  window.location.reload();
+}, 1500);
+               
             } catch (error) {
                 console.error("Error fetching Service Cancellation:", error);
             }
@@ -331,10 +319,7 @@ const Cancellation = ({ eventID, subSrvID,startDT, jobClosureStatus, endDateTime
                 setOpenSnackbar(true);
                 setSnackbarMessage('Session Cancelled successfully!');
                 setSnackbarSeverity('success');
-                // window.location.reload();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
+                window.location.reload();
             }
             // onClose();
         } catch (error) {
@@ -538,12 +523,12 @@ const Cancellation = ({ eventID, subSrvID,startDT, jobClosureStatus, endDateTime
 
                     <Grid item lg={12} sm={12} xs={12}>
                         {selectedOption === '2' ? (
-                            <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: '#7AB8EE', borderRadius: "12px", textTransform: "capitalize", }}
+                            <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: 'rgb(52, 123, 137)',":hover":{backgroundColor:"rgb(52, 123, 137)"}  , borderRadius: "12px", textTransform: "capitalize", }}
                                 onClick={handleCancelSession}>
                                 Cancel Session
                             </Button>
                         ) : (
-                            <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: '#7AB8EE', borderRadius: "12px", textTransform: "capitalize", }}
+                            <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: 'rgb(52, 123, 137)', ":hover":{backgroundColor:"rgb(52, 123, 137)"}  , borderRadius: "12px", textTransform: "capitalize", }}
                                 onClick={handleCancelService}>
                                 Cancel Service
                             </Button>

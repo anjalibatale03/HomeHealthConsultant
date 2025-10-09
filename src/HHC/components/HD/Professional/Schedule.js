@@ -212,6 +212,7 @@ const Schedule = () => {
             }
             if (selectedServicee) {
                 params.push(`srv_id=${encodeURIComponent(selectedServicee)}`);
+                
             }
 
             // Only append filters if it's not a custom pagination URL
@@ -247,13 +248,17 @@ const Schedule = () => {
         }
     };
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            getProfessionalListForChat();
-        }, 3000);
+    const [currentChatUrl, setCurrentChatUrl] = useState(null);
 
-        return () => clearInterval(interval);
-    }, [rowsPerPageChat, selectedServicee, selectedProfName]);
+    useEffect(() => {
+        if (!currentChatUrl || !currentChatUrl.includes('?page=')) {
+            const interval = setInterval(() => {
+                getProfessionalListForChat();
+            }, 3000);
+            return () => clearInterval(interval);
+        }
+        return undefined;
+    }, [rowsPerPageChat, selectedServicee, selectedProfName, currentChatUrl]);
 
 
     // useEffect(() => {
@@ -330,36 +335,28 @@ const Schedule = () => {
         };
         getViewProfList();
     }, []);
+    
 
-    const filteredData = professionalList.filter((item) => {
-        if (
-            (selectedProfName === '' || item.prof_fullname.toLowerCase().includes(selectedProfName.toLowerCase())) &&
-            (selectedService === '' || item.srv_id.toLowerCase().includes(selectedService.toLowerCase()))
-        ) {
-            return true;
-        }
-        return false;
-    });
+    function filterProfessionals(list, selectedProfName, selectedService) {
+  const profNameSearch = (selectedProfName || '').trim().toLowerCase();
+  const serviceSearch = (selectedService || '').trim().toLowerCase();
 
-    const filteredDataChat = professionalListChat.filter((item) => {
-        if (
-            (selectedProfName === '' || item.prof_fullname.toLowerCase().includes(selectedProfName.toLowerCase())) &&
-            (selectedService === '' || item.srv_id.toLowerCase().includes(selectedService.toLowerCase()))
-        ) {
-            return true;
-        }
-        return false;
-    });
+  return list.filter((item) => {
+    const profName = (item.prof_fullname || '').toLowerCase();
+    const serviceId = (item.srv_id || '').toLowerCase();
 
-    const viewFilteredData = viewProfList.filter((item) => {
-        if (
-            (selectedProfName === '' || item.prof_fullname.toLowerCase().includes(selectedProfName.toLowerCase())) &&
-            (selectedService === '' || item.srv_id.toLowerCase().includes(selectedService.toLowerCase()))
-        ) {
-            return true;
-        }
-        return false;
-    });
+    return (
+      (profNameSearch === '' || profName.includes(profNameSearch)) &&
+      (serviceSearch === '' || serviceId.includes(serviceSearch))
+    );
+  });
+}
+
+// Now just call it for each list:
+const filteredData = filterProfessionals(professionalList, selectedProfName, selectedService);
+const filteredDataChat = filterProfessionals(professionalListChat, selectedProfName, selectedService);
+const viewFilteredData = filterProfessionals(viewProfList, selectedProfName, selectedService);
+
 
     const [chatCount, setChatCount] = useState(null);
     const audioRef = useRef(null);
@@ -370,7 +367,6 @@ const Schedule = () => {
 
         const fetchChatCount = async () => {
             try {
-                // const response = await fetch(`${port}/web/all_msg_counts/`,);
                 const response = await fetch(`${port}/web/all_msg_counts/`, {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -380,7 +376,6 @@ const Schedule = () => {
                 const data = await response.json();
 
                 if (data && typeof data.count === 'number') {
-                    console.log(`🟡 Old: ${chatCount}, 🔵 New: ${data.count}`);
 
                     if (chatCount !== null && data.count > chatCount) {
                         try {
@@ -390,18 +385,20 @@ const Schedule = () => {
                         } catch (err) {
                             console.warn("🔇 Sound play blocked:", err);
                         }
+                        setCurrentChatUrl(null); 
+                        getProfessionalListForChat(`${port}/web/prof_list_msg_count_wise/${rowsPerPageChat}/`);
                     }
 
                     setChatCount(data.count);
                 }
             } catch (error) {
-                console.error("❌ Failed to fetch chat count:", error);
+                console.error("Failed to fetch chat count:", error);
             }
         };
 
         const interval = setInterval(fetchChatCount, 3000);
         return () => clearInterval(interval);
-    }, [chatCount]);
+    }, [chatCount, port, accessToken, rowsPerPageChat, getProfessionalListForChat]);
 
     return (
         <>
@@ -440,6 +437,7 @@ const Schedule = () => {
                                                                     inputProps={{ 'aria-label': 'select service' }}
                                                                     value={selectedService}
                                                                     onChange={handleServiceChange}
+                                                                    
                                                                 />
                                                                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
                                                                     <SearchIcon style={{ color: "#7AB7EE" }} />
@@ -462,7 +460,7 @@ const Schedule = () => {
                                                                 </IconButton>
                                                             </Box>
 
-                                                            <Button variant="outlined" style={{ textTransform: "capitalize", borderRadius: "8px", marginLeft: "20px", height: "2.6rem", backgroundColor: tabIndex === 1 ? '#69A5EB' : 'inherit', color: tabIndex === 1 ? '#FFFFFF' : 'inherit', }} onClick={() => setTabIndex(1)}>Schedule List</Button>
+                                                            <Button variant="outlined" style={{ textTransform: "capitalize", borderRadius: "8px", marginLeft: "20px", height: "2.6rem", backgroundColor: tabIndex === 1 ? '#347B89' : 'inherit', color: tabIndex === 1 ? '#FFFFFF' : 'inherit', }} onClick={() => setTabIndex(1)}>Schedule List</Button>
                                                             <Button
                                                                 variant="outlined"
                                                                 style={{
@@ -508,7 +506,7 @@ const Schedule = () => {
                                                                 <TableRow>
                                                                     <ScheduleCard
                                                                         style={{
-                                                                            background: "#69A5EB",
+                                                                            background: "#e7bb74ff",
                                                                             color: "#FFFFFF",
                                                                             borderRadius: "8px 10px 0 0",
                                                                         }}
@@ -559,7 +557,7 @@ const Schedule = () => {
                                                                                                 flex: 3,
                                                                                                 borderLeft:
                                                                                                     selectedProfessional === row.srv_prof_id
-                                                                                                        ? "3px solid #69A5EB"
+                                                                                                        ? "3px solid #e7bb74ff"
                                                                                                         : "none",
                                                                                                 height: "40px",
                                                                                                 display: "flex",
@@ -602,6 +600,7 @@ const Schedule = () => {
                                                     </TableContainer>
 
                                                     <TablePagination
+                                                    sx={{overflowY:'hidden'}}
                                                         rowsPerPageOptions={[7, 25, 100]}
                                                         component="div"
                                                         count={filteredData.length}
@@ -717,7 +716,7 @@ const Schedule = () => {
                                                             </IconButton>
                                                         </Box>
 
-                                                        <Button variant="outlined" style={{ textTransform: "capitalize", borderRadius: "8px", marginLeft: "20px", height: "2.6rem", backgroundColor: tabIndex === 1 ? '#69A5EB' : 'inherit', color: tabIndex === 1 ? '#FFFFFF' : 'inherit', }} onClick={() => setTabIndex(1)}>Schedule List</Button>
+                                                        <Button variant="outlined" style={{ textTransform: "capitalize", borderRadius: "8px", marginLeft: "20px", height: "2.6rem", backgroundColor: tabIndex === 1 ? '#347B89' : 'inherit', color: tabIndex === 1 ? '#FFFFFF' : 'inherit', }} onClick={() => setTabIndex(1)}>Schedule List</Button>
                                                         <Button
                                                             variant="outlined"
                                                             style={{
@@ -761,7 +760,7 @@ const Schedule = () => {
                                                                 <TableRow>
                                                                     <ScheduleCard
                                                                         style={{
-                                                                            background: "#69A5EB",
+                                                                            background: " #f2b655ff",
                                                                             color: "#FFFFFF",
                                                                             borderRadius: "8px 10px 0 0",
                                                                         }}
@@ -827,7 +826,7 @@ const Schedule = () => {
                                                                                                 flex: 3,
                                                                                                 borderLeft:
                                                                                                     selectedProfessional === row.srv_prof_id
-                                                                                                        ? "3px solid #69A5EB"
+                                                                                                        ? "3px solid #f2b655ff"
                                                                                                         : "none",
                                                                                                 height: "40px",
                                                                                                 display: "flex",
@@ -900,7 +899,7 @@ const Schedule = () => {
                                                         </Table>
                                                     </TableContainer>
                                                 </Grid>
-                                                <TablePagination
+                                                {/* <TablePagination
                                                     rowsPerPageOptions={[5, 25, 50, 100]}
                                                     component="div"
                                                     count={-1}
@@ -928,7 +927,7 @@ const Schedule = () => {
                                                             display: 'none',
                                                         },
                                                     }}
-                                                />
+                                                /> */}
                                                 {/* <TablePagination
                                                     rowsPerPageOptions={[5, 25, 50, 100]}
                                                     component="div"
@@ -938,10 +937,10 @@ const Schedule = () => {
                                                     onPageChange={(e, newPage) => {
                                                         if (newPage > pageChat && nextUrl) {
                                                             setPageChat(newPage);
-                                                            getProfessionalListForChat(nextUrl);
+                                                            getProfessionalListForChat(nextUrl); // Only call paginated URL
                                                         } else if (newPage < pageChat && prevUrl) {
                                                             setPageChat(newPage);
-                                                            getProfessionalListForChat(prevUrl);
+                                                            getProfessionalListForChat(prevUrl); // Only call paginated URL
                                                         }
                                                     }}
                                                     onRowsPerPageChange={(event) => {
@@ -957,6 +956,37 @@ const Schedule = () => {
                                                         },
                                                     }}
                                                 /> */}
+                                                <TablePagination
+                                                    rowsPerPageOptions={[5, 25, 50, 100]}
+                                                    component="div"
+                                                    count={-1}
+                                                    rowsPerPage={rowsPerPageChat}
+                                                    page={pageChat}
+                                                    onPageChange={(e, newPage) => {
+                                                        if (newPage > pageChat && nextUrl) {
+                                                            setPageChat(newPage);
+                                                            setCurrentChatUrl(nextUrl); // Track paginated URL
+                                                            getProfessionalListForChat(nextUrl);
+                                                        } else if (newPage < pageChat && prevUrl) {
+                                                            setPageChat(newPage);
+                                                            setCurrentChatUrl(prevUrl); // Track paginated URL
+                                                            getProfessionalListForChat(prevUrl);
+                                                        }
+                                                    }}
+                                                    onRowsPerPageChange={(event) => {
+                                                        const newRows = parseInt(event.target.value, 10);
+                                                        setRowsPerPageChat(newRows);
+                                                        setPageChat(0);
+                                                        setCurrentChatUrl(null); // Reset to first page
+                                                        getProfessionalListForChat(`${port}/web/prof_list_msg_count_wise/${newRows}/`);
+                                                    }}
+                                                    labelDisplayedRows={() => ''}
+                                                    sx={{
+                                                        '.MuiTablePagination-displayedRows': {
+                                                            display: 'none',
+                                                        },
+                                                    }}
+                                                />
                                             </Grid>
                                         </Grid>
 
@@ -977,8 +1007,8 @@ const Schedule = () => {
                                                         profClgId={profClgId}
                                                     />
                                                 ) : (
-                                                    <div style={{ textAlign: "center"}}>
-                                                        <img src={hiImage} alt="Hi" style={{ width: "26.2em", height: '28em',border:'none' }} />
+                                                    <div style={{ textAlign: "center" }}>
+                                                        <img src={hiImage} alt="Hi" style={{ width: "26.2em", height: '28em', border: 'none' }} />
                                                     </div>
                                                 )}
                                             </div>

@@ -287,8 +287,8 @@ const ShiftHandover = () => {
                     style={{
                         background: "white",
                         padding: "20px",
-                        margin: "160px auto",
-                        width: "500px",
+                        margin: "140px auto",
+                        width: "800px",
                         borderRadius: "8px",
                     }}
                 >

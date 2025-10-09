@@ -729,7 +729,10 @@ const PatientView = ({ ptnID, ptnData, hospData, onClose, patientID }) => {
                 m: 1,
                 mx: 8,
                 width: "30ch",
-                backgroundColor: "#7AB8EE",
+                backgroundColor: "rgb(52, 123, 137)",
+                hover: {
+                  backgroundColor: "rgb(52, 123, 137)",
+                },
                 borderRadius: "12px",
                 textTransform: "capitalize",
               }}

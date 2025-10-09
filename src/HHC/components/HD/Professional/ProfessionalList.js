@@ -228,6 +228,7 @@ const ProfessionalList = ({ viewProfList, loading, filteredData }) => {
             </Table>
           </TableContainer>
           <TablePagination
+          sx={{overflowY:'hidden'}}
             rowsPerPageOptions={[6, 10, 25, 100]}
             component="div"
             count={filteredData.length}

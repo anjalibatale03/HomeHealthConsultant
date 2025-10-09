@@ -409,7 +409,7 @@ const CallerView = ({
               sx={{
                 m: 2,
                 width: "25ch",
-                backgroundColor: "#7AB8EE",
+                backgroundColor: "rgb(52, 123, 137)",
                 borderRadius: "12px",
                 textTransform: "capitalize",
                 mx: 5,

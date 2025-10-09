@@ -30,7 +30,7 @@ const Feedback = ({ eveID, patId }) => {
     const [textInputs, setTextInputs] = useState({});
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-
+    const addedby = localStorage.getItem('clg_id');
     const [feedbackDataState, setFeedbackDataState] = useState([]);
     const [formSubmitted, setFormSubmitted] = useState(false);
     console.log(feedbackDataState, 'fetched Data');
@@ -226,6 +226,7 @@ const Feedback = ({ eveID, patId }) => {
                 formData.append('video', selectedVideo);
             }
             formData.append('feedback', JSON.stringify(feedbackData));
+            formData.append('added_by', addedby,)
 
             const response = await fetch(`${port}/web/save_feedback_q/`, {
                 method: 'POST',
@@ -242,6 +243,12 @@ const Feedback = ({ eveID, patId }) => {
                 setSnackbarSeverity('success');
                 setSnackbarMessage(responseData.message);
                 setFormSubmitted(true);
+
+                // Reset form fields
+                setSelectedDropdownValue("");
+                setSelectedAnswers({});
+                setTextInputs({});
+
             } else {
                 console.error('Failed to submit feedback');
                 setSnackbarSeverity('error');

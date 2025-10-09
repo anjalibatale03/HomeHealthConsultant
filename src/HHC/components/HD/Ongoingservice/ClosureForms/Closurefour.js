@@ -110,54 +110,72 @@ const Closurefour = ({ formNo, evePlanID, profSD, profST, profED, profET, sessio
     console.log("Closure Form 4", startDate, startTime, endDate, endTime)
 
     async function handleClosureFourSubmit(event) {
-        event.preventDefault();
-        // handleEmptyField();
-        const hasErrors = handleEmptyField();
-        if (hasErrors) {
-            return;
-        }
-        if (sessions.length === 0) {
-            console.error("No session data available.");
-            return;
-        }
-        const requestData = {
-            form_number: formNo,
-            Name_injection_fld: fluid,
-            Inj_site_IM: im,
-            Dose_freq: dose,
-            Remark: remark,
-            prof_st_dt: startDate,
-            prof_st_time: startTime,
-            prof_ed_dt: endDate,
-            prof_ed_time: endTime,
-        };
-        console.log("POST API Hitting......", requestData)
-        try {
-            const response = await fetch(`${port}/web/agg_hhc_session_job_closure/?dtl_eve=${evePlanID}`, {
-                method: "POST",
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                },
-                body: JSON.stringify(requestData),
-            });
-            if (!response.ok) {
-                console.error(`HTTP error! Status: ${response.status}`);
-                return;
-            }
-            const result = await response.json();
-            console.log("Closure data", result);
-            setOpenSnackbar(true);
-            setSnackbarMessage('Closure data submitted successfully!');
-            onClose();
-            emt();
-            // sessions();
-            // window.location.reload();
-        } catch (error) {
-            console.error("An error occurred:", error);
-        }
+  event.preventDefault();
+
+  const hasErrors = handleEmptyField();
+  if (hasErrors) return;
+
+  if (sessions.length === 0) {
+    console.error("No session data available.");
+    return;
+  }
+
+  const requestData = {
+    form_number: formNo,
+    Name_injection_fld: fluid,
+    Inj_site_IM: im,
+    Dose_freq: dose,
+    Remark: remark,
+    prof_st_dt: startDate,
+    prof_st_time: startTime,
+    prof_ed_dt: endDate,
+    prof_ed_time: endTime,
+  };
+
+  console.log("POST API Hitting......", requestData);
+
+  try {
+    const response = await fetch(
+      `${port}/web/agg_hhc_session_job_closure/?dtl_eve=${evePlanID}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(requestData),
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`HTTP error! Status: ${response.status}`);
+      setSnackbarMessage("Something went wrong! Please try again.");
+      setOpenSnackbar(true);
+      return;
     }
+
+    const result = await response.json();
+    console.log("Closure data", result);
+
+    // ✅ Show success snackbar
+    setSnackbarMessage("Closure data submitted successfully!");
+    setOpenSnackbar(true);
+
+    // ✅ Delay to let snackbar show before closing modal
+    setTimeout(() => {
+      onClose(); // close modal
+      emt();     // refresh parent data
+    //   sessions(); // reload updated data
+    }, 2000); // 2 seconds for smooth feedback
+
+  } catch (error) {
+    console.error("An error occurred:", error);
+    setSnackbarMessage("Network error! Please check your connection.");
+    setOpenSnackbar(true);
+  }
+}
+
     return (
         <>
             <Box sx={{ flexGrow: 1, bgcolor: "#ffffff" }}>

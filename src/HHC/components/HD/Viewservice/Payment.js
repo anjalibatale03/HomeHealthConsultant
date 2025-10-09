@@ -38,6 +38,8 @@ const Payment = ({ eveID, pay, ptnData, onClose, walletData }) => {
     const [value, setValue] = useState('1');
 
     const [selectedPayMode, setSelectedPayMode] = useState(1);
+    console.log("SelectedPayMode:", selectedPayMode);
+    
     const [chequeNo, setChequeNo] = useState('');
     const [chequeDate, setChequeDate] = useState('');
     const [bankName, setBankName] = useState('');
@@ -48,6 +50,8 @@ const Payment = ({ eveID, pay, ptnData, onClose, walletData }) => {
 
     const [remark, setRemark] = useState('')
     const [paymentData, setPaymentData] = useState({ ...pay });
+    console.log("PaymentData:", paymentData);
+    
     const [patientData, setPatientData] = useState({ ...ptnData });
     const [amountError, setAmountError] = useState('');
     const [sessionError, setSessionError] = useState('');
@@ -540,9 +544,6 @@ const Payment = ({ eveID, pay, ptnData, onClose, walletData }) => {
             setOpenSnackbar(true);
             setSnackbarMessage('Payment saved successfully.');
             setSnackbarSeverity('success');
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
             // window.location.reload();
 
         } catch (error) {
@@ -792,11 +793,11 @@ const Payment = ({ eveID, pay, ptnData, onClose, walletData }) => {
                                             name="card_no"
                                             value={cardNo}
                                             onChange={(e) => setCardNo(e.target.value)}
-                                            placeholder='Enter last 16 digits'
+                                            placeholder='Enter last 4 digits'
                                             size="small"
                                             fullWidth
                                             inputProps={{
-                                                maxLength: 16,
+                                                maxLength: 4,
                                             }}
                                             sx={{
                                                 textAlign: "left",
@@ -913,6 +914,51 @@ const Payment = ({ eveID, pay, ptnData, onClose, walletData }) => {
                                 />
                             </Grid>
 
+                            {/* {
+                                Number(paymentData.Total_Amount) !== Number(walletamout) && (
+                                    <Grid item lg={12} sm={12} xs={12} style={{ marginTop: "10px" }}>
+                                        <TextField
+                                            // required
+                                            id="amount_paid"
+                                            name="amount_paid"
+                                            label="Amount Paid"
+                                            placeholder="Enter amount"
+                                            size="small"
+                                            type="number"
+                                            value={paymentData.amount_paid || ""}
+                                            onChange={(e) => {
+                                                const enteredValue = e.target.value;
+                                                const walletAmount = Number(walletamout);
+                                                const totalAmount = Number(paymentData.Total_Amount);
+                                                const maxPayable = totalAmount - walletAmount;
+
+                                                if (enteredValue === "") {
+                                                    handleFieldChange("amount_paid", "");
+                                                } else if (!isNaN(enteredValue) && Number(enteredValue) <= maxPayable) {
+                                                    handleFieldChange("amount_paid", Number(enteredValue));
+                                                }
+                                            }}
+                                            fullWidth
+                                            sx={{
+                                                textAlign: "left",
+                                                "& input": {
+                                                    fontSize: "14px",
+                                                },
+                                            }}
+                                            // error={!!amountError || !!sessionError}
+                                            helperText={
+                                                amountError ||
+                                                sessionError ||
+                                                (paymentData.amount_paid + walletamout > paymentData.Total_Amount
+                                                    ? "Amount exceeds the total payable."
+                                                    : ""
+                                                )
+                                            }
+                                        />
+                                    </Grid>
+                                )
+                            } */}
+
                             {
                                 Number(paymentData.Total_Amount) !== Number(walletamout) && (
                                     <Grid item lg={12} sm={12} xs={12} style={{ marginTop: "10px" }}>
@@ -922,7 +968,7 @@ const Payment = ({ eveID, pay, ptnData, onClose, walletData }) => {
                                             label="Amount Paid"
                                             placeholder="Enter amount"
                                             size="small"
-                                            type="text"
+                                            type="number"
                                             value={dynamicAmountPaid}
                                             onChange={(e) => {
                                                 const raw = e.target.value;
@@ -1034,25 +1080,22 @@ const Payment = ({ eveID, pay, ptnData, onClose, walletData }) => {
                                 </Box>
                             </Grid>
 
-                            {
-                                selectedPayMode !== 1 &&
-                                <Grid item lg={12} sm={12} xs={12} style={{ marginTop: "10px" }}>
-                                    <TextField
-                                        id="utr"
-                                        name="utr"
-                                        label="UTR"
-                                        size="small"
-                                        value={utr}
-                                        onChange={(e) => setUTR(e.target.value)}
-                                        fullWidth
-                                        sx={{
-                                            textAlign: "left", '& input': {
-                                                fontSize: '14px',
-                                            },
-                                        }}
-                                    />
-                                </Grid>
-                            }
+                            <Grid item lg={12} sm={12} xs={12} style={{ marginTop: "10px" }}>
+                                <TextField
+                                    id="utr"
+                                    name="utr"
+                                    label="UTR"
+                                    size="small"
+                                    value={utr}
+                                    onChange={(e) => setUTR(e.target.value)}
+                                    fullWidth
+                                    sx={{
+                                        textAlign: "left", '& input': {
+                                            fontSize: '14px',
+                                        },
+                                    }}
+                                />
+                            </Grid>
 
                             <Grid item lg={12} sm={12} xs={12} style={{ marginTop: "10px" }}>
                                 <TextField
@@ -1279,7 +1322,7 @@ const Payment = ({ eveID, pay, ptnData, onClose, walletData }) => {
                                             label="Amount Paid"
                                             placeholder="Enter amount"
                                             size="small"
-                                            type="text"
+                                            type="number"
                                             value={dynamicAmountPaid}
                                             onChange={(e) => {
                                                 const raw = e.target.value;

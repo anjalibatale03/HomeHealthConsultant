@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Box, Grid, Typography, TextField, Button, MenuItem, Snackbar, Alert } from "@mui/material"
 import { getCurrentDateString } from "../../../Utils/ValidationUtils";
 
-
 const Request = ({ eveId, sessionId, requestID, selectedRequestbyID, reqID, startDate, endDate, startTime, endTime, srvId, onClose, prof }) => {
     const port = process.env.REACT_APP_API_KEY;
     const accessToken = localStorage.getItem('token');
+
+    console.log(eveId,sessionId,'eeeeeeeeeeeee');
+    console.log(selectedRequestbyID,'selectedRequestbyID');
+    console.log(requestID,'requestID');
+    
+    
 
     const [value, setValue] = useState('1');
     const [profData, setProfData] = useState([]);
@@ -106,8 +111,7 @@ const Request = ({ eveId, sessionId, requestID, selectedRequestbyID, reqID, star
     //     };
     //     getProfData();
     // }, [eveId, sessionId]);
-    const [reschDate, setReschDate] = useState('');
-
+     const [reschDate, setReschDate] = useState('');
     const fetchProfData = async (eveId, sessionId) => {
         try {
             let url;
@@ -123,11 +127,13 @@ const Request = ({ eveId, sessionId, requestID, selectedRequestbyID, reqID, star
                 },
             });
             const data = await res.json();
-            // console.log("Professional Data.......", data);
+            console.log("Professional Data.......", data);
             if (data.message === "Data not found.") {
                 setProfData([]);
                 setSesData([]);
             } else {
+                console.log('data is set..');
+                console.log(data.ses.reschedule_date,'data.sesdata.sesdata.ses');
                 setReschDate(data.ses.reschedule_date);
                 setProfData(data.eve_data[0]);
                 setSesData(data.ses);
@@ -265,14 +271,14 @@ const Request = ({ eveId, sessionId, requestID, selectedRequestbyID, reqID, star
     return (
         <>
             {(selectedRequestbyID === '1' || selectedRequestbyID === '2') ? (
-                <Box sx={{ marginTop: "20px" }}>
+                <Box sx={{ marginTop: "0px" }}>
                     {requestID === '1' && (
-                        <Box sx={{ background: "#FFC9C9", mt: 1, pt: 1.5, px: 5, pb: 1.5, borderRadius: "8px" }}>
+                        <Box sx={{ background: "#FFC9C9", mt: 2, pt: 1.5, px: 5, pb: 1.5, borderRadius: "8px" }}>
                             <Typography variant='subtitle2' style={{ fontSize: "20px", fontWeight: 600, color: "#B00000" }}>CANCEL REQUEST</Typography>
                         </Box>
                     )}
                     {requestID === '2' && (
-                        <Box sx={{ background: "#E4ECFF", mt: 1, pt: 1.5, px: 5, pb: 1.5, borderRadius: "8px" }}>
+                        <Box sx={{ background: "#E4ECFF", mt: 2, pt: 1.5, px: 5, pb: 1.5, borderRadius: "8px" }}>
                             <Typography variant='subtitle2' style={{ fontSize: "20px", fontWeight: 600, color: "#003FE0" }}>RESCHEDULE REQUEST</Typography>
                         </Box>
                     )}
@@ -295,16 +301,11 @@ const Request = ({ eveId, sessionId, requestID, selectedRequestbyID, reqID, star
                         </Grid>
 
                         <Grid container style={{ justifyContent: "space-between", marginTop: "10px" }}>
-                            <Typography inline variant="body2" color="text.secondary" >Existing Service Date</Typography>
+                            <Typography inline variant="body2" color="text.secondary" >Existing Session Date</Typography>
                             <Typography inline variant="body2">  {profData?.epoc_data?.[0]?.start_date
                                 ? formatDate(profData.epoc_data[0].start_date)
                                 : '-'}</Typography>
                         </Grid>
-
-                        {/* <Grid container style={{ justifyContent: "space-between", marginTop: "10px" }}>
-                            <Typography inline variant="body2" color="text.secondary" >Requested Date</Typography>
-                            <Typography inline variant="body2">{sesData ? formatDate(sesData.added_date) : '-'}</Typography>
-                        </Grid> */}
 
                         {requestID === '2' && <Grid container style={{ justifyContent: "space-between", marginTop: "10px" }}>
                             <Typography inline variant="body2" color="text.secondary" >Requested Date</Typography>
@@ -314,9 +315,10 @@ const Request = ({ eveId, sessionId, requestID, selectedRequestbyID, reqID, star
                         <Grid container style={{ justifyContent: "space-between", marginTop: "10px" }}>
                             <Typography inline variant="body2" color="text.secondary" >Remark</Typography>
                             <Typography inline variant="body2">{sesData.remark ? sesData.remark : '-'}</Typography>
+                            {/* <Typography inline variant="body2">{sesData ? formatDate(sesData.reschedule_date) : '-'}</Typography> */}
                         </Grid>
                     </Box>
-                    <Grid sx={{ mt: 3 }}>
+                    <Grid sx={{ mt: 2 }}>
                         <TextField
                             required
                             id="remark"
@@ -338,10 +340,10 @@ const Request = ({ eveId, sessionId, requestID, selectedRequestbyID, reqID, star
                     </Grid>
 
                     {requestID === '1' && (
-                        <Button variant="contained" sx={{ mt: 2, mb: 0, ml: 6, width: "25ch", textTransform: "capitalize", borderRadius: "8px", background: "#69A5EB" }} onClick={handleApproveSubmit}>Cancel Request</Button>
+                        <Button variant="contained" sx={{ mt: 2, mb: 0, ml: 6, width: "25ch", textTransform: "capitalize", borderRadius: "8px", background: "rgb(52, 123, 137)" }} onClick={handleApproveSubmit}>Cancel Request</Button>
                     )}
                     {requestID === '2' && (
-                        <Button variant="contained" sx={{ mt: 2, mb: 0, ml: 6, width: "25ch", textTransform: "capitalize", borderRadius: "8px", background: "#69A5EB" }} onClick={handleApproveSubmit}>Reschedule Request</Button>
+                        <Button variant="contained" sx={{ mt: 2, mb: 0, ml: 6, width: "25ch", textTransform: "capitalize", borderRadius: "8px", background: "rgb(52, 123, 137)" }} onClick={handleApproveSubmit}>Reschedule Request</Button>
                     )}
                 </Box>
             ) : (
@@ -445,7 +447,7 @@ const Request = ({ eveId, sessionId, requestID, selectedRequestbyID, reqID, star
                     </Grid>
 
                     <Grid item lg={12} sm={12} xs={12} sx={{ mb: 3 }}>
-                        <Button variant="contained" sx={{ mt: 4, ml: 4, width: '30ch', backgroundColor: '#7AB8EE', borderRadius: "12px", textTransform: "capitalize", }}
+                        <Button variant="contained" sx={{ mt: 4, ml: 4, width: '30ch', backgroundColor: 'rgb(52, 123, 137)', borderRadius: "12px", textTransform: "capitalize", }}
                             onClick={handleAtnSubmit}
                         >
                             Attendance Approve
@@ -453,7 +455,7 @@ const Request = ({ eveId, sessionId, requestID, selectedRequestbyID, reqID, star
                     </Grid>
                 </Box>
             )}
-        </>
+        </> 
     )
 }
 

@@ -37,7 +37,7 @@ import TimePicker from "react-time-picker";
 import ViewService from "./Viewservice";
 import Navbar from "../../Navbar";
 import Footer from "../../Footer";
-import Header from "../../Header";
+// import Header from "../../Header";
 import moment from "moment";
 import dayjs from "dayjs";
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";

@@ -273,12 +273,14 @@ const Closuretwo = ({ formNo, eveID, evePlanID, srvProfID, profSD, profST, profE
             }
             const result = await response.json();
             console.log("Closure data", result);
-            setOpenSnackbar(true);
-            setSnackbarMessage('Closure data submitted successfully!');
-            onClose();
-            // sessions();
-            emt();
-            // window.location.reload();
+            setSnackbarMessage("Closure data submitted successfully!");
+    setOpenSnackbar(true);
+            
+            setTimeout(() => {
+      onClose();   // close modal
+      emt();       // refresh or trigger update
+    //   sessions();  // reload data list
+    }, 2000); // 2 secon
         } catch (error) {
             console.error("An error occurred:", error);
         }

@@ -177,7 +177,7 @@ const Sessions = ({ eveID, subSrvID }) => {
                 <Table>
                     <TableHead >
                         <TableRow >
-                            <SessionCard style={{ background: "#69A5EB", color: "#FFFFFF", borderRadius: "8px 10px 0 0", }}>
+                            <SessionCard style={{ background: "rgb(173, 219, 177)", color: "#FFFFFF", borderRadius: "8px 10px 0 0", }}>
                                 <CardContent style={{ width: "5%", borderRight: "1px solid #FFFFFF" }}>
                                     <Typography variant='subtitle2'>Sr No.</Typography>
                                 </CardContent >
@@ -260,19 +260,30 @@ const Sessions = ({ eveID, subSrvID }) => {
                                                 </CardContent>
                                                 <CardContent style={{ width: "15%" }}>
                                                     <div style={{ display: "flex" }}>
-                                                        <AccessTimeIcon sx={{ color: "#69A5EB", fontSize: "18px" }} />
+                                                        <AccessTimeIcon sx={{ color: "#1bb78d", fontSize: "18px" }} />
                                                         <Typography variant="body2">
                                                             {row.end_time}
                                                         </Typography>
                                                     </div>
                                                 </CardContent>
                                                 <CardContent style={{ width: "10%" }}>
-                                                    <Button variant="outlined" sx={{ textTransform: "capitalize" }} disabled={formNo === null}
-                                                        onClick={() => {
-                                                            eventDetailPlanIDRequest(row.agg_sp_dt_eve_poc_id);
-                                                            handleOpenClosure()
-                                                        }}
-                                                    >Closure</Button>
+                                                    <Button
+  variant="contained"
+  color="primary"
+  sx={{
+    textTransform: "capitalize",
+    width: "100%",
+    background: "#2CDFAA",
+  }}
+  disabled={formNo === null}
+  onClick={() => {
+    eventDetailPlanIDRequest(row.agg_sp_dt_eve_poc_id);
+    handleOpenClosure();
+  }}
+>
+  Closure
+</Button>
+
                                                     <Modal
                                                         open={openClosure}
                                                         onClose={handleCloseClosure}
@@ -303,6 +314,7 @@ const Sessions = ({ eveID, subSrvID }) => {
                 </Table>
             </TableContainer>
             <TablePagination
+              sx={{overflowY:'hidden'}}
                 rowsPerPageOptions={[5, 10, 25, 100]}
                 component="div"
                 count={sessions.length}

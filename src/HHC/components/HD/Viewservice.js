@@ -32,6 +32,7 @@ import {
   TablePagination,
   IconButton,
 } from "@mui/material";
+import BroadcastOnPersonalIcon from '@mui/icons-material/BroadcastOnPersonal';
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 // import CalendarComponent from './Professional/calendar/CalendarComponent';
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -54,6 +55,8 @@ import Navbar from "../../Navbar";
 import dayjs from "dayjs";
 import CancelService from "./Viewservice/CancelService";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import Broadcast from "./Viewservice/Broadcast";
+import { width } from "@mui/system";
 
 const style = {
   position: "absolute",
@@ -141,10 +144,24 @@ const Viewservice = () => {
     selectedCall,
     rescheduletoservice,
     srvExtendSrvPurpId,
-    selectedCallEnq
+    followUpToAllocate,
+    callTy
   } = location.state;
 
-  console.log("selectedCallEnq", selectedCallEnq);
+  console.log(callTy,'callTycallTy');
+  
+  /// Broadcast Start
+  const [openBroadcastModal, setOpenBroadcastModal] = useState(false);
+
+  const handleOpenBroadcast = () => {
+    setOpenBroadcastModal(true);
+  };
+
+  const handleCloseBroadcast = () => {
+    setOpenBroadcastModal(false);
+  };
+
+  /// Broadcast End
   console.log("evId", evId);
   console.log("rescheduletoservice", rescheduletoservice);
   console.log("Selected Call:", selectedCall);
@@ -173,9 +190,6 @@ const Viewservice = () => {
   const [patient, setPatient] = useState("");
   const [hospital, setHospital] = useState("");
   const [serviceID, setserviceID] = useState("");
-  const [callerEnqtoServ, setCallerEnqtoServ] = useState("");
-  console.log(callerEnqtoServ, 'callerEnqtoServ');
-
   const [ptnZoneID, setPtnZoneID] = useState("");
   const [searchProf, setSearchProf] = useState("");
   const [professional, setProfessional] = useState([]);
@@ -236,6 +250,8 @@ const Viewservice = () => {
   const [chooseDates, setChooseDates] = useState([]);
   const [dateCount, setDateCount] = useState(0);
   const [blockedDates, setBlockedDates] = useState([]);
+  console.log(blockedDates, 'blockedDatesblockedDates');
+
   const [eventDates, setEventDates] = useState([]);
 
   const [srvProfDateAndId, setSrvProfDateAndId] = useState({});
@@ -395,6 +411,17 @@ const Viewservice = () => {
         },
       };
     }
+    if (unAvailDates.includes(dateString)) {
+      return {
+        disabled: true,
+        style: {
+          backgroundColor: "#9E9E9E",
+          color: "white",
+          pointerEvents: "none",
+          cursor: "not-allowed",
+        },
+      };
+    }
     // if (occupancyDates.includes(dateString)) {
     //   return {
     //     disabled: true,
@@ -406,7 +433,8 @@ const Viewservice = () => {
     //     },
     //   };
     // }
-     if (occupancyDates.includes(dateString)) {
+
+    if (occupancyDates.includes(dateString)) {
       if (blockedDates.includes(dateString)) {
         return {
           disabled: true,
@@ -425,29 +453,6 @@ const Viewservice = () => {
         },
       };
     }
-    if (unAvailDates.includes(dateString)) {
-      return {
-        disabled: true,
-        style: {
-          backgroundColor: "#9E9E9E",
-          color: "white",
-          pointerEvents: "none",
-          cursor: "not-allowed",
-        },
-      };
-    }
-    // if (availDates.includes(dateString)) {
-    //     return {
-    //         style: { backgroundColor: '#98B433' }
-    //     };
-    // }
-
-    // if (date < startDate || date > endDate || blockedDates.includes(dateString)) {
-    //     return {
-    //         disabled: true,
-    //         style: { color: "#ccc" },
-    //     };
-    // }
 
     if (availDates.includes(dateString)) {
       if (blockedDates.includes(dateString)) {
@@ -580,18 +585,18 @@ const Viewservice = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    setPage(0);
-
   };
-
-  useEffect(() => {
-    setPage(0);
-  }, [searchProf]);
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+    
   };
+
+
+  useEffect(() => {
+  setPage(0);
+}, [searchProf]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -857,7 +862,6 @@ const Viewservice = () => {
           console.log("Service Details ID wise", data);
           setService(data.services);
           setserviceID(data.services.srv_id.srv_id);
-          setCallerEnqtoServ(data.services.purp_call_id)
           console.log("Service ID....", data.services.srv_id.srv_id);
         } catch (error) {
           console.error("Error fetching Service Details ID wise:", error);
@@ -1354,36 +1358,6 @@ const Viewservice = () => {
       console.error("An error occurred:", error);
     }
   }
-
-  async function handleMultiAllocation1(event) {
-    console.log("pppppppppppppp", values.length);
-    console.log("pppppppppppppp", flag);
-    if (values.length > 0) {
-      if (flag === 1 && selectedCall === 1) {
-        handleMultiAllocation();
-        setTimeout(() => {
-          navigate("/ongoing");
-        }, 2000);
-      } else if (flag === 2) {
-        handleOpenAllocateRemark();
-      } else if (flag === 3) {
-        handleOpenAllocateRemark();
-      } else if (selectedCall === 2) {
-        handleMultiAllocationEnquiry();
-        // setTimeout(() => {
-        //   navigate("/ongoing");
-        // }, 2000);
-      } else {
-        handleMultiAllocation();
-        // setTimeout(() => {
-        //   navigate("/ongoing");
-        // }, 2000);
-      }
-    } else if (values.length <= 0) {
-      setOpenSnackbar1(true);
-    }
-  }
-
   const handleCancelService = () => {
     setOpenServiceCancel(true);
   };
@@ -1415,43 +1389,58 @@ const Viewservice = () => {
   //     }
   // }
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleMultiAllocation1(event) {
+    if (event) {
+      event.preventDefault();
+    }
+    setIsSubmitting(true);
+    console.log("pppppppppppppp", values.length);
+    console.log("pppppppppppppp", flag);
+    if (values.length > 0) {
+      if (flag === 1 && selectedCall === 1) {
+        handleMultiAllocation();
+        setTimeout(() => {
+          navigate("/ongoing");
+        }, 2000);
+      } else if (flag === 2) {
+        handleOpenAllocateRemark();
+      } else if (flag === 3) {
+        handleOpenAllocateRemark();
+      } else if (selectedCall === 2) {
+        handleMultiAllocationEnquiry();
+      } else {
+        handleMultiAllocation();
+      }
+    } else if (values.length <= 0) {
+      setOpenSnackbar1(true);
+    }
+  }
+
   async function handleMultiAllocation(event) {
-    // if (values.length > 0) {
-    //     handleOpenAllocateRemark();
-    // }
+    if (event) {
+      event.preventDefault();
+    }
+    setIsSubmitting(true);
     handleCloseAllocateRemark();
     console.log(values, "selected dateeeeeeeeeeeeeeeee");
-
-    // event.preventDefault();
-
     const filteredDates = Object.fromEntries(
       Object.entries(selectedDates).filter(([key, value]) =>
         value.every((item) => item !== "")
       )
-      // Object.entries(selectedDates)
-      //     .filter(([key, value]) => value.every(item => item !== ""))
-      //     .map(([key, value]) => [key, value[value.length - 1]])
     );
     const requestData = {
-      // flag_id: flag,
       flag_id: flag === 4 ? 1 : flag,
       eve_id: eventID,
-      // srv_prof_date_and_id: selectedDates,
-      // srv_prof_date_and_id: filteredDates,
-      // conve_charge: convnce,
-      // start_date: service.start_date,
-      // end_date: service.end_date,
       caller_id: callerID,
       agg_sp_pt_id: patientID,
       srv_prof_date_and_id: srvProfDateAndId,
-      // ambs_id: serviceID === 12 ? selectedAmb : null,
-      // "srv_prof_date_and_id":{"120":[[["2024-04-08, 2024-04-09"]],500],"157":[[["2024-04-11, 2024-04-11"]],0],"2":[[["2024-04-10, 2024-04-10"]],127]}
     };
 
     if (flag === 2) {
       console.log("Remark value:", remark);
       requestData.remark = remark;
-      // requestData.srv_prof_date_and_id = srvProfDateAndId1;
       requestData.srv_prof_date_and_id = srvProfDateAndId;
     }
     if (flag === 3) {
@@ -1459,7 +1448,6 @@ const Viewservice = () => {
       requestData.flag_id = flag;
       requestData.eve_id = eventID;
       requestData.session_date = sessionDate;
-      // requestData.srv_prof_date_and_id = srvProfDateAndId1;
       requestData.srv_prof_date_and_id = srvProfDateAndId;
       requestData.remark = remark;
       requestData.start_time = startTime;
@@ -1476,9 +1464,6 @@ const Viewservice = () => {
         },
         body: JSON.stringify(requestData),
       });
-      // if (!response.ok) {
-      //     throw new Error(`HTTP error! Status: ${response.status}`);
-      // }
       const result = await response.json();
       console.log("Multiple Prof Allocation.....", result);
       if (result.message === "professional already Allocated") {
@@ -1488,83 +1473,88 @@ const Viewservice = () => {
           "Professional has already been assigned for the dates you selected."
         );
         setSnackbarSeverity("warning");
-        // setModalDetails(result.date);
-        // handleOpenModal();
       } else if (result.message === "Select proper dates") {
         console.log("Please select all dates");
         setOpenSnackbar(true);
-        // setSnackbarMessage('Please choose dates according to the service requirements.');
         setSnackbarMessage(
           "Please select dates based on service requirements."
         );
         setSnackbarSeverity("error");
-      } else {
+      }
+      else {
         console.log("Allocation successful");
         setOpenSnackbar(true);
         if (rescheduletoservice === 1) {
+          setIsSubmitting(false);
           setSnackbarMessage("Allocation done successfully!!");
         } else {
+          setIsSubmitting(false);
           setSnackbarMessage("Service Created successfully!!");
         }
         setSnackbarSeverity("success");
-        // handleConsentForm();
         console.log("before");
-
         handleConsentForm(event);
         console.log("after");
 
-        setTimeout(() => {
-          navigate("/ongoing");
-        }, 2000);
+        if (response.status === 200) {
+          setTimeout(() => {
+            setIsSubmitting(false);
+            navigate("/ongoing");
+          }, 2000);
+        }
       }
+
+      // else {
+      //   console.log("Allocation successful");
+      //   setOpenSnackbar(true);
+      //   if (rescheduletoservice === 1) {
+      //     setSnackbarMessage("Allocation done successfully!!");
+      //   } else {
+      //     setSnackbarMessage("Service Created successfully!!");
+      //   }
+      //   setSnackbarSeverity("success");
+      //   console.log("before");
+      //   handleConsentForm(event);
+      //   console.log("after");
+
+      //   setTimeout(() => {
+      //     navigate("/ongoing");
+      //   }, 2000);
+      // }
       handleCloseAllocateRemark();
       console.log("lllllll");
 
-      setTimeout(() => {
-        navigate("/ongoing");
-      }, 2000);
+      // setTimeout(() => {
+      //   navigate("/ongoing");
+      // }, 2000);
     } catch (error) {
       console.error("An error occurred:", error);
+    }
+    finally {
+      setIsSubmitting(false);
     }
   }
 
   async function handleMultiAllocationEnquiry(event) {
-    // if (values.length > 0) {
-    //     handleOpenAllocateRemark();
-    // }
+    setIsSubmitting(true);
     handleCloseAllocateRemark();
     console.log(values, "selected dateeeeeeeeeeeeeeeee");
-
-    // event.preventDefault();
-
     const filteredDates = Object.fromEntries(
       Object.entries(selectedDates).filter(([key, value]) =>
         value.every((item) => item !== "")
       )
-      // Object.entries(selectedDates)
-      //     .filter(([key, value]) => value.every(item => item !== ""))
-      //     .map(([key, value]) => [key, value[value.length - 1]])
     );
     const requestData = {
-      // flag_id: flag,
       flag_id: flag === 4 ? 1 : flag,
       eve_id: eventID,
-      // srv_prof_date_and_id: selectedDates,
-      // srv_prof_date_and_id: filteredDates,
-      // conve_charge: convnce,
-      // start_date: service.start_date,
-      // end_date: service.end_date,
       caller_id: callerID,
       agg_sp_pt_id: patientID,
       srv_prof_date_and_id: srvProfDateAndId,
-      // ambs_id: serviceID === 12 ? selectedAmb : null,
-      // "srv_prof_date_and_id":{"120":[[["2024-04-08, 2024-04-09"]],500],"157":[[["2024-04-11, 2024-04-11"]],0],"2":[[["2024-04-10, 2024-04-10"]],127]}
     };
 
     if (flag === 2) {
       console.log("Remark value:", remark);
       requestData.remark = remark;
-      // requestData.srv_prof_date_and_id = srvProfDateAndId1;
       requestData.srv_prof_date_and_id = srvProfDateAndId;
     }
     if (flag === 3) {
@@ -1572,7 +1562,6 @@ const Viewservice = () => {
       requestData.flag_id = flag;
       requestData.eve_id = eventID;
       requestData.session_date = sessionDate;
-      // requestData.srv_prof_date_and_id = srvProfDateAndId1;
       requestData.srv_prof_date_and_id = srvProfDateAndId;
       requestData.remark = remark;
       requestData.start_time = startTime;
@@ -1591,9 +1580,6 @@ const Viewservice = () => {
           body: JSON.stringify(requestData),
         }
       );
-      // if (!response.ok) {
-      //     throw new Error(`HTTP error! Status: ${response.status}`);
-      // }
       const result = await response.json();
       console.log("Multiple Prof Allocation.....", result);
       if (result.message === "professional already Allocated") {
@@ -1627,6 +1613,9 @@ const Viewservice = () => {
       }, 2000);
     } catch (error) {
       console.error("An error occurred:", error);
+    }
+    finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -1717,7 +1706,7 @@ const Viewservice = () => {
                           position="static"
                           style={{
                             background:
-                              "linear-gradient(45deg, #1FD0C4 38.02%, #0E8FE4 100%)",
+                              "linear-gradient(90deg, rgb(100 154 141) 40%, rgb(92 173 130) 100%)",
                             width: "22.8rem",
                             height: "3rem",
                             marginTop: "-16px",
@@ -1726,7 +1715,7 @@ const Viewservice = () => {
                           }}
                         >
                           <div style={{ display: "flex" }}>
-                            <Typography
+                           <Typography
                               align="left"
                               style={{
                                 fontSize: "16px",
@@ -1948,11 +1937,11 @@ const Viewservice = () => {
                       aria-describedby="modal-modal-description"
                     >
                       <Box sx={{ ...style, width: 400, borderRadius: "10px" }}>
-                        <AppBar
+                         <AppBar
                           position="static"
                           style={{
                             background:
-                              "linear-gradient(45deg, #1FD0C4 38.02%, #0E8FE4 100%)",
+                              "linear-gradient(90deg, rgb(100 154 141) 40%, rgb(92 173 130) 100%)",
                             width: "29rem",
                             height: "3rem",
                             marginTop: "-16px",
@@ -2165,11 +2154,11 @@ const Viewservice = () => {
                       aria-describedby="modal-modal-description"
                     >
                       <Box sx={{ ...style, width: 300, borderRadius: "10px" }}>
-                        <AppBar
+                         <AppBar
                           position="static"
                           style={{
                             background:
-                              "linear-gradient(45deg, #1FD0C4 38.02%, #0E8FE4 100%)",
+                              "linear-gradient(90deg, rgb(100 154 141) 40%, rgb(92 173 130) 100%)",
                             width: "22.8rem",
                             height: "3rem",
                             marginTop: "-16px",
@@ -2329,10 +2318,10 @@ const Viewservice = () => {
                 }}
               >
                 <CardContent>
-                  <Stack
+                   <Stack
                     direction="row"
                     justifyContent="space-between"
-                    sx={{ mt: 1 }}
+                    sx={{ mt: 1, mb: 1 }}
                   >
                     <Typography
                       sx={{ fontSize: 15, fontWeight: 600, ml: "-1em" }}
@@ -2412,7 +2401,7 @@ const Viewservice = () => {
                   <Box
                     sx={{ height: "auto", marginTop: "5px", overflowX: "auto" }}
                   >
-                    <style>
+                     <style>
                       {`
         .custom-scrollbar::-webkit-scrollbar {
             height: 8px; 
@@ -2440,9 +2429,10 @@ const Viewservice = () => {
                           <TableRow>
                             <ViewServiceCard
                               style={{
-                                background: "#69A5EB",
-                                color: "#FFFFFF",
+                                background: "rgb(237, 204, 242)",
+                                color: "#000000",
                                 borderRadius: "8px 10px 0 0",
+                                height: "45px",
                               }}
                             >
                               <CardContent
@@ -2565,15 +2555,27 @@ const Viewservice = () => {
                                       }}
                                     >
                                       <ViewServiceCard
-                                        style={{
+                                       style={{
                                           backgroundColor:
                                             selectedProf.includes(
                                               row.srv_prof_id
                                             )
                                               ? "#D0F4F5"
-                                              : "white",
+                                              : "#f1f1f1",
+                                          borderRight: selectedProf.includes(
+                                            row.srv_prof_id
+                                          )
+                                            ? "4px solid rgb(202, 140, 211)"
+                                            : "2px solid rgb(237, 204, 242)",
+                                          borderLeft: selectedProf.includes(
+                                            row.srv_prof_id
+                                          )
+                                            ? "4px solid rgb(202, 140, 211)"
+                                            : "2px solid rgb(237, 204, 242)",
+                                          cursor: "pointer",
                                         }}
                                       >
+                                      
                                         <CardContent style={{ flex: 2 }}>
                                           <Tooltip
                                             title={
@@ -2616,7 +2618,7 @@ const Viewservice = () => {
                                             </Typography>
                                           </Tooltip>
 
-                                          <Modal
+                                       <Modal
                                             open={
                                               openConvenience ===
                                               row.srv_prof_id
@@ -2628,7 +2630,7 @@ const Viewservice = () => {
                                             <Box
                                               sx={{
                                                 ...style,
-                                                width: 400,
+                                                width: 350,
                                                 borderRadius: "5px",
                                               }}
                                             >
@@ -2650,45 +2652,246 @@ const Viewservice = () => {
                                                 >
                                                   <CloseIcon />
                                                 </Button>
+
+                                                {/* <Grid
+                                                                                                    container
+                                                                                                    justifyContent="center"
+                                                                                                    alignItems="center"
+                                                                                                // style={{ height: "20vh" }} // Full height to center vertically
+                                                                                                >
+                                                                                                    <Grid item lg={8} sm={10} xs={6}>
+                                                                                                        <Box
+                                                                                                            display="flex"
+                                                                                                            justifyContent="center"
+                                                                                                            alignItems="center"
+                                                                                                            height="100%"
+                                                                                                        >
+                                                                                                            <TextField
+                                                                                                                required
+                                                                                                                id="sub_srv_id"
+                                                                                                                name="sub_srv_id"
+                                                                                                                select
+                                                                                                                label="Select Sub Service"
+                                                                                                                value={
+                                                                                                                    selectedSubService
+                                                                                                                }
+                                                                                                                onChange={
+                                                                                                                    handleSubServiceSelect
+                                                                                                                }
+                                                                                                                size="small"
+                                                                                                                fullWidth
+                                                                                                                error={error}
+                                                                                                                helperText={
+                                                                                                                    error
+                                                                                                                        ? "Sub Service is required"
+                                                                                                                        : ""
+                                                                                                                }
+                                                                                                                sx={{
+                                                                                                                    textAlign: "left",
+                                                                                                                    "& input": {
+                                                                                                                        fontSize: "14px",
+                                                                                                                    },
+                                                                                                                    "& .MuiSelect-icon": {
+                                                                                                                        color: "#69A5EB", // Button color
+                                                                                                                        borderRadius: "50%",
+                                                                                                                    },
+                                                                                                                    marginBottom: "50px",  // Same margin as dropdown height
+
+                                                                                                                }}
+                                                                                                                SelectProps={{
+                                                                                                                    MenuProps: {
+                                                                                                                        // disablePortal: true,  // Ensures dropdown renders within container
+
+                                                                                                                        anchorOrigin: {
+                                                                                                                            vertical: "bottom",
+                                                                                                                            horizontal: "left",
+                                                                                                                        },
+                                                                                                                        transformOrigin: {
+                                                                                                                            // vertical: "top",
+                                                                                                                            // horizontal: "left",
+                                                                                                                        },
+                                                                                                                        PaperProps: {
+                                                                                                                            style: {
+                                                                                                                                // marginTop: "-8px",  // Adjust for better appearance                                                                // Slight gap to prevent direct attachment
+                                                                                                                                maxHeight: "200px",
+                                                                                                                                maxWidth: "200px",
+                                                                                                                                overflowX: "auto",
+                                                                                                                                zIndex: 5,  // Ensure dropdown appears above other UI components
+                                                                                                                            },
+                                                                                                                        },
+                                                                                                                    },
+                                                                                                                }}
+                                                                                                            >
+                                                                                                                {subService.map(
+                                                                                                                    (option) => (
+                                                                                                                        <MenuItem
+                                                                                                                            key={
+                                                                                                                                option.sub_srv_id
+                                                                                                                            }
+                                                                                                                            value={
+                                                                                                                                option.sub_srv_id
+                                                                                                                            }
+                                                                                                                            sx={{
+                                                                                                                                fontSize:
+                                                                                                                                    "14px",
+                                                                                                                            }}
+                                                                                                                        >
+                                                                                                                            {
+                                                                                                                                option.recommomded_service
+                                                                                                                            }
+                                                                                                                        </MenuItem>
+                                                                                                                    )
+                                                                                                                )}
+                                                                                                            </TextField>
+                                                                                                        </Box>
+                                                                                                    </Grid>
+                                                                                                </Grid> */}
+
+                                                {/* <Grid item lg={6} sm={6} xs={6}>
+                                                                                                <TextField
+                                                                                                    id="start_date"
+                                                                                                    name="start_date"
+                                                                                                    label="From Date"
+                                                                                                    type="date"
+                                                                                                    value={fromDate}
+                                                                                                    onChange={handleFromDateChange}
+                                                                                                    size="small"
+                                                                                                    fullWidth
+                                                                                                    variant="standard"
+                                                                                                    error={!!errors.fromDate}
+                                                                                                    helperText={errors.fromDate}
+                                                                                                    sx={{
+                                                                                                        '& input': {
+                                                                                                            fontSize: '14px',
+                                                                                                        },
+                                                                                                    }}
+                                                                                                    InputLabelProps={{
+                                                                                                        shrink: true,
+                                                                                                    }}      
+                                                                                                    inputProps={{
+                                                                                                        // min: getCurrentDateTimeString(),
+                                                                                                        min: service ? service.start_date : getCurrentDateTimeString(),
+                                                                                                        max: service ? service.end_date : undefined,
+                                                                                                    }}
+                                                                                                />
+                                                                                            </Grid>
+
+                                                                                            <Grid item lg={6} sm={6} xs={6}>
+                                                                                                <TextField
+                                                                                                    id="end_date"
+                                                                                                    name="end_date"
+                                                                                                    label="To Date"
+                                                                                                    type="date"
+                                                                                                    value={toDate}
+                                                                                                    onChange={handleToDateChange}
+                                                                                                    size="small"
+                                                                                                    fullWidth
+                                                                                                    variant="standard"
+                                                                                                    sx={{
+                                                                                                        '& input': {
+                                                                                                            fontSize: '14px',
+                                                                                                        },
+                                                                                                    }}
+                                                                                                    InputLabelProps={{
+                                                                                                        shrink: true,
+                                                                                                    }}
+                                                                                                    error={toDateError !== '' || !!errors.toDate}
+                                                                                                    helperText={toDateError || errors.toDate}
+                                                                                                    inputProps={{
+                                                                                                        // min: getCurrentDateTimeString(),
+                                                                                                        min: service ? service.start_date : getCurrentDateTimeString(),
+                                                                                                        max: service ? service.end_date : undefined,
+                                                                                                    }}
+                                                                                                 />
+                                                                                            </Grid> */}
+
                                                 <Grid
                                                   item
                                                   lg={12}
                                                   sm={12}
                                                   xs={12}
                                                 >
-                                                  <Grid container spacing={2}>
-                                                    <Grid item xs={6} sm={3}>
-                                                      <div style={{ display: "flex", alignItems: "left" }}>
-                                                        <CircleIcon style={{ color: "#E5492F", fontSize: "20px" }} />
-                                                        <Typography variant="subtitle2" sx={{ ml: 0.5 }}>Busy</Typography>
-                                                      </div>
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
-                                                      <div style={{ display: "flex", alignItems: "left" }}>
-                                                        <CircleIcon style={{ color: "#e8e810", fontSize: "20px" }} />
-                                                        <Typography variant="subtitle2" sx={{ ml: 0.5 }}>Leave</Typography>
-                                                      </div>
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
-                                                      <div style={{ display: "flex", alignItems: "left" }}>
-                                                        <CircleIcon style={{ color: "#51DDAB", fontSize: "20px" }} />
-                                                        <Typography variant="subtitle2" sx={{ ml: 0.5 }}>Available</Typography>
-                                                      </div>
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
-                                                      <div style={{ display: "flex", alignItems: "left" }}>
-                                                        <CircleIcon style={{ color: "#9E9E9E", fontSize: "20px" }} />
-                                                        <Typography variant="subtitle2" sx={{ ml: 0.5 }}>Unavailable</Typography>
-                                                      </div>
-                                                    </Grid>
-                                                    <Grid item xs={6} sm={3}>
-                                                      <div style={{ display: "flex", alignItems: "left" }}>
-                                                        <CircleIcon style={{ color: "orange", fontSize: "20px" }} />
-                                                        <Typography variant="subtitle2" sx={{ ml: 0.5 }}>Occupancy</Typography>
-                                                      </div>
-                                                    </Grid>
-                                                  </Grid>
+                                                  <div
+                                                    style={{ display: "flex" }}
+                                                  >
+                                                    <div
+                                                      style={{
+                                                        display: "flex",
+                                                      }}
+                                                    >
+                                                      <CircleIcon
+                                                        style={{
+                                                          color: "#E5492F",
+                                                          fontSize: "20px",
+                                                        }}
+                                                      />
+                                                      <Typography
+                                                        variant="subtitle2"
+                                                        sx={{ ml: 0.5 }}
+                                                      >
+                                                        Busy
+                                                      </Typography>
+                                                    </div>
+                                                    <div
+                                                      style={{
+                                                        display: "flex",
+                                                        marginLeft: "10px",
+                                                      }}
+                                                    >
+                                                      <CircleIcon
+                                                        style={{
+                                                          color: "#FABC23",
+                                                          fontSize: "20px",
+                                                        }}
+                                                      />
+                                                      <Typography
+                                                        variant="subtitle2"
+                                                        sx={{ ml: 0.5 }}
+                                                      >
+                                                        Leave
+                                                      </Typography>
+                                                    </div>
+                                                    <div
+                                                      style={{
+                                                        display: "flex",
+                                                        marginLeft: "10px",
+                                                      }}
+                                                    >
+                                                      <CircleIcon
+                                                        style={{
+                                                          color: "#51DDAB",
+                                                          fontSize: "20px",
+                                                        }}
+                                                      />
+                                                      <Typography
+                                                        variant="subtitle2"
+                                                        sx={{ ml: 0.5 }}
+                                                      >
+                                                        Available
+                                                      </Typography>
+                                                    </div>
+                                                    <div
+                                                      style={{
+                                                        display: "flex",
+                                                        marginLeft: "10px",
+                                                      }}
+                                                    >
+                                                      <CircleIcon
+                                                        style={{
+                                                          color: "#9E9E9E",
+                                                          fontSize: "20px",
+                                                        }}
+                                                      />
+                                                      <Typography
+                                                        variant="subtitle2"
+                                                        sx={{ ml: 0.5 }}
+                                                      >
+                                                        Unavailable
+                                                      </Typography>
+                                                    </div>
+                                                  </div>
                                                 </Grid>
+
                                                 <Grid
                                                   item
                                                   lg={12}
@@ -2752,7 +2955,7 @@ const Viewservice = () => {
                                                   />
                                                 </Grid>
 
-                                                {serviceID === 10 && (
+                                                {serviceID === 12 && (
                                                   <Grid
                                                     item
                                                     lg={12}
@@ -2935,64 +3138,64 @@ const Viewservice = () => {
                                                       </FormControl>
                                                       {viewConvenience ===
                                                         "yes" && (
-                                                          <div
-                                                            style={{
-                                                              display: "flex",
+                                                        <div
+                                                          style={{
+                                                            display: "flex",
+                                                          }}
+                                                        >
+                                                          <TextField
+                                                            required
+                                                            id="convnceCharge"
+                                                            name="convnceCharge"
+                                                            label="Day Convenience"
+                                                            size="small"
+                                                            type="number"
+                                                            value={convnce}
+                                                            onChange={(e) =>
+                                                              setConvnce(
+                                                                e.target.value
+                                                              )
+                                                            }
+                                                            variant="standard"
+                                                            InputLabelProps={{
+                                                              shrink: true,
                                                             }}
-                                                          >
-                                                            <TextField
-                                                              required
-                                                              id="convnceCharge"
-                                                              name="convnceCharge"
-                                                              label="Day Convenience"
-                                                              size="small"
-                                                              type="number"
-                                                              value={convnce}
-                                                              onChange={(e) =>
-                                                                setConvnce(
-                                                                  e.target.value
-                                                                )
-                                                              }
-                                                              variant="standard"
-                                                              InputLabelProps={{
-                                                                shrink: true,
-                                                              }}
-                                                              sx={{
-                                                                textAlign: "left",
-                                                                mt: "10px",
-                                                                "& input": {
-                                                                  fontSize:
-                                                                    "14px",
-                                                                },
-                                                              }}
-                                                            />
-                                                            <TextField
-                                                              required
-                                                              id="convnceCharge"
-                                                              name="convnceCharge"
-                                                              label="Total Convenience"
-                                                              size="small"
-                                                              // value={convnceCharge}
-                                                              // onChange={handleConvnceChargeChange}
-                                                              value={
-                                                                calculateConvnce
-                                                              }
-                                                              variant="standard"
-                                                              InputLabelProps={{
-                                                                shrink: true,
-                                                              }}
-                                                              sx={{
-                                                                textAlign: "left",
-                                                                mt: "10px",
-                                                                ml: 2,
-                                                                "& input": {
-                                                                  fontSize:
-                                                                    "14px",
-                                                                },
-                                                              }}
-                                                            />
-                                                          </div>
-                                                        )}
+                                                            sx={{
+                                                              textAlign: "left",
+                                                              mt: "10px",
+                                                              "& input": {
+                                                                fontSize:
+                                                                  "14px",
+                                                              },
+                                                            }}
+                                                          />
+                                                          <TextField
+                                                            required
+                                                            id="convnceCharge"
+                                                            name="convnceCharge"
+                                                            label="Total Convenience"
+                                                            size="small"
+                                                            // value={convnceCharge}
+                                                            // onChange={handleConvnceChargeChange}
+                                                            value={
+                                                              calculateConvnce
+                                                            }
+                                                            variant="standard"
+                                                            InputLabelProps={{
+                                                              shrink: true,
+                                                            }}
+                                                            sx={{
+                                                              textAlign: "left",
+                                                              mt: "10px",
+                                                              ml: 2,
+                                                              "& input": {
+                                                                fontSize:
+                                                                  "14px",
+                                                              },
+                                                            }}
+                                                          />
+                                                        </div>
+                                                      )}
                                                     </Grid>
                                                   )}
 
@@ -3067,64 +3270,64 @@ const Viewservice = () => {
                                                       </FormControl>
                                                       {viewConvenience ===
                                                         "yes" && (
-                                                          <div
-                                                            style={{
-                                                              display: "flex",
+                                                        <div
+                                                          style={{
+                                                            display: "flex",
+                                                          }}
+                                                        >
+                                                          <TextField
+                                                            required
+                                                            id="convnceCharge"
+                                                            name="convnceCharge"
+                                                            label="Day Convenience"
+                                                            size="small"
+                                                            type="number"
+                                                            value={convnce}
+                                                            onChange={(e) =>
+                                                              setConvnce(
+                                                                e.target.value
+                                                              )
+                                                            }
+                                                            variant="standard"
+                                                            InputLabelProps={{
+                                                              shrink: true,
                                                             }}
-                                                          >
-                                                            <TextField
-                                                              required
-                                                              id="convnceCharge"
-                                                              name="convnceCharge"
-                                                              label="Day Convenience"
-                                                              size="small"
-                                                              type="number"
-                                                              value={convnce}
-                                                              onChange={(e) =>
-                                                                setConvnce(
-                                                                  e.target.value
-                                                                )
-                                                              }
-                                                              variant="standard"
-                                                              InputLabelProps={{
-                                                                shrink: true,
-                                                              }}
-                                                              sx={{
-                                                                textAlign: "left",
-                                                                mt: "10px",
-                                                                "& input": {
-                                                                  fontSize:
-                                                                    "14px",
-                                                                },
-                                                              }}
-                                                            />
-                                                            <TextField
-                                                              required
-                                                              id="convnceCharge"
-                                                              name="convnceCharge"
-                                                              label="Total Convenience"
-                                                              size="small"
-                                                              // value={convnceCharge}
-                                                              // onChange={handleConvnceChargeChange}
-                                                              value={
-                                                                calculateConvnce
-                                                              }
-                                                              variant="standard"
-                                                              InputLabelProps={{
-                                                                shrink: true,
-                                                              }}
-                                                              sx={{
-                                                                textAlign: "left",
-                                                                mt: "10px",
-                                                                ml: 2,
-                                                                "& input": {
-                                                                  fontSize:
-                                                                    "14px",
-                                                                },
-                                                              }}
-                                                            />
-                                                          </div>
-                                                        )}
+                                                            sx={{
+                                                              textAlign: "left",
+                                                              mt: "10px",
+                                                              "& input": {
+                                                                fontSize:
+                                                                  "14px",
+                                                              },
+                                                            }}
+                                                          />
+                                                          <TextField
+                                                            required
+                                                            id="convnceCharge"
+                                                            name="convnceCharge"
+                                                            label="Total Convenience"
+                                                            size="small"
+                                                            // value={convnceCharge}
+                                                            // onChange={handleConvnceChargeChange}
+                                                            value={
+                                                              calculateConvnce
+                                                            }
+                                                            variant="standard"
+                                                            InputLabelProps={{
+                                                              shrink: true,
+                                                            }}
+                                                            sx={{
+                                                              textAlign: "left",
+                                                              mt: "10px",
+                                                              ml: 2,
+                                                              "& input": {
+                                                                fontSize:
+                                                                  "14px",
+                                                              },
+                                                            }}
+                                                          />
+                                                        </div>
+                                                      )}
                                                     </Grid>
                                                   )}
 
@@ -3156,6 +3359,7 @@ const Viewservice = () => {
                                               </Grid>
                                             </Box>
                                           </Modal>
+                                          
                                         </CardContent>
                                         <CardContent style={{ flex: 1 }}>
                                           <Typography
@@ -3565,6 +3769,7 @@ const Viewservice = () => {
                       </Table>
                     </TableContainer>
                     <TablePagination
+                    sx={{overflowY:"hidden"}}
                       rowsPerPageOptions={[4, 10, 25, 100]}
                       component="div"
                       count={professional.length}
@@ -3591,7 +3796,7 @@ const Viewservice = () => {
                     </Button>
                   )}
 
-                  {(flag === 3) && (
+                  {flag === 3 && (
                     <Button
                       variant="contained"
                       startIcon={<HowToRegIcon style={{ fontSize: "25px" }} />}
@@ -3608,40 +3813,91 @@ const Viewservice = () => {
                     </Button>
                   )}
 
-                  {/* {selectedCall === 1 && (
-                    <Button
-                      variant="contained"
-                      startIcon={<HowToRegIcon style={{ fontSize: "25px" }} />}
-                      sx={{
-                        textTransform: "capitalize",
-                        borderRadius: "10px",
-                        width: "22ch",
-                        background: "#69A5EB",
-                      }}
-                      // onClick={handleOpenAllocateRemark}
-                      onClick={handleMultiAllocation1}
-                    >
-                      Allocate
-                    </Button>
-                  )} */}
-
-                  {selectedCallEnq === 1 && (
+                  {selectedCall === 1 && (
                     <>
+                      <Tooltip
+                        title={!zoneID ? "To enable broadcasting please select the zone" : ""}
+                        arrow
+                      >
+                        <span>
+                          <Button
+                            variant="contained"
+                            startIcon={<BroadcastOnPersonalIcon style={{ fontSize: "25px" }} />}
+                            sx={{
+                              textTransform: "capitalize",
+                              borderRadius: "10px",
+                              width: "22ch",
+                              background: "#ca9116",
+                              marginRight: "10px",
+                              "&:hover": {
+                                background: "#ca9116",
+                              },
+                            }}
+                            onClick={handleOpenBroadcast}
+                            disabled={!zoneID}
+                          >
+                            Broadcast
+                          </Button>
+                        </span>
+                      </Tooltip>
+
+                      <Modal
+                        open={openBroadcastModal}
+                        onClose={handleCloseBroadcast}
+                        aria-labelledby="broadcast-modal-title"
+                        aria-describedby="broadcast-modal-description"
+                      >
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            width: 1200,
+                            height: 500,
+                            transform: "translate(-50%, -50%)",
+                            bgcolor: "rgba(255,255,255,0.1)",
+                            backdropFilter: "blur(10px)",
+                            borderRadius: "16px",
+                            boxShadow: 24,
+                            p: 4,
+                            outline: "none",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            position: "relative"
+                          }}
+                        >
+                          <IconButton
+                            onClick={handleCloseBroadcast}
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "white"
+                            }}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+
+                          <Broadcast size={400} zoneID={zoneID} eventPlanID={eventPlanID} eventID={eventID} />
+                        </Box>
+                      </Modal>
+
                       <Button
                         variant="contained"
-                        startIcon={<HowToRegIcon style={{ fontSize: "25px" }} />}
+                        startIcon={
+                          <HowToRegIcon style={{ fontSize: "25px" }} />
+                        }
                         sx={{
                           textTransform: "capitalize",
                           borderRadius: "10px",
                           width: "22ch",
                           background: "#69A5EB",
                         }}
-                        // onClick={handleOpenAllocateRemark}
                         onClick={handleMultiAllocation1}
                       >
-                        Allocate
+                        Create Service
                       </Button>
-
                       <Button
                         variant="contained"
                         color="error"
@@ -3655,11 +3911,117 @@ const Viewservice = () => {
                       >
                         Cancel Service
                       </Button>
+                      <Modal
+                        open={openServiceCancel}
+                        onClose={handleCloseServiceCancel}
+                      >
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            width: 400,
+                            bgcolor: "background.paper",
+                            boxShadow: 24,
+                            p: 3,
+                            borderRadius: "10px",
+                          }}
+                        >
+                          {/* Header Section */}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              mb: 2,
+                            }}
+                          >
+                            <Typography variant="h6" fontWeight="bold">
+                              Cancel Service
+                            </Typography>
+                            <IconButton onClick={handleCloseServiceCancel}>
+                              <CloseIcon />
+                            </IconButton>
+                          </Box>
+
+                          <CancelService eventID={eventID} />
+                        </Box>
+                      </Modal>
                     </>
                   )}
+                  {followUpToAllocate === 2 && (
 
-                  {selectedCall === 1 && (
                     <>
+                       <Tooltip
+                        title={!zoneID ? "To enable broadcasting please select the zone" : ""}
+                        arrow
+                      >
+                        <span>
+                          <Button
+                            variant="contained"
+                            startIcon={<BroadcastOnPersonalIcon style={{ fontSize: "25px" }} />}
+                            sx={{
+                              textTransform: "capitalize",
+                              borderRadius: "10px",
+                              width: "22ch",
+                              background: "#ca9116",
+                              marginRight: "10px",
+                              "&:hover": {
+                                background: "#ca9116",
+                              },
+                            }}
+                            onClick={handleOpenBroadcast}
+                            disabled={!zoneID}
+                          >
+                            Broadcast
+                          </Button>
+                        </span>
+                      </Tooltip>
+
+                      <Modal
+                        open={openBroadcastModal}
+                        onClose={handleCloseBroadcast}
+                        aria-labelledby="broadcast-modal-title"
+                        aria-describedby="broadcast-modal-description"
+                      >
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            width: 1200,
+                            height: 500,
+                            transform: "translate(-50%, -50%)",
+                            bgcolor: "rgba(255,255,255,0.1)",
+                            backdropFilter: "blur(10px)",
+                            borderRadius: "16px",
+                            boxShadow: 24,
+                            p: 4,
+                            outline: "none",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            position: "relative"
+                          }}
+                        >
+                          <IconButton
+                            onClick={handleCloseBroadcast}
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "white"
+                            }}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+
+                          <Broadcast size={400} zoneID={zoneID} eventPlanID={eventPlanID} eventID={eventID} />
+                        </Box>
+                      </Modal>
+
+                    
                       <Button
                         variant="contained"
                         startIcon={
@@ -3736,8 +4098,279 @@ const Viewservice = () => {
                     </>
                   )}
 
-                  {ServicetoEnquiry === 1 && (
+                  {callTy === 2 && (
                     <>
+                     <Tooltip
+                        title={!zoneID ? "To enable broadcasting please select the zone" : ""}
+                        arrow
+                      >
+                        <span>
+                          <Button
+                            variant="contained"
+                            startIcon={<BroadcastOnPersonalIcon style={{ fontSize: "25px" }} />}
+                            sx={{
+                              textTransform: "capitalize",
+                              borderRadius: "10px",
+                              width: "22ch",
+                              background: "#ca9116",
+                              marginRight: "10px",
+                              "&:hover": {
+                                background: "#ca9116",
+                              },
+                            }}
+                            onClick={handleOpenBroadcast}
+                            disabled={!zoneID}
+                          >
+                            Broadcast
+                          </Button>
+                        </span>
+                      </Tooltip>
+
+                      <Modal
+                        open={openBroadcastModal}
+                        onClose={handleCloseBroadcast}
+                        aria-labelledby="broadcast-modal-title"
+                        aria-describedby="broadcast-modal-description"
+                      >
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            width: 1200,
+                            height: 500,
+                            transform: "translate(-50%, -50%)",
+                            bgcolor: "rgba(255,255,255,0.1)",
+                            backdropFilter: "blur(10px)",
+                            borderRadius: "16px",
+                            boxShadow: 24,
+                            p: 4,
+                            outline: "none",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            position: "relative"
+                          }}
+                        >
+                          <IconButton
+                            onClick={handleCloseBroadcast}
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "white"
+                            }}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+
+                          <Broadcast size={400} zoneID={zoneID} eventPlanID={eventPlanID} eventID={eventID} />
+                        </Box>
+                      </Modal>
+                      <Button
+                        variant="contained"
+                        startIcon={
+                          <HowToRegIcon style={{ fontSize: "25px" }} />
+                        }
+                        sx={{
+                          textTransform: "capitalize",
+                          borderRadius: "10px",
+                          width: "22ch",
+                          background: "#69A5EB",
+                        }}
+                        onClick={handleMultiAllocation1}
+                      >
+                        Create Service
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        color="success"
+                        sx={{
+                          textTransform: "capitalize",
+                          borderRadius: "10px",
+                          width: "22ch",
+                          marginLeft: "10px",
+                        }}
+                        onClick={handleSaveEnquiry}
+                      >
+                        Save Enquiry
+                      </Button>
+                    </>
+                  )}
+
+                    {selectedCall === 2 && (
+                    <>
+                       <Tooltip
+                        title={!zoneID ? "To enable broadcasting please select the zone" : ""}
+                        arrow
+                      >
+                        <span>
+                          <Button
+                            variant="contained"
+                            startIcon={<BroadcastOnPersonalIcon style={{ fontSize: "25px" }} />}
+                            sx={{
+                              textTransform: "capitalize",
+                              borderRadius: "10px",
+                              width: "22ch",
+                              background: "#ca9116",
+                              marginRight: "10px",
+                              "&:hover": {
+                                background: "#ca9116",
+                              },
+                            }}
+                            onClick={handleOpenBroadcast}
+                            disabled={!zoneID}
+                          >
+                            Broadcast
+                          </Button>
+                        </span>
+                      </Tooltip>
+
+                      <Modal
+                        open={openBroadcastModal}
+                        onClose={handleCloseBroadcast}
+                        aria-labelledby="broadcast-modal-title"
+                        aria-describedby="broadcast-modal-description"
+                      >
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            width: 1200,
+                            height: 500,
+                            transform: "translate(-50%, -50%)",
+                            bgcolor: "rgba(255,255,255,0.1)",
+                            backdropFilter: "blur(10px)",
+                            borderRadius: "16px",
+                            boxShadow: 24,
+                            p: 4,
+                            outline: "none",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            position: "relative"
+                          }}
+                        >
+                          <IconButton
+                            onClick={handleCloseBroadcast}
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "white"
+                            }}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+
+                          <Broadcast size={400} zoneID={zoneID} eventPlanID={eventPlanID} eventID={eventID} />
+                        </Box>
+                      </Modal>
+                      <Button
+                        variant="contained"
+                        startIcon={
+                          <HowToRegIcon style={{ fontSize: "25px" }} />
+                        }
+                        sx={{
+                          textTransform: "capitalize",
+                          borderRadius: "10px",
+                          width: "22ch",
+                          background: "#69A5EB",
+                        }}
+                        onClick={handleMultiAllocation1}
+                      >
+                        Create Service
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        color="success"
+                        sx={{
+                          textTransform: "capitalize",
+                          borderRadius: "10px",
+                          width: "22ch",
+                          marginLeft: "10px",
+                        }}
+                        onClick={handleSaveEnquiry}
+                      >
+                        Save Enquiry
+                      </Button>
+                    </>
+                  )}
+
+                  {ServicetoEnquiry === 1 &&   (
+                    <>
+
+                      <Tooltip
+                        title={!zoneID ? "To enable broadcasting please select the zone" : ""}
+                        arrow
+                      >
+                        <span>
+                          <Button
+                            variant="contained"
+                            startIcon={<BroadcastOnPersonalIcon style={{ fontSize: "25px" }} />}
+                            sx={{
+                              textTransform: "capitalize",
+                              borderRadius: "10px",
+                              width: "22ch",
+                              background: "#ca9116",
+                              marginRight: "10px",
+                              "&:hover": {
+                                background: "#ca9116",
+                              },
+                            }}
+                            onClick={handleOpenBroadcast}
+                            disabled={!zoneID}
+                          >
+                            Broadcast
+                          </Button>
+                        </span>
+                      </Tooltip>
+
+                      <Modal
+                        open={openBroadcastModal}
+                        onClose={handleCloseBroadcast}
+                        aria-labelledby="broadcast-modal-title"
+                        aria-describedby="broadcast-modal-description"
+                      >
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            width: 1200,
+                            height: 500,
+                            transform: "translate(-50%, -50%)",
+                            bgcolor: "rgba(255,255,255,0.1)",
+                            backdropFilter: "blur(10px)",
+                            borderRadius: "16px",
+                            boxShadow: 24,
+                            p: 4,
+                            outline: "none",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            position: "relative"
+                          }}
+                        >
+                          <IconButton
+                            onClick={handleCloseBroadcast}
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "white"
+                            }}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+
+                          <Broadcast size={400} zoneID={zoneID} eventPlanID={eventPlanID} eventID={eventID} />
+                        </Box>
+                      </Modal>
+
                       <Button
                         variant="contained"
                         startIcon={
@@ -3815,6 +4448,78 @@ const Viewservice = () => {
 
                   {srvExtendSrvPurpId === 1 && (
                     <>
+                       <Tooltip
+                        title={!zoneID ? "To enable broadcasting please select the zone" : ""}
+                        arrow
+                      >
+                        <span>
+                          <Button
+                            variant="contained"
+                            startIcon={<BroadcastOnPersonalIcon style={{ fontSize: "25px" }} />}
+                            sx={{
+                              textTransform: "capitalize",
+                              borderRadius: "10px",
+                              width: "22ch",
+                              background: "#ca9116",
+                              marginRight: "10px",
+                              "&:hover": {
+                                background: "#ca9116",
+                              },
+                            }}
+                            onClick={handleOpenBroadcast}
+                            disabled={!zoneID}
+                          >
+                            Broadcast
+                          </Button>
+                        </span>
+                      </Tooltip>
+
+
+                      <Modal
+                        open={openBroadcastModal}
+                        onClose={handleCloseBroadcast}
+                        aria-labelledby="broadcast-modal-title"
+                        aria-describedby="broadcast-modal-description"
+                      >
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            width: 1200,
+                            height: 500,
+                            transform: "translate(-50%, -50%)",
+                            bgcolor: "rgba(255,255,255,0.1)",
+                            backdropFilter: "blur(10px)",
+                            borderRadius: "16px",
+                            boxShadow: 24,
+                            p: 4,
+                            outline: "none",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            position: "relative"
+                          }}
+                        >
+                          <IconButton
+                            onClick={handleCloseBroadcast}
+                            sx={{
+                              position: "absolute",
+                              top: 8,
+                              right: 8,
+                              color: "white"
+                            }}
+                          >
+                            <CloseIcon />
+                          </IconButton>
+
+                          <Broadcast size={400} zoneID={zoneID} eventPlanID={eventPlanID} eventID={eventID} />
+                        </Box>
+                      </Modal>
+
+
+
+
                       <Button
                         variant="contained"
                         startIcon={
@@ -3890,40 +4595,6 @@ const Viewservice = () => {
                     </>
                   )}
 
-                  {selectedCall === 2 && (
-                    <>
-                      <Button
-                        variant="contained"
-                        startIcon={
-                          <HowToRegIcon style={{ fontSize: "25px" }} />
-                        }
-                        sx={{
-                          textTransform: "capitalize",
-                          borderRadius: "10px",
-                          width: "22ch",
-                          background: "#69A5EB",
-                        }}
-                        onClick={handleMultiAllocation1}
-                      >
-                        Create Service
-                      </Button>
-
-                      <Button
-                        variant="contained"
-                        color="success"
-                        sx={{
-                          textTransform: "capitalize",
-                          borderRadius: "10px",
-                          width: "22ch",
-                          marginLeft: "10px",
-                        }}
-                        onClick={handleSaveEnquiry}
-                      >
-                        Save Enquiry
-                      </Button>
-                    </>
-                  )}
-
                   <Snackbar
                     open={openSnackbar}
                     autoHideDuration={6000}
@@ -3959,7 +4630,7 @@ const Viewservice = () => {
           </Grid>
         </Box>
 
-        {/* ====================Remark Modal============== */}
+         {/* ====================Remark Modal============== */}
         <Modal
           open={openAllocateRemark}
           onClose={handleCloseAllocateRemark}
@@ -4012,7 +4683,7 @@ const Viewservice = () => {
                   borderRadius: "8px",
                 }}
                 onClick={() => handleMultiAllocation()}
-              // onClick={() => handleCloseAllocateRemark}
+                // onClick={() => handleCloseAllocateRemark}
               >
                 Submit
               </Button>

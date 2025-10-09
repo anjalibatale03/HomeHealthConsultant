@@ -279,7 +279,7 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
             <TabContext value={value}>
                 <Box sx={{
                     typography: 'body1',
-                    background: "#F2F2F2",
+                    background: "#white",
                     borderRadius: '10px',
                     width: "auto",
                     height: "3rem",
@@ -508,15 +508,15 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
 
                             <Grid item lg={12} sm={12} xs={12}>
                                 {selectedOption === '2' ? (
-                                    <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: '#7AB8EE', borderRadius: "12px", textTransform: "capitalize" }} onClick={handleCancelSubmit}>
+                                    <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: 'rgb(52, 123, 137)', borderRadius: "12px", textTransform: "capitalize" }} onClick={handleCancelSubmit}>
                                         Close Enquiry
                                     </Button>
                                 ) : selectedOption === '3' ? (
-                                    <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: '#7AB8EE', borderRadius: "12px", textTransform: "capitalize" }} onClick={handleCreateServiceSubmit}>
+                                    <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: 'rgb(52, 123, 137)', borderRadius: "12px", textTransform: "capitalize" }} onClick={handleCreateServiceSubmit}>
                                         Go to Service
                                     </Button>
                                 ) : (
-                                    <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: '#7AB8EE', borderRadius: "12px", textTransform: "capitalize" }} onClick={handleFollowupSubmit}>
+                                    <Button variant="contained" sx={{ m: 1, width: '30ch', backgroundColor: 'rgb(52, 123, 137)', borderRadius: "12px", textTransform: "capitalize" }} onClick={handleFollowupSubmit}>
                                         Keep in Followup
                                     </Button>
                                 )}

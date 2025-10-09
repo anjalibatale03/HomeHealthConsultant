@@ -12,7 +12,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Box, Typography } from '@mui/material';
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import ImageIcon from "@mui/icons-material/Image";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import VideocamIcon from '@mui/icons-material/Videocam';
 
 function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profClgId, getProfessionalListForChat, setProfessionalListChat }) {
     console.log(selectedId, 'selectedId');
@@ -28,8 +28,8 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
     useEffect(() => {
         if (selectedId) {
             createGroup();
+            fetchProfessionalDetails(selectedId);
         }
-
         return () => {
             clearInterval(intervalRef.current);
         };
@@ -70,9 +70,9 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                 //     )
                 // );
 
-                intervalRef.current = setInterval(() => {
-                    fetchProfessionalDetails(selectedId);
-                }, 1000);
+                // intervalRef.current = setInterval(() => {
+                //     fetchProfessionalDetails(selectedId);
+                // }, 1000);
             }
         } catch (error) {
             console.error("Group creation failed:", error);
@@ -212,7 +212,12 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
     const handleSend = async () => {
         // TEXT MESSAGE ONLY
         if (!recording && input.trim() && !selectedImage) {
-            const newMessage = { id: 0, message: input, msg_type: 1 };
+            const newMessage = {
+                id: 0,
+                message: input,
+                msg_type: 1,
+                time: formatTime(new Date())
+            };
             setMessages((prev) => [...prev, newMessage]);
             const messageToSend = input;
             setInput("");
@@ -269,6 +274,7 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                 msg_file: previewUrl,
                 message: input || "",
                 sending: true,
+                time: formatTime(new Date())
             };
             setMessages((prev) => [...prev, previewMessage]);
 
@@ -326,13 +332,159 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
             }
         }
 
+        // VIDEO MESSAGE (with or without text)
+        else if (selectedVideo && selectedVideo.type.startsWith("video/")) {
+            console.log("Selected video file:", selectedVideo);
+            const formData = new FormData();
+            formData.append("group", profClgId);
+            formData.append("sender", clgId);
+            formData.append("msg_type", 3);
+            formData.append("message", input || "");
+            formData.append("msg_file", selectedVideo);
+
+            const previewMessage = {
+                id: 0,
+                msg_type: 3,
+                msg_file: previewUrl,
+                message: "",
+                sending: true,
+                time: formatTime(new Date())
+            };
+            setMessages((prev) => [...prev, previewMessage]);
+
+            try {
+                const response = await fetch(`${port}/web/chat/messages/send/`, {
+                    method: "POST",
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) throw new Error("Failed to send video");
+
+                const resData = await response.json();
+
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg === previewMessage
+                            ? {
+                                ...msg,
+                                id: resData?.id || 0,
+                                msg_file: resData?.msg_file || msg.msg_file,
+                                sending: false,
+                            }
+                            : msg
+                    )
+                );
+
+                setInput("");
+                setSelectedVideo(null);
+                setPreviewUrl(null);
+                setFileName("");
+
+                setProfessionalListChat((prevList) => {
+                    const updatedList = prevList.map((item) =>
+                        item.prof_clg_id === profClgId
+                            ? {
+                                ...item,
+                                msg_count: item.msg_count || 0,
+                                last_message: "🎥 Video",
+                                last_msg_time: new Date().toISOString(),
+                            }
+                            : item
+                    );
+
+                    const updatedItem = updatedList.find((item) => item.prof_clg_id === profClgId);
+                    const others = updatedList.filter((item) => item.prof_clg_id !== profClgId);
+                    return [updatedItem, ...others];
+                });
+
+            } catch (error) {
+                console.error("Error sending video message:", error);
+            }
+        }
+
+        else if (selectedPDF) {
+            const formData = new FormData();
+            formData.append("group", profClgId);
+            formData.append("sender", clgId);
+            formData.append("msg_type", 5); // 5 for document
+            formData.append("message", input || "");
+            formData.append("msg_file", selectedPDF);
+
+            const previewMessage = {
+                id: 0,
+                msg_type: 5,
+                msg_file: "",
+                message: input || "",
+                pdfName: fileName,
+                sending: true,
+                time: formatTime(new Date())
+            };
+            setMessages((prev) => [...prev, previewMessage]);
+
+            try {
+                const response = await fetch(`${port}/web/chat/messages/send/`, {
+                    method: "POST",
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) throw new Error("Failed to send document");
+
+                const resData = await response.json();
+
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg === previewMessage
+                            ? {
+                                ...msg,
+                                id: resData?.id || 0,
+                                msg_file: resData?.msg_file || "",
+                                sending: false,
+                            }
+                            : msg
+                    )
+                );
+
+                setInput("");
+                setSelectedPDF(null);
+                setPDFPreviewName("");
+                setFileName("");
+
+                // Update chat list
+                setProfessionalListChat((prevList) => {
+                    const updatedList = prevList.map((item) =>
+                        item.prof_clg_id === profClgId
+                            ? {
+                                ...item,
+                                msg_count: item.msg_count || 0,
+                                last_message: "📄 Document",
+                                last_msg_time: new Date().toISOString(),
+                            }
+                            : item
+                    );
+
+                    const updatedItem = updatedList.find((item) => item.prof_clg_id === profClgId);
+                    const others = updatedList.filter((item) => item.prof_clg_id !== profClgId);
+                    return [updatedItem, ...others];
+                });
+
+            } catch (error) {
+                console.error("Error sending document message:", error);
+            }
+        }
+
         // AUDIO MESSAGE
         else if (recordedBlob) {
             const formData = new FormData();
             formData.append("group", profClgId);
             formData.append("sender", clgId);
             formData.append("msg_type", 2);
-            formData.append("message", "");
+            formData.append("message", input || "");
             formData.append("msg_file", recordedBlob, "audio_message.webm");
 
             try {
@@ -435,11 +587,6 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
         }
         setRecording(true);
     };
-
-    const stopAndSend = () => {
-        setRecording(false);
-    };
-
     const [stream, setStream] = useState(null);
 
     const startRecording = async () => {
@@ -480,6 +627,7 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
     const iconRef = useRef(null);
     const pdfInputRef = useRef(null);
     const imageInputRef = useRef(null);
+    const videoInputRef = useRef(null);
     const [fileName, setFileName] = useState("");
     const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -490,26 +638,53 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
     const handlePDFClick = () => {
         pdfInputRef.current.click();
     };
+
     const handleImageClick = () => {
         imageInputRef.current.click();
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreviewImage(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        if (file && file.type === 'application/pdf') {
-        }
+    const handleVideoClick = () => {
+        videoInputRef.current.click();
     };
 
+    const [selectedPDF, setSelectedPDF] = useState(null);
+    const [pdfPreviewName, setPDFPreviewName] = useState("");
+
+    const handlePDFFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file && file.type === "application/pdf") {
+            setPDFPreviewName(file.name);
+            setFileName(file.name);
+            setSelectedPDF(file);
+            setPreviewUrl(null);
+            setOpenModal(false);
+        }
+    };
     const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedVideo, setSelectedVideo] = useState(null);
     const [zoomLevel, setZoomLevel] = useState(1);
+
+    const handlePaste = (event) => {
+        if (event.clipboardData && event.clipboardData.items) {
+            for (let i = 0; i < event.clipboardData.items.length; i++) {
+                const item = event.clipboardData.items[i];
+                if (item.type.indexOf("image") !== -1) {
+                    const file = item.getAsFile();
+                    if (file) {
+                        const url = URL.createObjectURL(file);
+                        setFileName(file.name || "clipboard-image.png");
+                        setPreviewUrl(url);
+                        setSelectedImage(file);
+                        setSelectedVideo(null);
+                        setSelectedPDF(null);
+                        setPDFPreviewName("");
+                    }
+                    event.preventDefault();
+                    break;
+                }
+            }
+        }
+    };
 
     const handleImageFileChange = (event) => {
         const file = event.target.files[0];
@@ -526,6 +701,78 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
         }
 
         setOpenModal(false);
+    };
+
+    const handleVideoFileChange = (event) => {
+        const file = event.target.files[0];
+
+        if (file && file.type.startsWith("video/")) {
+            const url = URL.createObjectURL(file);
+            setFileName(file.name);
+            setPreviewUrl(url);
+            setSelectedVideo(file);
+        } else {
+            setFileName("");
+            setPreviewUrl(null);
+            setSelectedVideo(null);
+        }
+
+        setOpenModal(false);
+    };
+
+    /// Drag and Drop
+    const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            const file = e.dataTransfer.files[0];
+            if (file.type.startsWith("image/")) {
+                const url = URL.createObjectURL(file);
+                setFileName(file.name);
+                setPreviewUrl(url);
+                setSelectedImage(file);
+                setSelectedVideo(null);
+                setSelectedPDF(null);
+                setPDFPreviewName("");
+            } else if (file.type.startsWith("video/")) {
+                const url = URL.createObjectURL(file);
+                setFileName(file.name);
+                setPreviewUrl(url);
+                setSelectedVideo(file);
+                setSelectedImage(null);
+                setSelectedPDF(null);
+                setPDFPreviewName("");
+            } else if (file.type === "application/pdf") {
+                setFileName(file.name);
+                setSelectedPDF(file);
+                setPreviewUrl(null);
+                setSelectedImage(null);
+                setSelectedVideo(null);
+                setPDFPreviewName(file.name);
+            } else {
+                setFileName("");
+                setPreviewUrl(null);
+                setSelectedImage(null);
+                setSelectedVideo(null);
+                setSelectedPDF(null);
+                setPDFPreviewName("");
+            }
+        }
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    const handleDragEnter = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
     };
 
     return (
@@ -571,7 +818,7 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                         width: '180px',
                     }}
                 >
-                    {/* <Box
+                    <Box
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
@@ -599,11 +846,11 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                             ref={pdfInputRef}
                             type="file"
                             accept=".pdf"
-                            onChange={handleFileChange}
+                            onChange={handlePDFFileChange}
                             style={{ display: 'none' }}
                         />
                         <span style={{ fontSize: '14px' }}>Document</span>
-                    </Box> */}
+                    </Box>
 
                     <Box
                         sx={{
@@ -620,7 +867,7 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                     >
                         <ImageIcon
                             sx={{
-                                color: 'blue',
+                                color: '#e91e63',
                                 padding: '6px',
                                 borderRadius: '50%',
                                 fontSize: '32px',
@@ -634,10 +881,10 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                             onChange={handleImageFileChange}
                             style={{ display: 'none' }}
                         />
-                        <span style={{ fontSize: '14px' }}>Photos</span>
+                        <span style={{ fontSize: '14px' }}>Image</span>
                     </Box>
 
-                    {/* <Box
+                    <Box
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
@@ -648,11 +895,11 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                                 backgroundColor: '#f3e5f5',
                             },
                         }}
-                        onClick={handleImageClick}
+                        onClick={handleVideoClick}
                     >
-                        <ImageIcon
+                        <VideocamIcon
                             sx={{
-                                color: 'blue',
+                                color: '#1976d2',
                                 padding: '6px',
                                 borderRadius: '50%',
                                 fontSize: '32px',
@@ -660,14 +907,14 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                             }}
                         />
                         <input
-                            ref={imageInputRef}
+                            ref={videoInputRef}
                             type="file"
-                            accept="image/*"
-                            onChange={handleImageFileChange}
+                            accept="video/*"
+                            onChange={handleVideoFileChange}
                             style={{ display: 'none' }}
                         />
                         <span style={{ fontSize: '14px' }}>Videos</span>
-                    </Box> */}
+                    </Box>
                 </Box>
             )}
 
@@ -733,6 +980,10 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                         scrollbarWidth: "none",
                         msOverflowStyle: "none",
                     }}
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    onDragEnter={handleDragEnter}
+                    onDragLeave={handleDragLeave}
                 >
                     {messages.length === 0 ? (
                         <div
@@ -751,9 +1002,10 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                                 {fileName ?
                                     (
                                         <>
-                                            {fileName && previewUrl && (
+                                            {fileName && (previewUrl || selectedPDF) && (
                                                 <>
-                                                    {fileName && previewUrl && (
+                                                    {/* Image Preview */}
+                                                    {previewUrl && !selectedPDF && (
                                                         <Box
                                                             sx={{
                                                                 display: "inline-block",
@@ -765,7 +1017,6 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                                                                 textAlign: "center",
                                                             }}
                                                         >
-                                                            {/* Image Preview */}
                                                             <img
                                                                 src={previewUrl}
                                                                 alt="Preview"
@@ -776,20 +1027,61 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                                                                     marginBottom: "4px",
                                                                 }}
                                                             />
-
-                                                            {/* File Name */}
                                                             <Typography
                                                                 variant="body2"
                                                                 sx={{ fontSize: "12px", color: "#444", mb: 1 }}
                                                             >
                                                                 {fileName}
                                                             </Typography>
-
-                                                            {/* Close Button Below */}
                                                             <Box
                                                                 onClick={() => {
                                                                     setFileName("");
                                                                     setPreviewUrl(null);
+                                                                    fetchProfessionalDetails();
+                                                                }}
+                                                                sx={{
+                                                                    display: "inline-flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    backgroundColor: "#fff",
+                                                                    borderRadius: "16px",
+                                                                    padding: "4px 12px",
+                                                                    fontSize: "14px",
+                                                                    fontWeight: "bold",
+                                                                    cursor: "pointer",
+                                                                    boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                                                                    color: "#000",
+                                                                    "&:hover": {
+                                                                        backgroundColor: "#f0f0f0",
+                                                                    },
+                                                                }}
+                                                            >
+                                                                Close ×
+                                                            </Box>
+                                                        </Box>
+                                                    )}
+
+                                                    {selectedPDF && (
+                                                        <Box
+                                                            sx={{
+                                                                display: "inline-block",
+                                                                padding: "8px",
+                                                                borderRadius: "12px",
+                                                                backgroundColor: "#f5f5f5",
+                                                                boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                                                                maxWidth: "350px",
+                                                                textAlign: "center",
+                                                            }}
+                                                        >
+                                                            <InsertDriveFileIcon sx={{ color: "green", fontSize: 48, mb: 1 }} />
+                                                            <Typography variant="body2" sx={{ fontSize: "12px", color: "#444", mb: 1 }}>
+                                                                {fileName}
+                                                            </Typography>
+                                                            <Box
+                                                                onClick={() => {
+                                                                    setFileName("");
+                                                                    setSelectedPDF(null);
+                                                                    setPDFPreviewName("");
                                                                     fetchProfessionalDetails();
                                                                 }}
                                                                 sx={{
@@ -907,56 +1199,120 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                                                                                 marginRight: msg.id === 0 ? 8 : 5,
                                                                             }}
                                                                         >
-                                                                            {msg.msg_type === 1 && msg.message ? (
-                                                                                <>{msg.message}</>
-                                                                            ) : msg.msg_type === 2 && msg.msg_file ? (
-                                                                                <audio
-                                                                                    controls
-                                                                                    style={{ maxWidth: "200px", height: "25px" }}
-                                                                                    onPlay={(e) => {
-                                                                                        const audioUrl = `${port}${msg.msg_file}`;
-                                                                                        if (e.target.src !== audioUrl) {
-                                                                                            e.target.src = audioUrl;
-                                                                                            e.target.play();
-                                                                                        }
-                                                                                    }}
-                                                                                >
-                                                                                    <source src={`${port}${msg.msg_file}`} type="audio/webm" />
-                                                                                    Your browser does not support the audio element.
-                                                                                </audio>
-                                                                            ) : msg.msg_type === 4 && msg.msg_file ? (
-                                                                                <div>
-                                                                                    <div style={{ borderRadius: "12px", maxWidth: "270px" }}>
-                                                                                        <img
-                                                                                            src={
-                                                                                                msg.msg_file.startsWith("blob:")
-                                                                                                    ? msg.msg_file
-                                                                                                    : `${port}${msg.msg_file}`
-                                                                                            }
-                                                                                            alt="Sent"
-                                                                                            onClick={() => {
-                                                                                                setSelectedImage(
-                                                                                                    msg.msg_file.startsWith("blob:")
-                                                                                                        ? msg.msg_file
-                                                                                                        : `${port}${msg.msg_file}`
-                                                                                                );
-                                                                                                setZoomLevel(1);
+                                                                            {
+                                                                                msg.msg_type === 1 && msg.message ? (
+                                                                                    <>{msg.message}</>
+                                                                                )
+                                                                                    :
+                                                                                    msg.msg_type === 2 && msg.msg_file ? (
+                                                                                        <audio
+                                                                                            controls
+                                                                                            controlsList="nodownload noplaybackrate nofullscreen"
+                                                                                            style={{ maxWidth: "200px", height: "25px" }}
+                                                                                            preload="none"
+                                                                                            onContextMenu={(e) => e.preventDefault()}
+                                                                                            onPlay={(e) => {
+                                                                                                const audioUrl = `${port}${msg.msg_file}`;
+                                                                                                if (e.target.src !== audioUrl) {
+                                                                                                    e.target.src = audioUrl;
+                                                                                                    e.target.play();
+                                                                                                }
                                                                                             }}
-                                                                                            style={{
-                                                                                                // maxWidth: "270px",
-                                                                                                width: msg.id !== 0 ? "120px" : "220px", 
-                                                                                                height: "150px",
-                                                                                                borderRadius: "8px",
-                                                                                                marginRight: "-0px",
-                                                                                                cursor: "pointer",
-                                                                                            }}
-                                                                                        />
-                                                                                    </div>
-                                                                                    {msg.message && (
-                                                                                        <div style={{ marginTop: 4 }}>{msg.message}</div>
-                                                                                    )}
-                                                                                </div>
-                                                                            ) : null}
+                                                                                        >
+                                                                                            <source src={`${port}${msg.msg_file}`} type="audio/webm" />
+                                                                                            Your browser does not support the audio element.
+                                                                                        </audio>
+                                                                                    )
+                                                                                        :
+                                                                                        msg.msg_type === 4 && msg.msg_file ? (
+                                                                                            <div>
+                                                                                                <div style={{ borderRadius: "12px", maxWidth: "270px" }}>
+                                                                                                    <img
+                                                                                                        src={
+                                                                                                            msg.msg_file.startsWith("blob:")
+                                                                                                                ? msg.msg_file
+                                                                                                                : `${port}${msg.msg_file}`
+                                                                                                        }
+                                                                                                        alt="Sent"
+                                                                                                        onClick={() => {
+                                                                                                            setSelectedVideo(
+                                                                                                                msg.msg_file.startsWith("blob:")
+                                                                                                                    ? msg.msg_file
+                                                                                                                    : `${port}${msg.msg_file}`
+                                                                                                            );
+                                                                                                            setZoomLevel(1);
+                                                                                                        }}
+                                                                                                        style={{
+                                                                                                            // maxWidth: "270px",
+                                                                                                            width: msg.id !== 0 ? "120px" : "220px",
+                                                                                                            height: "150px",
+                                                                                                            borderRadius: "8px",
+                                                                                                            marginRight: "-0px",
+                                                                                                            cursor: "pointer",
+                                                                                                        }}
+                                                                                                    />
+                                                                                                </div>
+                                                                                                {msg.message && (
+                                                                                                    <div style={{ marginTop: 4 }}>{msg.message}</div>
+                                                                                                )}
+                                                                                            </div>
+                                                                                        )
+                                                                                            :
+                                                                                            msg.msg_type === 3 && msg.msg_file ? (
+                                                                                                <div>
+                                                                                                    <video
+                                                                                                        width={msg.id !== 0 ? "120" : "220"}
+                                                                                                        height="150"
+                                                                                                        controls
+                                                                                                        style={{
+                                                                                                            borderRadius: "8px",
+                                                                                                            cursor: "pointer",
+                                                                                                            backgroundColor: "#000",
+                                                                                                        }}
+                                                                                                        onContextMenu={(e) => e.preventDefault()}
+                                                                                                    >
+                                                                                                        <source
+                                                                                                            src={
+                                                                                                                msg.msg_file.startsWith("blob:")
+                                                                                                                    ? msg.msg_file
+                                                                                                                    : `${port}${msg.msg_file}`
+                                                                                                            }
+                                                                                                            type="video/mp4"
+                                                                                                        />
+                                                                                                        Your browser does not support the video tag.
+                                                                                                    </video>
+                                                                                                    {msg.message && (
+                                                                                                        <div style={{ marginTop: 4 }}>{msg.message}</div>
+                                                                                                    )}
+                                                                                                </div>
+                                                                                            )
+                                                                                                :
+                                                                                                msg.msg_type === 5 && msg.msg_file ? (
+                                                                                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                                                                                        <InsertDriveFileIcon sx={{ color: "green", fontSize: 32 }} />
+                                                                                                        <a
+                                                                                                            href={msg.msg_file.startsWith("blob:") ? msg.msg_file : `${port}${msg.msg_file}`}
+                                                                                                            target="_blank"
+                                                                                                            rel="noopener noreferrer"
+                                                                                                            style={{
+                                                                                                                color: "#1976d2",
+                                                                                                                fontWeight: "bold",
+                                                                                                                textDecoration: "underline",
+                                                                                                                fontSize: "13px",
+                                                                                                                wordBreak: "break-all",
+                                                                                                            }}
+                                                                                                            download={msg.pdfName || (msg.msg_file ? msg.msg_file.split('/').pop() : "document.pdf")}
+                                                                                                        >
+                                                                                                            {msg.pdfName || (msg.msg_file ? msg.msg_file.split('/').pop() : "Document")}
+                                                                                                        </a>
+                                                                                                        {msg.message && (
+                                                                                                            <div style={{ marginLeft: 8, fontSize: "12px" }}>{msg.message}</div>
+                                                                                                        )}
+                                                                                                    </div>
+                                                                                                )
+                                                                                                    :
+                                                                                                    null
+                                                                            }
                                                                         </div>
                                                                     </div>
 
@@ -1008,100 +1364,231 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                                                 }}
                                             />
 
-                                            {
-                                                selectedImage && (
+                                            {selectedImage && (
+                                                <div
+                                                    style={{
+                                                        position: "fixed",
+                                                        top: 0,
+                                                        left: 0,
+                                                        width: "100vw",
+                                                        height: "100vh",
+                                                        backgroundColor: "rgba(0, 0, 0, 0.75)",
+                                                        display: "flex",
+                                                        justifyContent: "center",
+                                                        alignItems: "center",
+                                                        zIndex: 9999,
+                                                        padding: 20,
+                                                        boxSizing: "border-box",
+                                                    }}
+                                                    onClick={() => setSelectedImage(null)}
+                                                >
                                                     <div
                                                         style={{
-                                                            position: "fixed",
-                                                            top: 0,
-                                                            left: 0,
-                                                            width: "100vw",
-                                                            height: "100vh",
-                                                            backgroundColor: "rgba(0, 0, 0, 0.75)",
+                                                            maxWidth: "80vw",
+                                                            maxHeight: "90vh",
+                                                            overflow: "auto",
                                                             display: "flex",
                                                             justifyContent: "center",
                                                             alignItems: "center",
-                                                            zIndex: 9999,
-                                                            padding: 20,
-                                                            boxSizing: "border-box",
                                                         }}
-                                                        onClick={() => setSelectedImage(null)}
+                                                        onClick={(e) => e.stopPropagation()}
                                                     >
-                                                        {/* Wrapper to constrain image area and prevent overflow */}
-                                                        <div
+                                                        <img
+                                                            src={selectedImage}
+                                                            alt="Preview"
                                                             style={{
-                                                                maxWidth: "80vw",
-                                                                maxHeight: "90vh",
-                                                                overflow: "auto",
-                                                                display: "flex",
-                                                                justifyContent: "center",
-                                                                alignItems: "center",
+                                                                transform: `scale(${zoomLevel})`,
+                                                                transition: "transform 0.3s ease",
+                                                                maxWidth: "100%",
+                                                                maxHeight: "100%",
+                                                                borderRadius: "8px",
+                                                                objectFit: "contain",
                                                             }}
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            <img
-                                                                src={selectedImage}
-                                                                alt="Preview"
-                                                                style={{
-                                                                    transform: `scale(${zoomLevel})`,
-                                                                    transition: "transform 0.3s ease",
-                                                                    maxWidth: "100%",
-                                                                    maxHeight: "100%",
-                                                                    borderRadius: "8px",
-                                                                    objectFit: "contain",
-                                                                }}
-                                                            />
-                                                        </div>
-
-                                                        {/* Button Column */}
-                                                        <div
-                                                            style={{
-                                                                display: "flex",
-                                                                flexDirection: "column",
-                                                                marginLeft: 20,
-                                                                gap: 10,
-                                                            }}
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            <button
-                                                                onClick={() => setZoomLevel((prev) => Math.max(0.5, prev - 0.1))}
-                                                                style={{
-                                                                    padding: "6px 12px",
-                                                                    fontSize: 14,
-                                                                    cursor: "pointer",
-                                                                }}
-                                                            >
-                                                                ➖ Zoom Out
-                                                            </button>
-                                                            <button
-                                                                onClick={() => setZoomLevel((prev) => Math.min(3, prev + 0.1))}
-                                                                style={{
-                                                                    padding: "6px 12px",
-                                                                    fontSize: 14,
-                                                                    cursor: "pointer",
-                                                                }}
-                                                            >
-                                                                ➕ Zoom In
-                                                            </button>
-                                                            <button
-                                                                onClick={() => setSelectedImage(null)}
-                                                                style={{
-                                                                    padding: "6px 12px",
-                                                                    fontSize: 14,
-                                                                    cursor: "pointer",
-                                                                    backgroundColor: "red",
-                                                                    color: "white",
-                                                                    border: "none",
-                                                                    borderRadius: 4,
-                                                                }}
-                                                            >
-                                                                ✖ Close
-                                                            </button>
-                                                        </div>
+                                                        />
                                                     </div>
-                                                )
-                                            }
 
+                                                    {/* Button Column */}
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            flexDirection: "column",
+                                                            marginLeft: 20,
+                                                            gap: 10,
+                                                        }}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <button
+                                                            onClick={() => setZoomLevel((prev) => Math.max(0.5, prev - 0.1))}
+                                                            style={{
+                                                                padding: "6px 12px",
+                                                                fontSize: 14,
+                                                                cursor: "pointer",
+                                                            }}
+                                                        >
+                                                            ➖ Zoom Out
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setZoomLevel((prev) => Math.min(3, prev + 0.1))}
+                                                            style={{
+                                                                padding: "6px 12px",
+                                                                fontSize: 14,
+                                                                cursor: "pointer",
+                                                            }}
+                                                        >
+                                                            ➕ Zoom In
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setSelectedImage(null)}
+                                                            style={{
+                                                                padding: "6px 12px",
+                                                                fontSize: 14,
+                                                                cursor: "pointer",
+                                                                backgroundColor: "red",
+                                                                color: "white",
+                                                                border: "none",
+                                                                borderRadius: 4,
+                                                            }}
+                                                        >
+                                                            ✖ Close
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {selectedVideo && (
+                                                <div
+                                                    style={{
+                                                        position: "fixed",
+                                                        top: 0,
+                                                        left: 0,
+                                                        width: "100vw",
+                                                        height: "100vh",
+                                                        backgroundColor: "rgba(0, 0, 0, 0.75)",
+                                                        display: "flex",
+                                                        justifyContent: "center",
+                                                        alignItems: "center",
+                                                        zIndex: 9999,
+                                                        padding: 20,
+                                                        boxSizing: "border-box",
+                                                    }}
+                                                    onClick={() => setSelectedVideo(null)}
+                                                >
+                                                    <div
+                                                        style={{
+                                                            maxWidth: "80vw",
+                                                            maxHeight: "90vh",
+                                                            overflow: "auto",
+                                                            display: "flex",
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                        }}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <video
+                                                            src={previewUrl}
+                                                            controls
+                                                            style={{
+                                                                transform: `scale(${zoomLevel})`,
+                                                                transition: "transform 0.3s ease",
+                                                                maxWidth: "100%",
+                                                                maxHeight: "100%",
+                                                                borderRadius: "8px",
+                                                                objectFit: "contain",
+                                                                background: "#000",
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            flexDirection: "column",
+                                                            marginLeft: 20,
+                                                            gap: 10,
+                                                        }}
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <button
+                                                            onClick={() => setZoomLevel((prev) => Math.max(0.5, prev - 0.1))}
+                                                            style={{
+                                                                padding: "6px 12px",
+                                                                fontSize: 14,
+                                                                cursor: "pointer",
+                                                            }}
+                                                        >
+                                                            ➖ Zoom Out
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setZoomLevel((prev) => Math.min(3, prev + 0.1))}
+                                                            style={{
+                                                                padding: "6px 12px",
+                                                                fontSize: 14,
+                                                                cursor: "pointer",
+                                                            }}
+                                                        >
+                                                            ➕ Zoom In
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setSelectedVideo(null)}
+                                                            style={{
+                                                                padding: "6px 12px",
+                                                                fontSize: 14,
+                                                                cursor: "pointer",
+                                                                backgroundColor: "red",
+                                                                color: "white",
+                                                                border: "none",
+                                                                borderRadius: 4,
+                                                            }}
+                                                        >
+                                                            ✖ Close
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {fileName && selectedPDF ? (
+                                                <Box
+                                                    sx={{
+                                                        display: "inline-block",
+                                                        padding: "8px",
+                                                        borderRadius: "12px",
+                                                        backgroundColor: "#f5f5f5",
+                                                        boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                                                        maxWidth: "350px",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    <InsertDriveFileIcon sx={{ color: "green", fontSize: 48, mb: 1 }} />
+                                                    <Typography variant="body2" sx={{ fontSize: "12px", color: "#444", mb: 1 }}>
+                                                        {fileName}
+                                                    </Typography>
+                                                    <Box
+                                                        onClick={() => {
+                                                            setFileName("");
+                                                            setSelectedPDF(null);
+                                                            setPDFPreviewName("");
+                                                            fetchProfessionalDetails();
+                                                        }}
+                                                        sx={{
+                                                            display: "inline-flex",
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            backgroundColor: "#fff",
+                                                            borderRadius: "16px",
+                                                            padding: "4px 12px",
+                                                            fontSize: "14px",
+                                                            fontWeight: "bold",
+                                                            cursor: "pointer",
+                                                            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                                                            color: "#000",
+                                                            "&:hover": {
+                                                                backgroundColor: "#f0f0f0",
+                                                            },
+                                                        }}
+                                                    >
+                                                        Close ×
+                                                    </Box>
+                                                </Box>
+                                            ) : null}
 
                                             {seenUserIds.length > 0 && (
                                                 <div
@@ -1264,6 +1751,7 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                                        onPaste={handlePaste}
                                     />
                                 </div>
                             )
@@ -1366,7 +1854,7 @@ function HDChat({ selectedId, selectedProfessionalName, selectedProfClgId, profC
                                     🗑️
                                 </button>
                             </div>
-                        ) : input.trim().length === 0 && !selectedImage ? (
+                        ) : input.trim().length === 0 && !selectedImage && !selectedVideo && !fileName ? (
                             <button
                                 onClick={startRecording}
                                 style={{

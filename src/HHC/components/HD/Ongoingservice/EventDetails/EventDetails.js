@@ -99,17 +99,18 @@ const EventDetails = ({ eveID, onClose }) => {
                         width: '0.2em',
                     },
                     '&::-webkit-scrollbar-track': {
-                        background: "#DCDCDE",
+                        background: " #DCDCDE",
                     },
                     '&::-webkit-scrollbar-thumb': {
-                        backgroundColor: '#7AB8EE',
+                        backgroundColor: ' #7AB8EE',
                     },
                     '&::-webkit-scrollbar-thumb:hover': {
-                        background: '#7AB8FF'
+                        background: ' #7AB8FF'
                     }
                 }}
             >
                 <div style={{ display: "flex" }}>
+                    
                     <Typography align="center" style={{ fontSize: 18, fontWeight: 600, color: "gray", marginTop: "10px", }}>EVENT DETAILS</Typography>
                     <Button onClick={onClose} sx={{ ml: "46rem", color: "gray", marginTop: "2px", }}><CloseIcon /></Button>
                 </div>
@@ -197,7 +198,7 @@ const EventDetails = ({ eveID, onClose }) => {
                         <Table>
                             <TableHead >
                                 <TableRow >
-                                    <DetailsCard style={{ background: "#FAAF30", color: "#FFFFFF", borderRadius: "8px 10px 0 0", }}>
+                                    <DetailsCard style={{ background: " rgb(173, 219, 177)", color: "#FFFFFF", borderRadius: "8px 10px 0 0", }}>
                                         {/* <CardContent style={{ width: "15%" }}>
                                             <Typography variant='subtitle2'>Service Name</Typography>
                                         </CardContent > */}
@@ -333,7 +334,7 @@ const EventDetails = ({ eveID, onClose }) => {
                                                                     <Table>
                                                                         <TableHead >
                                                                             <TableRow >
-                                                                                <DetailsCard style={{ background: "#FAAF30", color: "#FFFFFF", borderRadius: "8px 10px 0 0", }}>
+                                                                                <DetailsCard style={{ background: "rgb(173, 219, 177)", color: "#000000", borderRadius: "8px 10px 0 0", }}>
                                                                                     <CardContent style={{ width: "30%" }}>
                                                                                         <Typography variant='subtitle2'>Professional Name</Typography>
                                                                                     </CardContent>
@@ -412,7 +413,7 @@ const EventDetails = ({ eveID, onClose }) => {
 
                 <div style={{ marginTop: "15px" }}>
                     <Typography sx={{ fontSize: 16, fontWeight: 600, }} color="text.secondary" gutterBottom>PAYMENT DETAILS</Typography>
-                    <DetailsCard style={{ background: "#FAAF30", color: "#FFFFFF", borderRadius: "8px 10px 0 0", }}>
+                    <DetailsCard style={{ background: "rgb(173, 219, 177)", color: "#FFFFFF", borderRadius: "8px 10px 0 0", }}>
                         <CardContent style={{ width: "10%" }}>
                             <Typography variant="subtitle2">Payment date</Typography>
                         </CardContent>

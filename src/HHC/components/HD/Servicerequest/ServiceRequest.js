@@ -20,6 +20,7 @@ import {
   useMediaQuery,
   CircularProgress,
   AppBar,
+  Toolbar,
 } from "@mui/material";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
 import LanguageIcon from "@mui/icons-material/Language";
@@ -56,10 +57,10 @@ const ServiceCard = styled(Card)({
   height: "54px",
   borderRadius: "10px",
   transition: "0.5s ease-in-out",
-  "&:hover": {
-    backgroundColor: "#F7F7F7",
-    // cursor: 'pointer',
-  },
+  // "&:hover": {
+  //   backgroundColor: "#F7F7F7",
+  //   // cursor: 'pointer',
+  // },
 });
 
 const style = {
@@ -88,10 +89,10 @@ const ServiceRequest = () => {
   // const [selectedCallerStatus, setSelectedCallerStatus] = useState(null);
   const [tableHeight, setTableHeight] = useState("auto");
   const [clrName, setclrName] = useState("");
-  const [callerNumber, setcallerNumber] = useState('')
+  const [callerNumber, setcallerNumber] = useState("");
   const [callerId, setcallerID] = useState("");
-  const [caller, setCaller] = useState('');
-  // snehas changes 
+  const [caller, setCaller] = useState("");
+  // snehas changes
   const [eventID, setEventID] = useState("");
   const [paydone, setPaydone] = useState();
   console.log("paydone.......", paydone);
@@ -120,7 +121,7 @@ const ServiceRequest = () => {
     eventID: "",
     callerID: "",
   });
-  const [openDetails, setopenDetails] = useState()
+  const [openDetails, setopenDetails] = useState();
   //  snehas changes
   const handleOpenPatientDetails = () => setOpenPatientDetails(true);
   const handleClosePatientDetails = () => setOpenPatientDetails(false);
@@ -195,10 +196,10 @@ const ServiceRequest = () => {
     console.log("Setting Caller Data:", data); // Log the data before setting the state
 
     setCallerData(data); // Set the caller data state
-    setopenDetails(true)
+    setopenDetails(true);
   };
   const handleCloseDetails2 = () => {
-    setopenDetails(false)
+    setopenDetails(false);
   };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -317,7 +318,7 @@ const ServiceRequest = () => {
       setPatientID(selectedRequest.agg_sp_pt_id?.agg_sp_pt_id);
       console.log("hhhfjhdfh", selectedRequest.agg_sp_pt_id?.agg_sp_pt_id);
       setFlagValue(selectedRequest.flag);
-      console.log("ffffffffflag", selectedRequest.flag)
+      console.log("ffffffffflag", selectedRequest.flag);
       setPaydone("ac");
       getRequestAllocation(selectedRequest.payment_is_done);
     }
@@ -337,8 +338,8 @@ const ServiceRequest = () => {
       setcallerID(selectedRequest.caller_id);
       console.log(selectedRequest.caller_id, "callerddddddd");
       setclrName(selectedRequest.caller_name, "callername");
-      setEventID(selectedRequest.event_id)
-      setcallerNumber(selectedRequest.caller_phone_number)
+      setEventID(selectedRequest.event_id);
+      setcallerNumber(selectedRequest.caller_phone_number);
     }
     // getRequestAllocation();
   };
@@ -380,7 +381,7 @@ const ServiceRequest = () => {
             // flag: 1,
             flag: flagValue,
             paymentStatus: a,
-            ServicetoEnquiry: 1, 
+            ServicetoEnquiry: 1,
           },
         });
       } catch (error) {
@@ -394,8 +395,6 @@ const ServiceRequest = () => {
   //Code for Model
   const [preFollowup, setPreFollowup] = useState([]);
   const [enqID, setEnqID] = useState([]);
-  console.log(enqID,'enqIDenqIDenqIDenqID');
-  
   const [enq, setEnq] = useState([]);
 
   const [open1, setOpen1] = useState(false);
@@ -404,8 +403,8 @@ const ServiceRequest = () => {
   const handleClose1 = () => setOpen1(false);
 
   function findPreFollowupRecords(eveId) {
-    console.log(enqID, "..............");
-    setEnqID(enqID);
+    console.log(eveId, "..............");
+    setEnqID(eveId);
 
     // const matchingRecords = enq.find((record) => record.eve_id === eveId);
     // if (matchingRecords) {
@@ -472,12 +471,15 @@ const ServiceRequest = () => {
       if (callerId) {
         try {
           // const res = await fetch(`${port}/web/Caller_details_api/${callerID}`);
-          const res = await fetch(`${port}/web/Caller_details_api/${callerId}`, {
-            headers: {
-              'Authorization': `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          });
+          const res = await fetch(
+            `${port}/web/Caller_details_api/${callerId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
           const data = await res.json();
           console.log("Caller Details ID wise", data);
           setCaller(data.caller);
@@ -493,7 +495,7 @@ const ServiceRequest = () => {
     <>
       <Navbar />
       <Box
-        sx={{ flexGrow: 1, mt: 14.6, ml: 1, mr: 1, mb: 2, overflow: "hidden" }}
+        sx={{ flexGrow: 1, mt: 13, ml: 1, mr: 1, mb: 4, overflow: "hidden" }}
       >
         <Stack
           direction={isSmallScreen ? "column" : "row"}
@@ -508,7 +510,7 @@ const ServiceRequest = () => {
               marginTop: "10px",
               marginLeft: "10px",
             }}
-            color="text.secondary"
+            color="rgb(162, 119, 169)"
             gutterBottom
           >
             SERVICE REQUESTS
@@ -630,56 +632,87 @@ const ServiceRequest = () => {
           sx={{
             height:
               filteredData.length === 0 || filteredData.length < 5
-                ? "60vh"
+                ? "40vh"
                 : "default",
             // overflow: "visible",
           }}
         >
-          <Table>
+          <Table size="small">
             <TableHead>
               <TableRow>
                 <ServiceCard
                   style={{
-                    background: "#69A5EB",
-                    color: "#FFFFFF",
+                    background: "rgb(237, 204, 242)",
+                    color: " #000000",
                     borderRadius: "8px 10px 0 0",
+                    display: "flex",
+                    height: "3rem",
                   }}
                 >
                   <CardContent
-                    style={{ width: "5%", borderRight: "1px solid #FFFFFF" }}
+                    style={{
+                      flex: "0.8",
+                      borderRight: "1px solid #FFFFFF",
+                    
+                       alignItems: "center",     // vertical align
+    justifyContent: "center",
+                    }}
                   >
-                    <Typography variant="subtitle2">Sr. No</Typography>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ alignItems: "center" }}
+                    >
+                      Sr. No
+                    </Typography>
                   </CardContent>
                   <CardContent
-                    style={{ width: "5%", borderRight: "1px solid #FFFFFF" }}
+                    style={{ flex: "1",
+                       alignItems: "center",     // vertical align
+    justifyContent: "center",
+     borderRight: "1px solid #FFFFFF" }}
                   >
-                    <Typography variant="subtitle2">Source</Typography>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ alignItems: "center" }}
+                    >
+                      Source
+                    </Typography>
                   </CardContent>
                   <CardContent
-                    style={{ width: "8%", borderRight: "1px solid #FFFFFF" }}
+                    style={{ flex: "2", borderRight: "1px solid #FFFFFF", alignItems: "center",     // vertical align
+    justifyContent: "center", }}
                   >
-                    <Typography variant="subtitle2">Event Code</Typography>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ alignItems: "center" }}
+                    >
+                      Event Code
+                    </Typography>
                   </CardContent>
                   <CardContent
-                    style={{ width: "10%", borderRight: "1px solid #FFFFFF" }}
+                    style={{ flex: "1.8", borderRight: "1px solid #FFFFFF",  alignItems: "center",     // vertical align
+    justifyContent: "center",}}
                   >
                     <Typography variant="subtitle2">Patient Name</Typography>
                   </CardContent>
                   <CardContent
-                    style={{ width: "10%", borderRight: "1px solid #FFFFFF" }}
+                    style={{ flex: "1.8", borderRight: "1px solid #FFFFFF"  ,alignItems: "center",     // vertical align
+    justifyContent: "center",}}
                   >
                     <Typography variant="subtitle2">Patient Mobile</Typography>
                   </CardContent>
                   <CardContent
-                    style={{ width: "8%", borderRight: "1px solid #FFFFFF" }}
+                    style={{ flex: "1.8", borderRight: "1px solid #FFFFFF" , alignItems: "center",     // vertical align
+    justifyContent: "center",}}
                   >
                     <Typography variant="subtitle2">Caller Mobile</Typography>
                   </CardContent>
-                  {/* <CardContent style={{ width: "15%", borderRight: "1px solid #FFFFFF" }}>
+                  {/* <CardContent style={{ flex:"2", borderRight: "1px solid #FFFFFF" }}>
                                         <Typography variant="subtitle2">Preferred Professional</Typography>
                                     </CardContent> */}
                   <CardContent
-                    style={{ width: "15%", borderRight: "1px solid #FFFFFF" }}
+                    style={{ flex: "2.8", borderRight: "1px solid #FFFFFF", alignItems: "center",     // vertical align
+    justifyContent: "center", }}
                   >
                     <Typography variant="subtitle2">Service Name</Typography>
                   </CardContent>
@@ -687,19 +720,22 @@ const ServiceRequest = () => {
                                         <Typography variant="subtitle2">Sub Service</Typography>
                                     </CardContent> */}
                   <CardContent
-                    style={{ width: "8%", borderRight: "1px solid #FFFFFF" }}
+                    style={{ flex: "2", borderRight: "1px solid #FFFFFF", alignItems: "center",     // vertical align
+    justifyContent: "center", }}
                   >
                     <Typography variant="subtitle2">Start Date</Typography>
                   </CardContent>
                   <CardContent
-                    style={{ width: "6%", borderRight: "1px solid #FFFFFF" }}
+                    style={{ flex: "1", borderRight: "1px solid #FFFFFF" , alignItems: "center",     // vertical align
+    justifyContent: "center",}}
                   >
                     <Typography variant="subtitle2">Zone</Typography>
                   </CardContent>
-                  {/* <CardContent style={{ width: "10%", borderRight: "1px solid #FFFFFF" }}>
+                  {/* <CardContent style={{ flex:"2", borderRight: "1px solid #FFFFFF" }}>
                                         <Typography variant="subtitle2">Address</Typography>
                                     </CardContent> */}
-                  <CardContent style={{ width: "8%" }}>
+                  <CardContent style={{ flex: "1", alignItems: "center",     // vertical align
+    justifyContent: "center", }} >
                     <Typography variant="subtitle2">Action </Typography>
                   </CardContent>
                 </ServiceCard>
@@ -713,7 +749,7 @@ const ServiceRequest = () => {
               <TableBody>
                 {filteredData.length === 0 ? (
                   <TableRow>
-                    <CardContent>
+                    <CardContent   >
                       <Typography variant="body2">No Data Available</Typography>
                     </CardContent>
                   </TableRow>
@@ -727,29 +763,49 @@ const ServiceRequest = () => {
                           "&:last-child td, &:last-child th": { border: 0 },
                         }}
                       >
-                        <ServiceCard>
-                          <CardContent style={{ width: "5%" }}>
+                        <ServiceCard
+                          // sx={{
+                          //   bgcolor: "#f1f1f1",
+                          //   hover: { bgcolor: "#f1f1f1" },
+                          // }}
+                          sx={{
+                            background: "#f1f1f1",
+                            borderLeft: "4px solid transparent",
+                            transition: "all 0.3s ease-in-out",
+                            hight: "40px",
+                            cursor: "pointer",
+                            "&:hover": {
+                              borderLeft: "4px solid rgb(215, 139, 227)",
+                              borderRight: "4px solid rgb(215, 139, 227)",
+                              transform: "scale(1)",
+                            },
+                          }}
+                        >
+                          <CardContent style={{ flex: "0.8" , alignItems: "center",     // vertical align
+    justifyContent: "center", }}>
                             <Typography variant="body2">
                               {index + 1 + page * rowsPerPage}
                             </Typography>
                           </CardContent>
-                          <CardContent style={{ width: "5%" }}>
+                          <CardContent
+                            style={{ flex: "1",  alignItems: "center",     // vertical align
+    justifyContent: "center",}}
+                          >
                             <Typography variant="body2">
                               {getCallerStatusTooltip(row.caller_status)}
                             </Typography>
                           </CardContent>
-                          <CardContent style={{ width: "8%" }}>
+                          <CardContent style={{ flex: "2", alignItems: "center",     // vertical align
+    justifyContent: "center", }}>
                             <Typography variant="body2">
                               {row.event_code}
                             </Typography>
                           </CardContent>
-                          <CardContent style={{ width: "10%" }}>
+                          <CardContent style={{ flex: "1.8", alignItems: "center",     // vertical align
+    justifyContent: "center", }}>
                             <button
                               onClick={() => {
-                                patientIDRequest(
-                                  row?.patient_id,
-
-                                );
+                                patientIDRequest(row?.patient_id);
                                 handleOpenPatientDetails();
                               }}
                               // onClick={() => {
@@ -762,12 +818,15 @@ const ServiceRequest = () => {
                                 outline: "none",
                                 cursor: "pointer",
                                 height: "40px",
-                                display: "flex",
+                                display: "flex ",
                                 alignItems: "center",
-                                color:'black'
                               }}
                             >
-                              <Typography variant="body2" textAlign="left">
+                              <Typography
+                                variant="body2"
+                                textAlign="left"
+                                sx={{ color: "black" }}
+                              >
                                 {row.patient_name}
                               </Typography>
                             </button>
@@ -788,8 +847,8 @@ const ServiceRequest = () => {
                                 <AppBar
                                   position="static"
                                   style={{
-                                    background:
-                                      "linear-gradient(45deg, #1FD0C4 38.02%, #0E8FE4 100%)",
+                                    background: "rgb(237, 204, 242)",
+
                                     width: "29rem",
                                     height: "3rem",
                                     marginTop: "-16px",
@@ -803,7 +862,7 @@ const ServiceRequest = () => {
                                       style={{
                                         fontSize: "16px",
                                         fontWeight: 600,
-                                        color: "#FFFFFF",
+                                        color: "#000000",
                                         marginTop: "10px",
                                         marginLeft: "18px",
                                       }}
@@ -814,7 +873,7 @@ const ServiceRequest = () => {
                                       onClick={handleClosePatientDetails}
                                       sx={{
                                         marginLeft: "15rem",
-                                        color: "#FFFFFF",
+                                        color: "#000000",
                                         marginTop: "2px",
                                       }}
                                     >
@@ -838,17 +897,22 @@ const ServiceRequest = () => {
                               {row.patient_name}
                             </Typography> */}
                           </CardContent>
-                          <CardContent style={{ width: "10%" }}>
-                            <div style={{ display: "flex" }}>
+
+                          <CardContent style={{ flex: " 1.8 ", alignItems: "center",     // vertical align
+    justifyContent: "center", }}>
+                            <div style={{ display: "flex  " }}>
                               <CallOutlinedIcon
                                 sx={{ color: "#3A974C", fontSize: "18px" }}
                               />
-                              <Typography variant="body2">
+                              <Typography variant="body2" textAlign={"center"}>
                                 {row.patient_number}
                               </Typography>
                             </div>
                           </CardContent>
-                          <CardContent style={{ width: "10%" }}>
+                          <CardContent
+                            style={{ flex: "1.8",  alignItems: "center",     // vertical align
+    justifyContent: "center", }}
+                          >
                             {/* <CardContent style={{ flex: 2 }} key={row.eve_id}>
                             <Typography variant="body2" textAlign="left">
                               {row.agg_sp_pt_id ? row.agg_sp_pt_id.name : ""}
@@ -856,8 +920,10 @@ const ServiceRequest = () => {
                           </CardContent> */}
                             <CardContent
                               style={{
-                                width: "8%",
+                                flex: "1",
                                 // flex:2,/
+                                 alignItems: "center",     // vertical align
+    justifyContent: "center",
                               }}
                             >
                               <button
@@ -877,15 +943,16 @@ const ServiceRequest = () => {
                                   height: "40px",
                                   display: "flex",
                                   alignItems: "center",
-                                  color:'black'
                                 }}
                               >
                                 <div style={{ display: "flex" }}>
-                                  <Typography variant="body2" sx={{ mt: 2 }}>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ mt: 2, color: "black" }}
+                                  >
                                     {row.caller_phone_number}
                                   </Typography>
                                 </div>
-
                               </button>
                               <Modal
                                 open={openDetails}
@@ -903,8 +970,8 @@ const ServiceRequest = () => {
                                   <AppBar
                                     position="static"
                                     style={{
-                                      background:
-                                        "linear-gradient(45deg, #1FD0C4 38.02%, #0E8FE4 100%)",
+                                      background: "rgb(237, 204, 242)",
+
                                       width: "22.8rem",
                                       height: "3rem",
                                       marginTop: "-16px",
@@ -918,7 +985,7 @@ const ServiceRequest = () => {
                                         style={{
                                           fontSize: "16px",
                                           fontWeight: 600,
-                                          color: "#FFFFFF",
+                                          color: "#000000",
                                           marginTop: "10px",
                                           marginLeft: "18px",
                                         }}
@@ -955,38 +1022,63 @@ const ServiceRequest = () => {
                               <CallOutlinedIcon
                                 sx={{ color: "#3A974C", fontSize: "18px" }}
                               />
-                              <Typography variant="body2">
+                              <Typography
+                                variant="body2"
+                                textAlign="left"
+                                sx={{ color: "#000000" }}
+                              >
                                 {row.caller_phone_number}
                               </Typography>
                             </div>
                           </CardContent>
-                          {/* <CardContent style={{ width: "15%" }}>
+                          {/* <CardContent style={{ flex:"2" }}>
                                                         <Typography variant="body2">{row.professional_preferred === 1 ? "Male" : row.professional_preferred === 2 ? "Female" : "None"}</Typography>
                                                     </CardContent> */}
-                          <CardContent style={{ width: "15%" }}>
-                            <Typography variant="body2" textAlign="left">
-                              {row.service_name}
-                            </Typography>
-                          </CardContent>
+                      <CardContent
+  style={{
+    flex: 2.8,
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "column",
+     alignItems: "center",     // vertical align
+    justifyContent: "center", // text vertical align ke liye
+  }}
+>
+  <Typography
+    variant="body2"
+    textAlign="center"
+    style={{
+      whiteSpace: "normal", // wrap allow kare
+      wordBreak: "break-word", // long words bhi break ho jaye
+    }}
+  >
+    {row.service_name}
+  </Typography>
+</CardContent>
                           {/* <CardContent style={{ width: "12%" }}>
                                                         <Typography variant="body2" textAlign="left">{row.sub_service}</Typography>
                                                     </CardContent> */}
-                          <CardContent style={{ width: "8%" }}>
+                          <CardContent
+                            style={{ flex: "2",  alignItems: "center",     // vertical align
+    justifyContent: "center",}}
+                          >
                             <div style={{ display: "flex" }}>
                               <CalendarMonthOutlinedIcon
-                                sx={{ color: "#69A5EB", fontSize: "18px" }}
+                                sx={{ color: " #69A5EB", fontSize: "18px" }}
                               />
-                              <Typography variant="body2">
+                              <Typography variant="body2" textAlign="center">
                                 {formatDate(row.event_start_date)}
                               </Typography>
                             </div>
                           </CardContent>
-                          <CardContent style={{ width: "6%" }}>
-                            <Typography variant="body2">
+
+                          <CardContent style={{ flex: "1", alignItems: "center",     // vertical align
+    justifyContent: "center", }}>
+                            <Typography variant="body2" textAlign={"left"}>
                               {row.patient_zone}
                             </Typography>
                           </CardContent>
-                          {/* <CardContent style={{ width: "10%" }}>
+                          {/* <CardContent style={{ flex:"2" }}>
                                                         <Tooltip title={row.patient_address || ""} arrow>
                                                             <Typography variant="body2" textAlign="left">
                                                                 {row.patient_address?.length > 25
@@ -995,7 +1087,8 @@ const ServiceRequest = () => {
                                                             </Typography>
                                                         </Tooltip>
                                                     </CardContent> */}
-                          <CardContent style={{ width: "8%" }}>
+                          <CardContent style={{ flex: "1", alignItems: "center",     // vertical align
+    justifyContent: "center", }}>
                             <IconButton
                               aria-label="more"
                               id="long-button"
@@ -1025,12 +1118,14 @@ const ServiceRequest = () => {
                                   style: {
                                     maxHeight: ITEM_HEIGHT * 4.5,
                                     width: "15ch",
-                                    boxShadow: rowsPerPage === 5
-                                      ? "0px 4px 10px rgba(0, 0, 0, 0.2)"
-                                      : "none",
-                                      border: rowsPerPage === 5
-                                      ? "none"
-                                      : "1px solid gray",
+                                    boxShadow:
+                                      rowsPerPage === 5
+                                        ? "0px 4px 10px rgba(0, 0, 0, 0.2)"
+                                        : "none",
+                                    border:
+                                      rowsPerPage === 5
+                                        ? "none"
+                                        : "1px solid gray",
                                   },
                                 },
                               }}
@@ -1082,6 +1177,7 @@ const ServiceRequest = () => {
         </TableContainer>
 
         <TablePagination
+        sx={{overflowY:'hidden'}}
           rowsPerPageOptions={[5, 10, 25, 100]}
           component="div"
           count={filteredData.length}
@@ -1097,32 +1193,44 @@ const ServiceRequest = () => {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
-            <Box sx={{ ...style, width: 320, borderRadius: "10px" }}>
-              <div style={{ display: "flex" }}>
-                <Typography
-                  align="center"
-                  style={{
-                    fontSize: "16px",
-                    fontWeight: 600,
-                    marginLeft: "14px",
-                    marginTop: "10px",
-                  }}
-                >
-                  FOLLOW UP
-                </Typography>
-                <Button
-                  onClick={handleClose1}
-                  sx={{ marginLeft: "9rem", color: "gray" }}
-                >
-                  <CloseIcon />
-                </Button>
-              </div>
-              <Followup
-                sendData={preFollowup}
-                enqData={enqID}
-                onClose={handleClose1}
-                flag={2}
-              />
+            <Box sx={{ ...style, width: 320, borderRadius: "10px", p: 0 }}>
+              {/* AppBar Header */}
+              <AppBar
+                position="static"
+                elevation={0}
+                sx={{
+                  borderRadius: "10px 10px 0 0",
+                  background: "rgb(237, 204, 242)",
+                  color: "#333",
+                  height: "3rem",
+                }}
+              >
+                <Toolbar sx={{ minHeight: "2rem", px: 1 ,mb: 2}}>
+                  <Typography
+                    variant="h6"
+                    sx={{ flexGrow: 1, fontSize: 15, fontWeight: 600 }}
+                  >
+                    FOLLOW UP
+                  </Typography>
+                  <IconButton
+                    edge="end"
+                    onClick={handleClose1}
+                    sx={{ color: "gray" }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </Toolbar>
+              </AppBar>
+
+              {/* Modal Content */}
+              <Box sx={{ p: 2 }}>
+                <Followup
+                  sendData={preFollowup}
+                  enqData={enqID}
+                  onClose={handleClose1}
+                  flag={2}
+                />
+              </Box>
             </Box>
           </Modal>
         </Box>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 // import { Counter } from './features/counter/Counter';
-import Navbar from "./HHC/Navbar";
-import Footer from "./HHC/Footer";
-import Header from "./HHC/Header";
+// import Navbar from "./HHC/Navbar";
+// import Footer from "./HHC/Footer";
+// import Header from "./HHC/Header";
 import NotFound from "./HHC/NotFound";
 import "./App.css";
 import { BrowserRouter, Router, Routes, Route } from "react-router-dom";
@@ -24,12 +24,9 @@ import Candidates from "./HHC/components/HR/Onboarding/Candidates";
 import Employee from "./HHC/components/HR/Employee/Employee";
 import ConsentDetails from "./HHC/components/HD/Viewservice/ConsentForm/ConsentDetails";
 import HRDashboard from "./HHC/components/HR/Dashboard/HRDashboard";
-import HrDashboard from "./HHC/components/HrPartner/Dashboard/HrDashboard";
 import Attendence from "./HHC/components/HR/Attendence/Attendence";
 import Permission from "./HHC/components/ADMIN/Permission";
 import AdminDashboard from "./HHC/components/ADMIN/AdminDashboard";
-import HRHeader from "./HHC/components/HR/HRHeader";
-import HRNavbar from "./HHC/components/HR/HRNavbar";
 import AdminReport from "./HHC/components/ADMIN/Reports/AdminReport";
 import EnquiryReport from "./HHC/components/ADMIN/Reports/EnquiryReport";
 import ConsultantReport from "./HHC/components/ADMIN/Reports/ConsultantReport";
@@ -55,45 +52,50 @@ import ProfessionalUnit from "./HHC/components/ADMIN/ACCOUNT/ProfessionalUnit";
 import ProfRequest from "./HHC/components/HD/ProfRequest/ProfRequest";
 import AccountDashboard from "./HHC/components/ADMIN/ACCOUNT/AccountDashboard";
 import LoginEmployees from "./HHC/components/ADMIN/HCM/LoginEmployees";
+import OnlineTransaction from "./HHC/components/ADMIN/ACCOUNT/OnlineTransaction";
 import DemoPurpose from "./HHC/components/ADMIN/DemoPurpose";
 import HospitalDashboard from "./HHC/components/Hospitals/Dashboard/HospitalDashboard";
-import PaymentUTR from "./HHC/components/ADMIN/ACCOUNT/PaymentUTR";
-import ManagementDashboard from "./HHC/components/ManagementDashboard/MDashboard";
 import AllocatedList from "./HHC/components/ADMIN/HCM/ProfessionalAllocation/AllocatedList";
+import PaymentUTR from "./HHC/components/ADMIN/ACCOUNT/PaymentUTR";
 import ManageAttendance from "./HHC/components/Attendance/ManageAttendance";
-import ManageReports from "./HHC/components/Attendance/ManageReports";
 import AtteDashboard from "./HHC/components/Attendance/AtteDashboard";
-import Home from "./HHC/components/HHC_Analytics/Home";
+import ManagementDashboard from "./HHC/components/ManagementDashboard/MDashboard";
+import ManageReports from "./HHC/components/Attendance/ManageReports";
+import ProfessionalDetails from "./HHC/components/ADMIN/HCM/ProfessionalDetails";
 import SystemUser from "./HHC/components/HR/SystemUser/SystemUser";
+import Header from "./HHC/components/Clinical/Header";
+import ManageInventory from "./HHC/components/InventoryModule/ManageInventory";
+import HrDashboard from "./HHC/components/HrPartner/Dashboard/HrDashboard";
 import ManageProfessionals from "./HHC/components/HrPartner/Professionals/ManageProfessionals";
 import AddProfPartner from "./HHC/components/HrPartner/Professionals/AddProfPartner";
 import ExternalProf from "./HHC/components/HR/ExternalProfessional/ExternalProf";
 import Servicedetails from "./HHC/components/HrPartner/ServiceDetails/Servicedetails";
-import ClinicalHeader from "./HHC/components/Clinical/ClinicalHeader";
-import OnlineTransaction from "./HHC/components/ADMIN/ACCOUNT/OnlineTransaction";
-// import AuthUser from './HHC/components/AuthUser';
-import ClosureRevalidation from "./HHC/components/ADMIN/HCM/ClosureRevalidation/ClosureRevalidation";
+import Home from "./HHC/components/HHC_Analytics/Home";
 import { Insurance } from "./HHC/components/ADMIN/HCM/Insurance/Insurance";
-// import ProtectedRoute from './HHC/ProtectedRoute';
-import ProfessionalDetails from "./HHC/components/ADMIN/HCM/ProfessionalDetails";
+import ClosureRevalidation from "./HHC/components/ADMIN/HCM/ClosureRevalidation/ClosureRevalidation";
+import Telemedicine from "./HHC/components/Clinical/ClinicalComponents/Telemedicine";
+import ClosureDetails from "./HHC/components/Clinical/ClosureDetails";
 import MM2Dashboard from "./HHC/components/M2Dashboard/MM2Dashboard";
+import ConsultantList from "./HHC/components/ADMIN/HCM/Consultant/ConsultantList";
 import Clinicalgov from "./HHC/components/ADMIN/ClinicalNew/Clinicalgov";
-import SupervisorVisitor from "./HHC/components/ADMIN/Supervisorvistior/SupervisorVisitor";
-import Patientblacklist from "./HHC/components/ADMIN/HCM/Patientblacklist";
 import Refund from "./HHC/components/ADMIN/Refund/Refund";
-import CareCoordinator from "./HHC/components/HR/CareTaker/CareTaker";
 import PhysioMiles from "./HHC/components/ADMIN/PhysioMilestone/PhysioMiles";
+
+import Physio from "./HHC/components/Physio/Physio";
+import SupervisorVisitor from "./HHC/components/ADMIN/Supervisorvistior/SupervisorVisitor";
+
 import AddPhysioMiles from "./HHC/components/ADMIN/PhysioMilestone/AddPhysioMiles";
-import RefundReports from "./HHC/components/ADMIN/Reports/RefunReports";
+import CareCoordinator from "./HHC/components/HR/CareTaker/CareTaker";
+import Patientblacklist from "./HHC/components/ADMIN/HCM/Patientblacklist";
 import ClinicalReports from "./HHC/components/ADMIN/Reports/ClinicalReports";
+import RefundReports from "./HHC/components/ADMIN/Reports/RefunReports";
 import PatientFeedbackReport from "./HHC/components/ADMIN/Reports/Patientfeedback/PatientFeedbackReport";
 import ProfessionalFeedbackReport from "./HHC/components/ADMIN/Reports/ProfessionalFeedbackReport";
-import ConsultantLogin from "./HHC/components/Consultant/ConsultantLogin/ConsultantLogin";
-import ReferredPatient from "./HHC/components/Consultant/ConsultantForm/ReferredPatient";
-import ReferredPatientDetails from "./HHC/components/Consultant/ConsultantForm/ReferredPatientDetails";
-import ManageConsultant from "./HHC/components/ADMIN/HCM/Manage Consultant/ManageConsultant";
+import HD_Dashboard from "./HHC/components/HD/HD_Dashboard/HD_Dashboard";
+import LongTearmForm from "./HHC/components/ADMIN/HCM/LongtermForm/LongtermForm";
+import MedicalForm from "./HHC/components/ADMIN/HCM/LongtermForm/MedicalForm";
 import ShiftHandover from "./HHC/components/HD/ShiftHandover/ShiftHandover";
-import ShiftHandoverReport from "./HHC/components/ADMIN/Reports/ShiftHandOverReport";
+
 
 function App() {
   const [isLoggIn, setIsLoggIn] = useState(
@@ -113,22 +115,17 @@ function App() {
     <div className="App">
       <BrowserRouter basename="">
         <div>
-          {isLoggIn && <HRNavbar />}
-          {isLoggIn && <HRHeader />}
+          {/* {isLoggIn && <HRNavbar />} */}
+          {/* {isLoggIn && <HRHeader />} */}
           <Routes>
             <Route exact path="/" element={<Login />} />
-
             {/* HD Module */}
             <Route
               exact
               path="/dashboard"
-              element={isLoggedIn ? <Dashboard /> : <Login />}
+              element={isLoggedIn ? <HD_Dashboard /> : <Login />}
             />
-            <Route
-              exact
-              path="/ConsultantLogin"
-              element={isLoggedIn ? <ConsultantLogin /> : <ConsultantLogin />}
-            />
+            {/* <Route exact path="/MM2Dashboard" element={isLoggedIn ? <MM2Dashboard /> : <Login />} /> */}
             <Route
               exact
               path="/addservice"
@@ -173,12 +170,11 @@ function App() {
               element={isLoggedIn ? <Membership /> : <Login />}
             />
             <Route path="/hhc/user" element={<UserDetails />} />
-            <Route path="/consent/:eve_id/" element={<ConsentDetails />} />
-
+            {/* <Route path="/consent/:eve_id/" element={<ConsentDetails />} /> */}
+            <Route path="/consent" element={<ConsentDetails />} />
             {/* ADMIN Module/ */}
             <Route path="/hhc/dashboard" element={<AdminDashboard />} />
             <Route path="/hhc/permission" element={<Permission />} />
-
             {/* ADMIN REPORT Module/ */}
             <Route path="/hhc/reports" element={<AdminReport />} />
             <Route
@@ -214,15 +210,13 @@ function App() {
               element={<ConsentForm />}
             />
             <Route
-              path="/hhc/reports/Clinical Governance Report"
-              element={<ClinicalReports />}
-            />
-
-            <Route
               path="/hhc/reports/Refund Report"
               element={<RefundReports />}
             />
-
+            <Route
+              path="/hhc/reports/Clinical Governance Report"
+              element={<ClinicalReports />}
+            />
             <Route
               path="/hhc/reports/Patient feedback report"
               element={<PatientFeedbackReport />}
@@ -234,6 +228,10 @@ function App() {
 
             {/* ADMIN HCM Module/ */}
             <Route path="/hhc/HCM/manage service" element={<ManageService />} />
+            <Route
+              path="/hhc/hcm/patient blacklist"
+              element={<Patientblacklist />}
+            />
             <Route
               path="/hhc/HCM/manage hospital"
               element={<ManageHospital />}
@@ -258,13 +256,15 @@ function App() {
               path="/hhc/HCM/professional details"
               element={<ProfessionalDetails />}
             />
+            <Route path="/hhc/HCM/insurance" element={<Insurance />} />
             <Route
               path="/hhc/HCM/closure revalidation"
               element={<ClosureRevalidation />}
             />
-            <Route path="/hhc/HCM/insurance" element={<Insurance />} />
-
-            <Route path="/hhc/HCM/manage consultant" element={<ManageConsultant />} />
+            <Route
+              path="/hhc/HCM/consultant management"
+              element={<ConsultantList />}
+            />
             {/* ACCOUNT Routing */}
             <Route
               path="/hhc/account/dashboard"
@@ -308,7 +308,6 @@ function App() {
               element={<OnlineTransaction />}
             />
             <Route path="/hhc/account/payment utr" element={<PaymentUTR />} />
-
             <Route path="/account/dashboard" element={<AccountDashboard />} />
             <Route
               path="/account/new export receipt"
@@ -345,7 +344,6 @@ function App() {
               element={<OnlineTransaction />}
             />
             <Route path="/account/payment utr" element={<PaymentUTR />} />
-
             {/* HR Module */}
             <Route path="/hr/dashboard" element={<HRDashboard />} />
             <Route path="/hr/manage profiles" element={<ManageProfile />} />
@@ -363,11 +361,7 @@ function App() {
               element={<ExternalProf />}
             />
             <Route path="/hr/Care Coordinator" element={<CareCoordinator />} />
-            <Route
-              path="hhc/hr/Care Coordinator"
-              element={<CareCoordinator />}
-            />
-
+            <Route path="/hr/gis analytics" element={<Home />} />
             <Route path="hhc/hr/dashboard" element={<HRDashboard />} />
             <Route path="hhc/hr/manage profiles" element={<ManageProfile />} />
             <Route
@@ -378,19 +372,26 @@ function App() {
             <Route path="hhc/hr/onboarding" element={<Candidates />} />
             <Route path="hhc/hr/our employees" element={<Employee />} />
             <Route path="hhc/hr/attendance" element={<Attendence />} />
+            <Route
+              path="hhc/hr/Care Coordinator"
+              element={<CareCoordinator />}
+            />
+
             <Route path="hhc/hr/system user" element={<SystemUser />} />
+
             <Route
               path="hhc/hr/external professionals"
               element={<ExternalProf />}
             />
-
+            <Route path="hhc/gis analytics" element={<Home />} />
             {/* temporary basis */}
-            <Route path="/hhc/attendance" element={<DemoPurpose />} />
+            {/* <Route path="/hhc/attendance" element={<DemoPurpose />} /> */}
             <Route path="/hhc/inventory" element={<DemoPurpose />} />
             <Route
               path="/hhc/hcm/manage professional"
               element={<DemoPurpose />}
             />
+            <Route path="/hhc/hcm/Long Term Form" element={<LongTearmForm />} />
             <Route
               path="/hhc/hcm/manage system users"
               element={<DemoPurpose />}
@@ -405,17 +406,14 @@ function App() {
             />
             <Route path="/hhc/dashboard/dashboard" element={<DemoPurpose />} />
             <Route
-              path="/hhc/account/paytm payment"
+              path="/hhc/accounts/paytm payment"
               element={<DemoPurpose />}
             />
-            <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
-            <Route
-              path="/hhc/hcm/patient blacklist"
-              element={<Patientblacklist />}
-            />
             {/* temporary basis */}
-
             {/* ATTENDANCE module */}
+            {/* <Route path="/attendance/attendance-view" element={<ManageAttendance />} />
+            <Route path="/attendance/attendance-dashboard" element={<AtteDashboard />} />
+            <Route path="/attendance/attendance-report" element={<ManageReports />} /> */}
             <Route
               path="/hhc/attendance/manage attendance"
               element={<ManageAttendance />}
@@ -428,7 +426,10 @@ function App() {
               path="/hhc/attendance/manage report"
               element={<ManageReports />}
             />
-
+            <Route
+              path="/hhc/attendance/manage attendance"
+              element={<ManageAttendance />}
+            />
             {/* Management Dashboard */}
             <Route
               path="/management/management-dashboard"
@@ -442,14 +443,20 @@ function App() {
               path="hhc/dashboard/financial dashboard"
               element={<MM2Dashboard />}
             />
-            <Route path="*" element={<NotFound />} />
-
             {/* clinical governance */}
-            {/* <Route path="/hhc/clinical" element={<ClinicalHeader />} /> */}
-
-            {/* Analytics */}
-            <Route path="/analytics/home" element={<Home />} />
-
+            {/* <Route exact path="/hhc/clinical" element={<Header />} /> */}
+            <Route exact path="/hhc/clinical" element={<Clinicalgov />} />
+            <Route path="/hhc/clinical/telemed" element={<Telemedicine />} />
+            {/* Inventory module */}
+            <Route
+              path="/hhc/inventory/manageinventory"
+              element={<ManageInventory />}
+            />
+            {/* <Route path="/hhc/attendance/attendance-dashboard" element={<AtteDashboard />} />
+            <Route path="/hhc/attendance/manage report" element={<ManageReports />} /> */}
+            <Route path="*" element={<NotFound />} />
+            {/* Hospital ROuting */}
+            <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
             {/* HR PARTNER */}
             <Route path="/hr partner/dashboard" element={<HrDashboard />} />
             <Route
@@ -464,7 +471,6 @@ function App() {
               path="/hr partner/service details"
               element={<Servicedetails />}
             />
-
             <Route path="hhc/hr partner/dashboard" element={<HrDashboard />} />
             <Route
               path="hhc/hr partner/manage professionals"
@@ -478,40 +484,33 @@ function App() {
               path="hhc/hr partner/service details"
               element={<Servicedetails />}
             />
-
+            <Route path="/analytics/home" element={<Home />} />
             <Route path="/MM2Dashboard" element={<MM2Dashboard />} />
             <Route path="/hhc/refund" element={<Refund />} />
-
-            {/*Clinical Governance */}
-
+            {/* Physio */}
+            <Route path="/physio" element={<Physio />} />
             <Route exact path="/hhc/ClinicalNew" element={<Clinicalgov />} />
             <Route
               exact
               path="/hhc/clinical governance"
               element={<Clinicalgov />}
             />
-            <Route exact path="/hhc/clinical" element={<Clinicalgov />} />
+            {/* {SupervisorVisitor} */}
             <Route
               path="/hhc/Supervisor Visitor"
               element={<SupervisorVisitor />}
             />
-
-            {/*Physio MileStone */}
             <Route
               path="/hhc/physio Quality Audit"
               element={<PhysioMiles />}
             ></Route>
+            <Route path="/physioMilestone" element={<PhysioMiles />}></Route>
             <Route
               path="/physio Quality Audit"
               element={<PhysioMiles />}
             ></Route>
             <Route path="/AddPhysioMiles" element={<AddPhysioMiles />}></Route>
-
-            <Route exact path="/Consultant/Referred Patient" element={<ReferredPatient />} />
-            <Route exact path="/Consultant/Referred Patient Details" element={<ReferredPatientDetails />} />
-            <Route exact path="/hhc/Consultant/Referred Patient" element={<ReferredPatient />} />
-            <Route exact path="/hhc/Consultant/Referred Patient Details" element={<ReferredPatientDetails />} />
-            <Route exact path="/hhc/reports/shift-handover" element={<ShiftHandoverReport />} />
+            <Route path="/long-term-form" element={<MedicalForm />}></Route>
           </Routes>
         </div>
       </BrowserRouter>

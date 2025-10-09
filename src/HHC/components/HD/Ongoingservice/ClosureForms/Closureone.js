@@ -224,19 +224,35 @@ const Closureone = ({ formNo, evePlanID, profSD, profST, profED, profET, session
             }
             const result = await response.json();
             console.log("Closure data", result);
-            setOpenSnackbar(true);
-            setSnackbarMessage('Closure data submitted successfully!');
-            onClose();
-            emt();
-            // sessions();
-            // window.location.reload();
+            setSnackbarMessage("Closure data submitted successfully!");
+    setOpenSnackbar(true);
+
+          setTimeout(() => {
+      onClose();   // close modal
+      emt();       // refresh or trigger update
+      sessions();  // reload data list
+    }, 2000); // 2 seconds delay for smooth UX
+
+           
         } catch (error) {
             console.error("An error occurred:", error);
         }
     }
     return (
         <>
-            <Box sx={{ flexGrow: 1, ml: 1, mr: 1, mt: 1, bgcolor: "#ffffff", }}>
+           <Box
+        sx={{
+          flexGrow: 1,
+          ml: 1,
+          mr: 1,
+          mt: 1,
+          bgcolor: "#ffffff",
+          overflow: "auto",
+          maxHeight: "500px",
+          Width: "100%",
+          p: 2,
+        }}
+      >
                 <div style={{ display: "flex", }}>
                     <Typography align="center" style={{ fontSize: "16px", fontWeight: 600, marginTop: "10px", }}>CLOSURE FORM</Typography>
                     <Button onClick={onClose} sx={{ marginLeft: "1000px", marginTop: "2px", color: "gray" }}><CloseIcon /></Button>

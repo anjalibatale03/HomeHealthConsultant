@@ -44,6 +44,28 @@ const CalendarComponent = ({ events }) => {
     }
   }, [events]);
 
+  // const getProfessionalSingleEvent = async () => {
+  //   if (selectedPOCID) {
+  //     try {
+  //       // const res = await fetch(`${port}/web/agg_hhc_detailed_event_plan_of_care_each_event/?poc=${selectedPOCID}`);
+  //       const res = await fetch(`${port}/web/agg_hhc_detailed_event_plan_of_care_each_event/?poc=${selectedPOCID}`, {
+  //         headers: {
+  //           'Authorization': `Bearer ${accessToken}`,
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
+  //       const data = await res.json();
+  //       console.log("Professional Against single Event", data);
+  //       setSelectedEvent(data)
+  //     } catch (error) {
+  //       console.error("Error fetching Professional Against single Event:", error);
+  //     }
+  //   }
+  //   else {
+  //     setSelectedEvent([]);
+  //   }
+  // };
+
   const getProfessionalSingleEvent = async (pocId) => {
     try {
       const res = await fetch(`${port}/web/agg_hhc_detailed_event_plan_of_care_each_event/?poc=${pocId}`, {
@@ -75,6 +97,20 @@ const CalendarComponent = ({ events }) => {
     setIsEditingEvent(false);
   };
 
+  // const handleEventEdit = (event) => {
+  //   // setSelectedEvent(event);
+  //   // setIsEditingEvent(true);
+  //   // setIsEventModalOpen(true);
+  //   console.log('Extracted POC ID', event);
+  //   if (event && event.agg_sp_dt_eve_poc_id) {
+  //     const { agg_sp_dt_eve_poc_id } = event;
+  //     setSelectedPOCID(agg_sp_dt_eve_poc_id);
+  //     console.log('Clicked POC ID:', agg_sp_dt_eve_poc_id);
+  //     setSelectedEvent(event);
+  //     setIsEditingEvent(true);
+  //     setIsEventModalOpen(true);
+  //   }
+  // };
 
   const handleEventEdit = (event) => {
     if (event && event.agg_sp_dt_eve_poc_id) {
