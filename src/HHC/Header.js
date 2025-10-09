@@ -1,4 +1,4 @@
-import React, { useState, useEffect ,useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
@@ -46,6 +46,7 @@ import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import ProfRequest from './components/HD/ProfRequest/ProfRequest';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import notificationMp3 from './assets/mixkit-software-interface-start-2574.wav'
+import ShiftHandover from './components/HD/ShiftHandover/ShiftHandover';
 
 const Header = () => {
   // const accessHospital = sessionStorage.getItem('selectedHospital');
@@ -440,44 +441,44 @@ const Header = () => {
     }
   };
 
-    /// Chat Count
-    const [chatCount, setChatCount] = useState(null);
-    const audioRef = useRef(null);
-  
-    useEffect(() => {
-      audioRef.current = new Audio(notificationMp3);
-      audioRef.current.load();
-  
-      const fetchChatCount = async () => {
-        try {
-          const response = await fetch(`${port}/web/all_msg_counts/`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-          });
-          const data = await response.json();
-  
-          if (data && typeof data.count === "number") {
-            if (chatCount !== null && data.count > chatCount) {
-              try {
-                audioRef.current.currentTime = 0;
-                await audioRef.current.play();
-                console.log("🔔 Notification sound played!");
-              } catch (err) {
-                console.warn("🔇 Sound play blocked:", err);
-              }
+  /// Chat Count
+  const [chatCount, setChatCount] = useState(null);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio(notificationMp3);
+    audioRef.current.load();
+
+    const fetchChatCount = async () => {
+      try {
+        const response = await fetch(`${port}/web/all_msg_counts/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+
+        if (data && typeof data.count === "number") {
+          if (chatCount !== null && data.count > chatCount) {
+            try {
+              audioRef.current.currentTime = 0;
+              await audioRef.current.play();
+              console.log("🔔 Notification sound played!");
+            } catch (err) {
+              console.warn("🔇 Sound play blocked:", err);
             }
-            setChatCount(data.count);
           }
-        } catch (error) {
-          console.error("Failed to fetch chat count:", error);
+          setChatCount(data.count);
         }
-      };
-  
-      const interval = setInterval(fetchChatCount, 3000);
-      return () => clearInterval(interval);
-    }, [chatCount, port, accessToken]);
+      } catch (error) {
+        console.error("Failed to fetch chat count:", error);
+      }
+    };
+
+    const interval = setInterval(fetchChatCount, 3000);
+    return () => clearInterval(interval);
+  }, [chatCount, port, accessToken]);
 
   return (
     <>
@@ -545,11 +546,8 @@ const Header = () => {
               <Tab component={Link} to="/service-request" value="/service-request" icon={<Badge color="error" badgeContent={srvNotify} overlap="circular"><NotificationsNoneIcon style={{ fontSize: "22px", marginBottom: "18px" }} /></Badge>} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }}>Service Request</span>} />
               <Tab component={Link} to="/enquiries" value="/enquiries" icon={<Badge color="error" badgeContent={enqNotify} overlap="circular" ><ChatBubbleOutlineIcon style={{ fontSize: "18px", marginBottom: "18px" }} /></Badge>} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }}>Enquiries</span>} />
               <Tab component={Link} to="/prof-req" value="/prof-req" icon={<ChatBubbleOutlineIcon style={{ fontSize: "18px", marginBottom: "18px" }} />} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }}>Professional Request</span>} />
-              {/* <Tab component={Link} to="/membership" value="/membership" icon={<StarBorderIcon style={{ fontSize: "20px", marginBottom: "18px" }} disabled />} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }} disabled >Spero Membership</span>} /> */}
-
-              {/* <Tab component={Link} to="/viewservice" value="8" icon={<ChatBubbleOutlineIcon style={{ fontSize: "18px", marginBottom: "18px" }} />} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }}>View Service</span>} /> */}
-
               <Tab icon={<LocalPostOfficeOutlinedIcon style={{ fontSize: "20px", marginBottom: "18px" }} disabled />} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }} onClick={handleSMSOpen}>SMS</span>} />
+              <Tab component={Link} to="/shift-handover" value="/shift-handover" icon={<ChatBubbleOutlineIcon style={{ fontSize: "18px", marginBottom: "18px" }} />} iconPosition="start" label={<span style={{ fontSize: '1rem', textTransform: "capitalize", marginBottom: "18px" }}>Shift HandOver</span>} />
             </TabList>
             {!isSmallScreen && (
               <>
@@ -896,16 +894,6 @@ const Header = () => {
           </Modal>
 
           <Box sx={{ width: '100%', typography: 'body1', m: 1 }}>
-            {/* <Box sx={{ width: '100%', typography: 'body1', marginTop: '-10px' }}> */}
-            {/* {value === '1' && <TabPanel value="1"><Dashboard /></TabPanel>}
-          {value === '2' && <TabPanel value="2"><Addservice /></TabPanel>}
-          {/* {value === '2' && <TabPanel value="2"><Viewservice /></TabPanel>} */}
-            {/* {value === '3' && <TabPanel value="3"><Ongoingservice /></TabPanel>} */}
-            {/* {value === '4' && <TabPanel value="4"><Schedule /></TabPanel>}
-          {value === '5' && <TabPanel value="5"><ServiceRequest /></TabPanel>}
-          {value === '6' && <TabPanel value="6"><Enquiries /></TabPanel>}
-          {value === '7' && <TabPanel value="7">Spero Membership</TabPanel>}  */}
-
             <Routes>
               <Route path="/dashboard" exact element={<Dashboard />} />
               <Route path="/addservice" element={<Addservice />} />
@@ -914,14 +902,12 @@ const Header = () => {
               <Route path="/service-request" element={<ServiceRequest />} />
               <Route path="/enquiries" element={<Enquiries />} />
               <Route path="/prof-req" element={<ProfRequest />} />
-              {/* <Route path="/membership" element={<Membership />} /> */}
               <Route path="/viewservice" element={<Viewservice />} />
+              <Route path="/shift-handover" element={<ShiftHandover />} />
             </Routes>
-
           </Box>
         </TabContext>
       </Box>
-      {/* <Footer /> */}
     </>
   )
 }

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -8,9 +7,13 @@ import {
   MenuItem,
   Button,
   Typography,
-  Autocomplete,
   Snackbar,
   Alert,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -232,6 +235,37 @@ const MilestoneForm = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${port}/web/clinical_evaluation_get/`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchData();
+  }, [accessToken]);
+
+
   return (
     <Card sx={{ p: 0, boxShadow: "none", mt: 1 }}>
       <CardContent>
@@ -259,9 +293,9 @@ const MilestoneForm = ({
               error={!!errors.observership}
               helperText={errors.observership}
               onChange={(e) => setObservership(e.target.value)}
-              // InputLabelProps={{
-              //   shrink: true,
-              // }}
+            // InputLabelProps={{
+            //   shrink: true,
+            // }}
             >
               <MenuItem value="">
                 <em>Select</em>
@@ -351,24 +385,6 @@ const MilestoneForm = ({
           </Grid>
         </Grid>
 
-        {/* {isEditMode && ( */}
-        {/* <Grid container justifyContent="center" sx={{ mt: 2 }}>
-          <Button
-            onClick={handleFormSubmit}
-            variant="contained"
-            disabled={!isEditMode || isSubmitDisabled}
-            sx={{
-              backgroundColor: !isEditMode || isSubmitDisabled ? "#ccc" : "primary.main",
-              cursor: !isEditMode || isSubmitDisabled ? "not-allowed" : "pointer",
-              "&:hover": {
-                backgroundColor: !isEditMode || isSubmitDisabled ? "#ccc" : "primary.dark",
-              },
-            }}
-          >
-            {submitting ? "Submitting..." : "Submit"}
-          </Button>
-        </Grid> */}
-
         <Grid container justifyContent="center" sx={{ mt: 2 }}>
           {isEditMode ? (
             <Button
@@ -402,7 +418,25 @@ const MilestoneForm = ({
           )}
         </Grid>
 
-        {/* )} */}
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Marks (10)</TableCell>
+              <TableCell>Out Of</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell>{item.name}</TableCell>
+                <TableCell>{item.marks}</TableCell>
+                <TableCell>10</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
       </CardContent>
 
       <Snackbar

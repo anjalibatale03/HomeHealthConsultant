@@ -92,6 +92,7 @@ import ConsultantLogin from "./HHC/components/Consultant/ConsultantLogin/Consult
 import ReferredPatient from "./HHC/components/Consultant/ConsultantForm/ReferredPatient";
 import ReferredPatientDetails from "./HHC/components/Consultant/ConsultantForm/ReferredPatientDetails";
 import ManageConsultant from "./HHC/components/ADMIN/HCM/Manage Consultant/ManageConsultant";
+import ShiftHandover from "./HHC/components/HD/ShiftHandover/ShiftHandover";
 
 function App() {
   const [isLoggIn, setIsLoggIn] = useState(
@@ -160,6 +161,10 @@ function App() {
             <Route
               path="/prof-req"
               element={isLoggedIn ? <ProfRequest /> : <Login />}
+            />
+            <Route
+              path="/shift-handover"
+              element={isLoggedIn ? <ShiftHandover /> : <Login />}
             />
             <Route
               exact
