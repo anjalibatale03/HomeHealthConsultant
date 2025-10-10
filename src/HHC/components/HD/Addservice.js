@@ -2483,13 +2483,17 @@ const { selectedCallEnq, enquiryDates } = location.state || {};
     }
     console.log("POST API Hitting......", requestData);
     try {
-      let apiUrl = `${port}/web/agg_hhc_add_service_details_api/`;
+      let apiUrl;
+      let method;
 
-      if (eventValue) {
-        apiUrl = `${port}/web/agg_hhc_add_service_details_api/${eventValue}`;
-        console.log("apiUrl", apiUrl);
+      if (callTy === 2) {
+        apiUrl = `${port}/web/agg_hhc_add_service_details_api/${eventID}`;
+        method = "PUT";
+      } else if (callTy === undefined) {
+        apiUrl = `${port}/web/agg_hhc_add_service_details_api/`;
+        method = "POST";
       }
-      const method = eventValue ? "PUT" : "POST";
+      // const method = eventValue ? "PUT" : "POST";
       const response = await fetch(apiUrl, {
         method,
         headers: {
