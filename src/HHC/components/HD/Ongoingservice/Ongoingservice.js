@@ -120,19 +120,18 @@ const Ongoingservice = ({ eveId, onClose, rows }) => {
   const [serviceRequest, setServiceRequest] = useState([]);
   const [requestAllocation, setRequestAllocation] = useState({});
   const [eventID, setEventID] = useState("");
+  console.log("DDDDDDDDDDDDDDDDDDDDDDDDD", eventID);
   const [conflictData, setConflictData] = useState(null);
   console.log(conflictData, "conflictData");
 
+  const [page2, setPage2] = useState(0);
+  const [rowsPerPage2, setRowsPerPage2] = useState(5);
 
-  
-const [page2, setPage2] = useState(0);
-const [rowsPerPage2, setRowsPerPage2] = useState(5);
-
-const handleChangePage2 = (event, newPage) => setPage2(newPage);
-const handleChangeRowsPerPage2 = (event) => {
-  setRowsPerPage2(parseInt(event.target.value, 10));
-  setPage2(0);
-};
+  const handleChangePage2 = (event, newPage) => setPage2(newPage);
+  const handleChangeRowsPerPage2 = (event) => {
+    setRowsPerPage2(parseInt(event.target.value, 10));
+    setPage2(0);
+  };
 
   const [selected, setSelected] = useState("service");
 
@@ -278,7 +277,6 @@ const handleChangeRowsPerPage2 = (event) => {
   // Usestate for Filter values in input field
   // const [filteredData, setFilteredData] = useState(onServices);
   const filteredData = onServices;
- 
 
   const [filterType, setFilterType] = useState("searchby");
   const [searchValue, setSearchValue] = useState("");
@@ -324,10 +322,6 @@ const handleChangeRowsPerPage2 = (event) => {
   const [isSubmitted, setIsSubmitted] = useState(false); // ✅ New state for form submission
   const [selectedID, setSelectedID] = useState(null);
 
-
-
-
-
   // Handle Yes/No change
   const handleYesNoChange = (e) => {
     const value = e.target.value; // string
@@ -357,7 +351,7 @@ const handleChangeRowsPerPage2 = (event) => {
     }
   }, [notifyby]); // fetch again when notifyby changes
 
-const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   // Prefetch
@@ -394,13 +388,10 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleOpenLongTermForm = () => {
     // setSelectedEventId(eveId);
-    // setEventID(eveId); 
+    // setEventID(eveId);
 
     setOpen(true);
   };
-
-  
-
 
   const handleSave = () => {
     if (!eventID) {
@@ -543,8 +534,6 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
   const handleCloseIsInvoice = () => {
     setIsInvoicePopup(false);
   };
- 
-
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -954,27 +943,27 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
       serviceStatus === 1
         ? "Service about to end"
         : serviceStatus === 2
-          ? "Acknowledge pending"
-          : serviceStatus === 3
-            ? "Acknowledge by professional"
-            : serviceStatus === 4
-              ? "Closure completed"
-              : serviceStatus === 5
-                ? "Pending for closure"
-                : "";
+        ? "Acknowledge pending"
+        : serviceStatus === 3
+        ? "Acknowledge by professional"
+        : serviceStatus === 4
+        ? "Closure completed"
+        : serviceStatus === 5
+        ? "Pending for closure"
+        : "";
 
     const iconColor =
       serviceStatus === 1
         ? "#D61616"
         : serviceStatus === 2
-          ? "#2A1D1D"
-          : serviceStatus === 3
-            ? "#3D8A00"
-            : serviceStatus === 4
-              ? "#1342BA"
-              : serviceStatus === 5
-                ? "#BA139F"
-                : "#000000";
+        ? "#2A1D1D"
+        : serviceStatus === 3
+        ? "#3D8A00"
+        : serviceStatus === 4
+        ? "#1342BA"
+        : serviceStatus === 5
+        ? "#BA139F"
+        : "#000000";
 
     return (
       <Tooltip title={title} arrow>
@@ -1028,6 +1017,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
   const handleExtendService = () => {
     navigate("/addservice", { state: { eventID } });
   };
+  
   useEffect(() => {
     const getCallerDetails = async () => {
       if (callerId) {
@@ -1057,8 +1047,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
   return (
     <>
       <Navbar />
-      <Box sx={{ flexGrow: 1, mt: 13.5, ml: 1, mr: 1, mb: 4 }} 
-        >
+      <Box sx={{ flexGrow: 1, mt: 13.5, ml: 1, mr: 1, mb: 4 }}>
         {selected === "service" ? (
           <Stack
             direction={isSmallScreen ? "column" : "row"}
@@ -1067,35 +1056,34 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
             sx={{ pt: 1 }}
           >
             <Typography
-            style={{
-              fontSize: 16,
-              fontWeight: 600,
-              marginTop: "7px",
-              marginLeft: "0.4px",
-              color: "rgb(54, 165, 121)",
-            }}
-            // color="text.secondary"
-            gutterBottom
-          >
-            ONGOING SERVICES
-          </Typography>
-
+              style={{
+                fontSize: 16,
+                fontWeight: 600,
+                marginTop: "7px",
+                marginLeft: "0.4px",
+                color: "rgb(54, 165, 121)",
+              }}
+              // color="text.secondary"
+              gutterBottom
+            >
+              ONGOING SERVICES
+            </Typography>
 
             <Box
-                 component="form"
-            sx={{
-              marginLeft: "2rem",
-              // p: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-              width: 300,
-              height: "2.6rem",
-              backgroundColor: "#f1f1f1",
-              boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
-              borderRadius: "10px",
-              border: "1px solid #C9C9C9",
-            }}
-          >
+              component="form"
+              sx={{
+                marginLeft: "2rem",
+                // p: "2px 4px",
+                display: "flex",
+                alignItems: "center",
+                width: 300,
+                height: "2.6rem",
+                backgroundColor: "#f1f1f1",
+                boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                borderRadius: "10px",
+                border: "1px solid #C9C9C9",
+              }}
+            >
               <InputBase
                 sx={{ ml: 1, mr: 1, flex: 1 }}
                 type="date"
@@ -1107,17 +1095,17 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
             <Box
               component="form"
               sx={{
-              marginLeft: "2rem",
-              p: "2px 4px",
-              display: "flex",
-              alignItems: "center",
-              width: 300,
-              height: "2.5rem",
-              backgroundColor: "#f1f1f1",
-              boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
-              borderRadius: "10px",
-              border: "1px solid #C9C9C9",
-            }}
+                marginLeft: "2rem",
+                p: "2px 4px",
+                display: "flex",
+                alignItems: "center",
+                width: 300,
+                height: "2.5rem",
+                backgroundColor: "#f1f1f1",
+                boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                borderRadius: "10px",
+                border: "1px solid #C9C9C9",
+              }}
             >
               <TextField
                 select
@@ -1125,17 +1113,17 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                 fullWidth
                 value={filterType}
                 onChange={handleFilterTypeChange}
-               sx={{
-                textAlign: "center",
-                "& input": {
-                  fontSize: "14px",
-                },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    border: "none",
+                sx={{
+                  textAlign: "center",
+                  "& input": {
+                    fontSize: "14px",
                   },
-                },
-              }}
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      border: "none",
+                    },
+                  },
+                }}
               >
                 <MenuItem value="searchby" disabled>
                   Search by
@@ -1162,17 +1150,17 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
               <Box
                 component="form"
                 sx={{
-                marginLeft: "2rem",
-                p: "2px 4px",
-                display: "flex",
-                alignItems: "center",
-                width: 300,
-                height: "2.5rem",
-                backgroundColor: "#f1f1f1",
-                boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
-                borderRadius: "10px",
-                border: "1px solid #C9C9C9",
-              }}
+                  marginLeft: "2rem",
+                  p: "2px 4px",
+                  display: "flex",
+                  alignItems: "center",
+                  width: 300,
+                  height: "2.5rem",
+                  backgroundColor: "#f1f1f1",
+                  boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                  borderRadius: "10px",
+                  border: "1px solid #C9C9C9",
+                }}
               >
                 <InputBase
                   sx={{ ml: 1, flex: 1 }}
@@ -1193,28 +1181,28 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
             <Button
               variant="contained"
               onClick={handleSubmit}
-               sx={{
-              textTransform: "capitalize",
-              height: "40px",
-              borderRadius: "8px",
-              width: "12ch",
-              bgcolor: "rgb(52, 123, 137)",
-              "&:hover": {
-                backgroundColor: "rgb(52, 123, 137)",
-              },
-            }}
+              sx={{
+                textTransform: "capitalize",
+                height: "40px",
+                borderRadius: "8px",
+                width: "12ch",
+                bgcolor: "rgb(52, 123, 137)",
+                "&:hover": {
+                  backgroundColor: "rgb(52, 123, 137)",
+                },
+              }}
             >
               Submit
             </Button>
             <Button
               variant="outlined"
               onClick={handleReset}
-               sx={{
-              textTransform: "capitalize",
-              height: "40px",
-              borderRadius: "8px",
-              width: "12ch",
-            }}
+              sx={{
+                textTransform: "capitalize",
+                height: "40px",
+                borderRadius: "8px",
+                width: "12ch",
+              }}
             >
               Reset
             </Button>
@@ -1246,15 +1234,15 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
             sx={{ pt: 1 }}
           >
             <Typography
-               style={{
-              fontSize: 16,
-              fontWeight: 600,
-              marginTop: "7px",
-              marginLeft: "0.4px",
-              color: "rgb(54, 165, 121)",
-            }}
-            // color="text.secondary"
-            gutterBottom
+              style={{
+                fontSize: 16,
+                fontWeight: 600,
+                marginTop: "7px",
+                marginLeft: "0.4px",
+                color: "rgb(54, 165, 121)",
+              }}
+              // color="text.secondary"
+              gutterBottom
             >
               Professional Live Tracking
             </Typography>
@@ -1283,71 +1271,79 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
         {selected === "service" ? (
           <>
             <TableContainer
-  sx={{
-    height:
-      filteredData.length === 0 || filteredData.length < 5
-        ? "60vh"
-        : "auto",
-     // ✅ allows vertical scroll instead of clipping
-    overflowY: "hidden !important",   // ✅ hides horizontal scroll if not needed
-  }}
-  // className="pagination-scroll"
->
-              <Table sx={{overflowY:'hidden'}}>
+              sx={{
+                height:
+                  filteredData.length === 0 || filteredData.length < 5
+                    ? "60vh"
+                    : "auto",
+                // ✅ allows vertical scroll instead of clipping
+                overflowY: "hidden !important", // ✅ hides horizontal scroll if not needed
+              }}
+              // className="pagination-scroll"
+            >
+              <Table sx={{ overflowY: "hidden" }}>
                 <TableHead>
                   <TableRow>
                     <OngoingServiceCard
-                     style={{
-                    background: "rgb(173, 219, 177)",
-                    color: "#423737",
-                    borderRadius: "8px 10px 0 0",
-                    height: "50px",
-                  }}
+                      style={{
+                        background: "rgb(173, 219, 177)",
+                        color: "#423737",
+                        borderRadius: "8px 10px 0 0",
+                        height: "50px",
+                      }}
                     >
-                     <CardContent
-                    style={{
-                      flex: 0.5,
-                      borderRight: "1px solid #ffffff",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <Typography style={{ fontSize: "13px", fontWeight: 500 }}>
-                      Sr. No
-                    </Typography>
-                  </CardContent>
-                     <CardContent
-                    style={{
-                      flex: 2,
-                      borderRight: "1px solid #ffffff",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <Typography style={{ fontSize: "13px", fontWeight: 500 }}>
-                      Event Code
-                    </Typography>
-                  </CardContent>
-                        <CardContent
-                    style={{
-                      flex: 1.8,
-                      borderRight: "1px solid #ffffff",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <Typography style={{ fontSize: "13px", fontWeight: 500 }}>
-                      Patient Name
-                    </Typography>
-                  </CardContent>
-                    <CardContent
-                    style={{
-                      flex: 1.6,
-                      borderRight: "1px solid #ffffff",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <Typography style={{ fontSize: "13px", fontWeight: 500 }}>
-                      Caller No
-                    </Typography>
-                  </CardContent>
+                      <CardContent
+                        style={{
+                          flex: 0.5,
+                          borderRight: "1px solid #ffffff",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <Typography
+                          style={{ fontSize: "13px", fontWeight: 500 }}
+                        >
+                          Sr. No
+                        </Typography>
+                      </CardContent>
+                      <CardContent
+                        style={{
+                          flex: 2,
+                          borderRight: "1px solid #ffffff",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <Typography
+                          style={{ fontSize: "13px", fontWeight: 500 }}
+                        >
+                          Event Code
+                        </Typography>
+                      </CardContent>
+                      <CardContent
+                        style={{
+                          flex: 1.8,
+                          borderRight: "1px solid #ffffff",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <Typography
+                          style={{ fontSize: "13px", fontWeight: 500 }}
+                        >
+                          Patient Name
+                        </Typography>
+                      </CardContent>
+                      <CardContent
+                        style={{
+                          flex: 1.6,
+                          borderRight: "1px solid #ffffff",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <Typography
+                          style={{ fontSize: "13px", fontWeight: 500 }}
+                        >
+                          Caller No
+                        </Typography>
+                      </CardContent>
                       <CardContent
                         style={{ flex: 2, borderRight: "1px solid #FFFFFF" }}
                       >
@@ -1438,29 +1434,28 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                               alignItems: "left",
                             }}
                           >
-                            <OngoingServiceCard  style={{ height: "4rem" }}
-                                 sx={{
-                            background: "#f1f1f1",
-                            borderLeft: "4px solid transparent",
-                            transition: "all 0.3s ease-in-out",
-                            cursor: "pointer",
-                            "&:hover": {
-                              borderLeft: "4px solid rgb(19 166 31)",
-                              borderRight: "4px solid rgb(19 166 31)",
-                              transform: "scale(1)",
-                            },
-                          }}>
+                            <OngoingServiceCard
+                              style={{ height: "3rem" }}
+                              sx={{
+                                background: "#f1f1f1",
+                                borderLeft: "4px solid transparent",
+                                transition: "all 0.3s ease-in-out",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  borderLeft: "4px solid rgb(19 166 31)",
+                                  borderRight: "4px solid rgb(19 166 31)",
+                                  transform: "scale(1)",
+                                },
+                              }}
+                            >
                               <CardContent style={{ flex: 0.5 }}>
                                 <Typography variant="body2">
                                   {index + 1 + page * rowsPerPage}
                                 </Typography>
                               </CardContent>
-                              <CardContent
-                               style={{ flex: 2 }}
-                              >
+                              <CardContent style={{ flex: 2.2 }}>
                                 <Typography
                                   variant="body2"
-                                  textAlign="left"
                                   onClick={() => {
                                     eventIDRequest(row.eve_id);
                                     handleOpenDetails();
@@ -1481,7 +1476,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                   />
                                 </Modal>
                               </CardContent>
-                              <CardContent style={{ flex: 1.8 }}>
+                              <CardContent style={{ flex: 1.6 }}>
                                 <Typography
                                   variant="body2"
                                   textAlign="left"
@@ -1572,7 +1567,6 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                               <CardContent style={{ flex: 1.6 }}>
                                 <Typography
                                   variant="body2"
-                                  textAlign="left"
                                   onClick={() => {
                                     eventIDRequest(
                                       row.eve_id,
@@ -1651,102 +1645,92 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                 </Modal>
                               </CardContent>
 
-<CardContent
-  sx={{
-    flex: 2,
-    minWidth: 0,
-    display: "flex",
-    alignItems: "center",
-    paddingY: 0.5, // small vertical balance
-  }}
->
-  <Typography
-    variant="body2"
-    textAlign="left"
-    sx={{
-      whiteSpace: "pre-wrap",      // allows normal wrapping + line breaks
-      wordBreak: "break-word",     // handles long words
-      overflowWrap: "anywhere",    // ensures even unbreakable strings wrap
-      lineHeight: 1.4,
-      width: "100%",
-    }}
-  >
-    {row?.job_closure?.service_professional || ""}
-  </Typography>
-</CardContent>
+                              <CardContent style={{ flex: 2, minWidth: 0 }}>
+                                <Typography
+                                  variant="body2"
+                                  textAlign="left"
+                                  sx={{
+                                    whiteSpace: "normal",
+                                    wordBreak: "break-word",
+                                    overflowWrap: "break-word",
+                                    lineHeight: 1.4,
+                                  }}
+                                >
+                                  {row.job_closure &&
+                                  row.job_closure.service_professional
+                                    ? `${row.job_closure.service_professional}`
+                                    : ""}
+                                </Typography>
+                              </CardContent>
 
-                              <CardContent style={{ flex: 2 }}>
+                              <CardContent style={{ flex: 1.5 }}>
                                 <Typography variant="body2" textAlign="left">
                                   {row.service ? row.service.service : ""}
                                 </Typography>
                               </CardContent>
 
                               <CardContent style={{ flex: 1.5 }}>
-                                <Typography variant="body2"  textAlign="left">
+                                <Typography variant="body2">
                                   {formatDate(
                                     row.service ? row.service.start_date : ""
                                   )}
                                 </Typography>
                               </CardContent>
                               <CardContent style={{ flex: 1.5 }}>
-                                <Typography variant="body2" textAlign="left">
+                                <Typography variant="body2">
                                   {formatDate(
                                     row.service ? row.service.end_date : ""
                                   )}
                                 </Typography>
                               </CardContent>
-                              <CardContent style={{ flex: 1.7 }}>
-                                {row.payment.pending_amount === 0 ? (
-                                  <div style={{ display: "flex" }}>
-                                    <CheckCircleIcon
-                                      style={{
-                                        fontSize: "16px",
-                                        color: "#3D8A00",
-                                      }}
-                                    />
-                                    <Typography
-                                      variant="body2"
-                                      textAlign="left"
-                                      sx={{
-                                        cursor:
-                                          row.payment.payment_status === 1
-                                            ? "pointer"
-                                            : "default",
-                                      }}
-                                      onClick={
-                                        row.payment.payment_status === 1
-                                          ? () => {
-                                            eventIDRequest(row.eve_id);
-                                            handleOpenRecPayment();
-                                          }
-                                          : undefined
-                                      }
-                                    >
-                                      {row.payment.payment_status === 1 ? (
-                                        "Received by professional"
-                                      ) : row.payment.payment_status === 100 ? (
-                                        <span>{"Complementary"}</span>
-                                      ) : (
-                                        <span>{"Received by desk"}</span>
-                                      )}
-                                    </Typography>
-                                  </div>
-                                ) : (
-                                  <Typography variant="body2" textAlign="left">
-                                    {row.payment.payment_status === 100 ? (
-                                      <span>{"Complementary"}</span>
-                                    ) : (
-                                      <>
-                                        ₹{" "}
-                                        <span style={{ color: "#DA0000" }}>
-                                          {parseInt(row.payment.pending_amount)}
-                                        </span>
-                                        /{parseInt(row.payment.final_amount)}
-                                      </>
-                                    )}
-                                  </Typography>
-                                )}
-                              </CardContent>
+ <CardContent style={{ flex: 1.7 }}>
+  {row.payment.pending_amount === 0 ? (
+    <div style={{ display: "flex", alignItems: "center" }}>
+      <CheckCircleIcon
+        style={{
+          fontSize: "16px",
+          color: "#3D8A00",
+          marginRight: "4px", // spacing between icon and text
+        }}
+      />
+      <Typography
+        variant="body2"
+        sx={{
+          textAlign: "left",
+          wordBreak: "break-word",
+          whiteSpace: "normal",
+          cursor: row.payment.payment_status === 1 ? "pointer" : "default",
+        }}
+        onClick={
+          row.payment.payment_status === 1
+            ? () => {
+                eventIDRequest(row.eve_id);
+                handleOpenRecPayment();
+              }
+            : undefined
+        }
+      >
+        {row.payment.payment_status === 1
+          ? "Received by professional"
+          : row.payment.payment_status === 100
+          ? "Complementary"
+          : "Received by desk"}
+      </Typography>
+    </div>
+  ) : (
+    <Typography variant="body2" sx={{ textAlign: "left", wordBreak: "break-word", whiteSpace: "normal" }}>
+      {row.payment.payment_status === 100 ? (
+        "Complementary"
+      ) : (
+        <>
+          ₹ <span style={{ color: "#DA0000" }}>{parseInt(row.payment.pending_amount)}</span>/{parseInt(row.payment.final_amount)}
+        </>
+      )}
+    </Typography>
+  )}
+</CardContent>
+
+
                               <Modal
                                 open={openRecPayment}
                                 onClose={handleCloseRecPayment}
@@ -1808,7 +1792,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                               </Modal>
 
                               <CardContent style={{ flex: 1 }}>
-                                <Typography variant="body2 " textAlign="left">
+                                <Typography variant="body2">
                                   {row.job_closure
                                     ? row.job_closure.job_closure_count
                                     : ""}
@@ -1981,141 +1965,200 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                             eventIDRequest(row.eve_id)
                                           )
                                         }
-                                      // onClick={() =>
-                                      //   handleOpenLongTermForm(row.eve_id)
-                                      // }
+                                        // onClick={() =>
+                                        //   handleOpenLongTermForm(row.eve_id)
+                                        // }
                                       >
                                         Long Term Form
                                       </MenuItem>
                                     </Menu>
 
-<Modal
-  open={open}
-  onClose={() => setOpen(false)}
-  aria-labelledby="longterm-modal-title"
-  aria-describedby="longterm-modal-description"
->
-  <Box
-    sx={{
-      ...style,
-      width: 550,
-      borderRadius: "10px",
-      border: "none",
-      p: 0, 
-      overflow: "hidden", 
-    }}
-  >
-    {/* Header AppBar */}
-    <AppBar
-      position="static"
-      sx={{
-        background: "rgb(173, 219, 177)",
-        height: "3rem",
-        borderRadius: "8px 8px 0 0", // ✅ match Box top border radius
-      }}
-    >
-      <Box sx={{ display: "flex", alignItems: "center", px: 2 }}>
-        <Typography
-          sx={{
-            fontSize: "16px",
-            fontWeight: 600,
-            color: "#FFFFFF",
-            flexGrow: 1,
-          }}
-        >
-          Long Term
-        </Typography>
-        <Button
-          onClick={() => setOpen(false)}
-          sx={{ color: "#FFFFFF", minWidth: "auto" }}
-        >
-          <CloseIcon />
-        </Button>
-      </Box>
-    </AppBar>
+                                    <Modal
+                                      open={open}
+                                      onClose={() => setOpen(false)}
+                                      aria-labelledby="longterm-modal-title"
+                                      aria-describedby="longterm-modal-description"
+                                    >
+                                      <Box
+                                        sx={{
+                                          ...style,
+                                          width: 550,
+                                          borderRadius: "10px",
+                                          border: "none",
+                                          p: 0,
+                                          overflow: "hidden",
+                                        }}
+                                      >
+                                        {/* Header AppBar */}
+                                        <AppBar
+                                          position="static"
+                                          sx={{
+                                            background: "rgb(173, 219, 177)",
+                                            height: "3rem",
+                                            borderRadius: "8px 8px 0 0", // ✅ match Box top border radius
+                                          }}
+                                        >
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              alignItems: "center",
+                                              px: 2,
+                                            }}
+                                          >
+                                            <Typography
+                                              sx={{
+                                                fontSize: "16px",
+                                                fontWeight: 600,
+                                                color: "#FFFFFF",
+                                                flexGrow: 1,
+                                              }}
+                                            >
+                                              Long Term
+                                            </Typography>
+                                            <Button
+                                              onClick={() => setOpen(false)}
+                                              sx={{
+                                                color: "#FFFFFF",
+                                                minWidth: "auto",
+                                              }}
+                                            >
+                                              <CloseIcon />
+                                            </Button>
+                                          </Box>
+                                        </AppBar>
 
-    {/* Modal Content */}
-    <Box sx={{ p: 2 }}>
-      <Stack spacing={2}>
-        {/* Yes/No */}
-        <FormControl fullWidth size="small">
-          <Select
-            value={yesNo}
-            disabled={isSubmitted}
-            onChange={(e) => setYesNo(Number(e.target.value))}
-          >
-            <MenuItem value={1}>Yes</MenuItem>
-            <MenuItem value={2}>No</MenuItem>
-          </Select>
-        </FormControl>
+                                        {/* Modal Content */}
+                                        <Box sx={{ p: 2 }}>
+                                          <Stack spacing={2}>
+                                            {/* Yes/No */}
+                                            <FormControl fullWidth size="small">
+                                              <Select
+                                                value={yesNo}
+                                                disabled={isSubmitted}
+                                                onChange={(e) =>
+                                                  setYesNo(
+                                                    Number(e.target.value)
+                                                  )
+                                                }
+                                              >
+                                                <MenuItem value={1}>
+                                                  Yes
+                                                </MenuItem>
+                                                <MenuItem value={2}>
+                                                  No
+                                                </MenuItem>
+                                              </Select>
+                                            </FormControl>
 
-        {/* Radio buttons */}
-        {!isSubmitted && yesNo === 1 && (
-          <FormControl component="fieldset">
-            <RadioGroup
-              row
-              value={notifyby}
-              onChange={(e) => setNotifyby(Number(e.target.value))}
-            >
-              <FormControlLabel value={1} control={<Radio />} label="Admin" />
-              <FormControlLabel value={2} control={<Radio />} label="Professional" />
-            </RadioGroup>
-          </FormControl>
-        )}
+                                            {/* Radio buttons */}
+                                            {!isSubmitted && yesNo === 1 && (
+                                              <FormControl component="fieldset">
+                                                <RadioGroup
+                                                  row
+                                                  value={notifyby}
+                                                  onChange={(e) =>
+                                                    setNotifyby(
+                                                      Number(e.target.value)
+                                                    )
+                                                  }
+                                                >
+                                                  <FormControlLabel
+                                                    value={1}
+                                                    control={<Radio />}
+                                                    label="Admin"
+                                                  />
+                                                  <FormControlLabel
+                                                    value={2}
+                                                    control={<Radio />}
+                                                    label="Professional"
+                                                  />
+                                                </RadioGroup>
+                                              </FormControl>
+                                            )}
 
-        {/* Role list */}
-        {!isSubmitted && yesNo === 1 && notifyby && (
-          <FormControl fullWidth size="small">
-            <InputLabel id="role-list-label">Select Name</InputLabel>
-            <Select
-              labelId="role-list-label"
-              label="Select Name"
-              value={notifyname || ""}
-              onChange={(e) => setnotifyname(e.target.value)}
-            >
-              {notifyby === 1 &&
-                roleList?.role === "admin" &&
-                roleList?.data?.map((item) => (
-                  <MenuItem
-                    key={item.clg_ref_id}
-                    value={item.clg_ref_id}
-                    sx={{ fontSize: "12px", mt: 1 }}
-                  >
-                    {item.name}
-                  </MenuItem>
-                ))}
+                                            {/* Role list */}
+                                            {!isSubmitted &&
+                                              yesNo === 1 &&
+                                              notifyby && (
+                                                <FormControl
+                                                  fullWidth
+                                                  size="small"
+                                                >
+                                                  <InputLabel id="role-list-label">
+                                                    Select Name
+                                                  </InputLabel>
+                                                  <Select
+                                                    labelId="role-list-label"
+                                                    label="Select Name"
+                                                    value={notifyname || ""}
+                                                    onChange={(e) =>
+                                                      setnotifyname(
+                                                        e.target.value
+                                                      )
+                                                    }
+                                                  >
+                                                    {notifyby === 1 &&
+                                                      roleList?.role ===
+                                                        "admin" &&
+                                                      roleList?.data?.map(
+                                                        (item) => (
+                                                          <MenuItem
+                                                            key={
+                                                              item.clg_ref_id
+                                                            }
+                                                            value={
+                                                              item.clg_ref_id
+                                                            }
+                                                            sx={{
+                                                              fontSize: "12px",
+                                                              mt: 1,
+                                                            }}
+                                                          >
+                                                            {item.name}
+                                                          </MenuItem>
+                                                        )
+                                                      )}
 
-              {notifyby === 2 &&
-                roleList?.role === "professional" &&
-                roleList?.data?.map((item) => (
-                  <MenuItem
-                    key={item.clg_ref_id}
-                    value={item.clg_ref_id}
-                    sx={{ fontSize: "12px", mb: 1 }}
-                  >
-                    {item.name}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-        )}
+                                                    {notifyby === 2 &&
+                                                      roleList?.role ===
+                                                        "professional" &&
+                                                      roleList?.data?.map(
+                                                        (item) => (
+                                                          <MenuItem
+                                                            key={
+                                                              item.clg_ref_id
+                                                            }
+                                                            value={
+                                                              item.clg_ref_id
+                                                            }
+                                                            sx={{
+                                                              fontSize: "12px",
+                                                              mb: 1,
+                                                            }}
+                                                          >
+                                                            {item.name}
+                                                          </MenuItem>
+                                                        )
+                                                      )}
+                                                  </Select>
+                                                </FormControl>
+                                              )}
 
-        {/* Submit button */}
-        {!isSubmitted && (
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleSave}
-          >
-            Submit
-          </Button>
-        )}
-      </Stack>
-    </Box>
-  </Box>
-</Modal>
-
+                                            {/* Submit button */}
+                                            {!isSubmitted && (
+                                              <Button
+                                                variant="contained"
+                                                color="primary"
+                                                fullWidth
+                                                onClick={handleSave}
+                                              >
+                                                Submit
+                                              </Button>
+                                            )}
+                                          </Stack>
+                                        </Box>
+                                      </Box>
+                                    </Modal>
 
                                     <Modal
                                       open={openInvoice}
@@ -2136,24 +2179,24 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                       aria-describedby="parent-modal-description"
                                     >
                                       <Box
-                                         sx={{
-                                      ...style,
-                                      width: 550,
-                                      borderRadius: "10px",
-                                      border: "none",
-                                    }}
+                                        sx={{
+                                          ...style,
+                                          width: 550,
+                                          borderRadius: "10px",
+                                          border: "none",
+                                        }}
                                       >
                                         <>
                                           <AppBar
-                                             position="static"
-                                        style={{
-                                          background: "rgb(173, 219, 177)",
-                                          width: "38.5rem",
-                                          height: "3rem",
-                                          marginTop: "-16px",
-                                          marginLeft: "-32px",
-                                          borderRadius: "8px 10px 0 0",
-                                        }}
+                                            position="static"
+                                            style={{
+                                              background: "rgb(173, 219, 177)",
+                                              width: "38.5rem",
+                                              height: "3rem",
+                                              marginTop: "-16px",
+                                              marginLeft: "-32px",
+                                              borderRadius: "8px 10px 0 0",
+                                            }}
                                           >
                                             <div style={{ display: "flex" }}>
                                               <Typography
@@ -2230,26 +2273,27 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                         ) : (
                                           <>
                                             <AppBar
-                                             position="static"
-                                          style={{
-                                            background: "rgb(173, 219, 177)",
-                                            width: "22.8rem",
-                                            height: "3rem",
-                                            marginTop: "-16px",
-                                            marginLeft: "-32px",
-                                            borderRadius: "8px 10px 0 0",
-                                          }}
+                                              position="static"
+                                              style={{
+                                                background:
+                                                  "rgb(173, 219, 177)",
+                                                width: "22.8rem",
+                                                height: "3rem",
+                                                marginTop: "-16px",
+                                                marginLeft: "-32px",
+                                                borderRadius: "8px 10px 0 0",
+                                              }}
                                             >
                                               <div style={{ display: "flex" }}>
                                                 <Typography
                                                   align="center"
-                                                   style={{
-                                                fontSize: "16px",
-                                                fontWeight: 600,
-                                                color: "#000000",
-                                                marginTop: "10px",
-                                                marginLeft: "15px",
-                                              }}
+                                                  style={{
+                                                    fontSize: "16px",
+                                                    fontWeight: 600,
+                                                    color: "#000000",
+                                                    marginTop: "10px",
+                                                    marginLeft: "15px",
+                                                  }}
                                                 >
                                                   SERVICE RESCHEDULE
                                                 </Typography>
@@ -2286,267 +2330,277 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                       </Box>
                                     </Modal>
 
-                                      <Modal
-                                  open={openSrvExtend}
-                                  onClose={handleCloseSrvExtend}
-                                  aria-labelledby="parent-modal-title"
-                                  aria-describedby="parent-modal-description"
-                                >
-                                  <Box
-                                    sx={{
-                                      ...style,
-                                      width: 300,
-                                      borderRadius: "10px",
-                                      border: "none",
-                                      bgcolor: " #f1f1f1",
-                                    }}
-                                  >
-                                    <AppBar
-                                      position="static"
-                                      style={{
-                                        background: "rgb(173, 219, 177)",
-                                        width: "22.8rem",
-                                        height: "3rem",
-                                        marginTop: "-16px",
-                                        marginLeft: "-32px",
-                                        borderRadius: "8px 10px 0 0",
-                                      }}
+                                    <Modal
+                                      open={openSrvExtend}
+                                      onClose={handleCloseSrvExtend}
+                                      aria-labelledby="parent-modal-title"
+                                      aria-describedby="parent-modal-description"
                                     >
-                                      <div style={{ display: "flex" }}>
-                                        <Typography
-                                          align="center"
-                                          style={{
-                                            fontSize: "16px",
-                                            fontWeight: 600,
-                                            color: "black",
-                                            marginTop: "10px",
-                                            marginLeft: '20px'
-                                          }}
-                                        >
-                                          SERVICE EXTEND
-                                        </Typography>
-                                        <Button
-                                          onClick={handleCloseSrvExtend}
-                                          sx={{
-                                            marginLeft: "150px",
-                                            color: "black",
-                                            marginTop: "2px",
-                                          }}
-                                        >
-                                          <CloseIcon />
-                                        </Button>
-                                      </div>
-                                    </AppBar>
-                                    <div style={{ marginTop: "25px" }}>
-                                      <Typography
-                                        style={{
-                                          fontSize: "13px",
-                                          fontWeight: 500,
-                                        }}
-                                      >
-                                        Are you sure want to extend the service?
-                                      </Typography>
-                                      <Button
-                                        varaint="contained"
-                                        onClick={handleExtendService}
+                                      <Box
                                         sx={{
-                                          backgroundColor: "rgb(52, 123, 137)",
+                                          ...style,
+                                          width: 300,
                                           borderRadius: "10px",
-                                          color: "white",
-                                          width: "14ch",
-                                          marginLeft: "100px",
-                                          marginTop: "25px",
-                                          textTransform: "capitalize",
-                                          "&:hover": {
-                                            backgroundColor:
-                                              "rgb(52, 123, 137)",
-                                          },
+                                          border: "none",
+                                          bgcolor: " #f1f1f1",
                                         }}
                                       >
-                                        Yes
-                                      </Button>
-                                    </div>
-                                  </Box>
-                                </Modal>
+                                        <AppBar
+                                          position="static"
+                                          style={{
+                                            background: "rgb(173, 219, 177)",
+                                            width: "22.8rem",
+                                            height: "3rem",
+                                            marginTop: "-16px",
+                                            marginLeft: "-32px",
+                                            borderRadius: "8px 10px 0 0",
+                                          }}
+                                        >
+                                          <div style={{ display: "flex" }}>
+                                            <Typography
+                                              align="center"
+                                              style={{
+                                                fontSize: "16px",
+                                                fontWeight: 600,
+                                                color: "black",
+                                                marginTop: "10px",
+                                                marginLeft: "20px",
+                                              }}
+                                            >
+                                              SERVICE EXTEND
+                                            </Typography>
+                                            <Button
+                                              onClick={handleCloseSrvExtend}
+                                              sx={{
+                                                marginLeft: "150px",
+                                                color: "black",
+                                                marginTop: "2px",
+                                              }}
+                                            >
+                                              <CloseIcon />
+                                            </Button>
+                                          </div>
+                                        </AppBar>
+                                        <div style={{ marginTop: "25px" }}>
+                                          <Typography
+                                            style={{
+                                              fontSize: "13px",
+                                              fontWeight: 500,
+                                            }}
+                                          >
+                                            Are you sure want to extend the
+                                            service?
+                                          </Typography>
+                                          <Button
+                                            varaint="contained"
+                                            onClick={handleExtendService}
+                                            sx={{
+                                              backgroundColor:
+                                                "rgb(52, 123, 137)",
+                                              borderRadius: "10px",
+                                              color: "white",
+                                              width: "14ch",
+                                              marginLeft: "100px",
+                                              marginTop: "25px",
+                                              textTransform: "capitalize",
+                                              "&:hover": {
+                                                backgroundColor:
+                                                  "rgb(52, 123, 137)",
+                                              },
+                                            }}
+                                          >
+                                            Yes
+                                          </Button>
+                                        </div>
+                                      </Box>
+                                    </Modal>
 
                                     <Modal
-                                  open={openCancel}
-                                  onClose={handleCloseCancel}
-                                  aria-labelledby="parent-modal-title"
-                                  aria-describedby="parent-modal-description"
-                                >
-                                  <Box
-                                    sx={{
-                                      ...style,
-                                      width: 300,
-                                      borderRadius: "10px",
-                                      border: "none",
-                                    }}
-                                  >
-                                    {jobClosureStatus === sesCount ? (
-                                      <Button
-                                        variant="contained"
+                                      open={openCancel}
+                                      onClose={handleCloseCancel}
+                                      aria-labelledby="parent-modal-title"
+                                      aria-describedby="parent-modal-description"
+                                    >
+                                      <Box
                                         sx={{
-                                          mt: 1,
-                                          ml: 1,
-                                          background: "#1bb78d",
+                                          ...style,
+                                          width: 300,
                                           borderRadius: "10px",
-                                          textTransform: "capitalize",
-                                          fontWeight: "bold",
-                                          color: "#fff",
-                                          fontSize: "14px",
-                                          boxShadow:
-                                            "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                                          "&:hover": {
-                                            backgroundColor: "#1bb78d",
-                                            boxShadow:
-                                              "0px 6px 12px rgba(0, 0, 0, 0.2)",
-                                          },
+                                          border: "none",
                                         }}
                                       >
-                                        Job closure has already completed.
-                                        Cannot cancel the service !!!
-                                      </Button>
-                                    ) : (
-                                      <>
-                                        <AppBar
-                                          position="static"
-                                          style={{
-                                            // background:"linear gradient(to right,rgb(80, 64, 121),rgb(37, 55, 61)",
-                                            background: "rgb(173, 219, 177)",
-
-                                            width: "22.8rem",
-                                            height: "3rem",
-                                            marginTop: "-16px",
-                                            marginLeft: "-32px",
-                                            borderRadius: "8px 10px 0 0",
-                                          }}
-                                        >
-                                          <div style={{ display: "flex" }}>
-                                            <Typography
-                                              align="center"
+                                        {jobClosureStatus === sesCount ? (
+                                          <Button
+                                            variant="contained"
+                                            sx={{
+                                              mt: 1,
+                                              ml: 1,
+                                              background: "#1bb78d",
+                                              borderRadius: "10px",
+                                              textTransform: "capitalize",
+                                              fontWeight: "bold",
+                                              color: "#fff",
+                                              fontSize: "14px",
+                                              boxShadow:
+                                                "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                                              "&:hover": {
+                                                backgroundColor: "#1bb78d",
+                                                boxShadow:
+                                                  "0px 6px 12px rgba(0, 0, 0, 0.2)",
+                                              },
+                                            }}
+                                          >
+                                            Job closure has already completed.
+                                            Cannot cancel the service !!!
+                                          </Button>
+                                        ) : (
+                                          <>
+                                            <AppBar
+                                              position="static"
                                               style={{
-                                                fontSize: "16px",
-                                                fontWeight: 600,
-                                                color: "#000000",
-                                                marginTop: "10px",
-                                                marginLeft: "15px",
-                                              }}
-                                            >
-                                              SERVICE CANCELLATION
-                                            </Typography>
-                                            <Button
-                                              onClick={handleCloseCancel}
-                                              sx={{
-                                                marginLeft: "6rem",
-                                                color: "#000000",
-                                                marginTop: "2px",
-                                              }}
-                                            >
-                                              <CloseIcon />
-                                            </Button>
-                                          </div>
-                                        </AppBar>
-                                        <Cancellation
-                                          serviceID={serviceID}
-                                          eventID={eventID}
-                                          subSrvID={subSrvID}
-                                          jobClosureStatus={jobClosureStatus}
-                                          endDateTime={endDateTime}
-                                          onClose={handleCloseCancel}
-                                        />
-                                      </>
-                                    )}
-                                  </Box>
-                                </Modal>
+                                                // background:"linear gradient(to right,rgb(80, 64, 121),rgb(37, 55, 61)",
+                                                background:
+                                                  "rgb(173, 219, 177)",
 
-                                   <Modal
-                                  open={openPayment}
-                                  onClose={handleClosePayment}
-                                  aria-labelledby="parent-modal-title"
-                                  aria-describedby="parent-modal-description"
-                                >
-                                  <Box
-                                    sx={{
-                                      ...style,
-                                      width: 300,
-                                      borderRadius: "10px",
-                                      border: "none",
-                                    }}
-                                  >
-                                    {/* {payment.Pending_Amount <= 0 ? ( */}
-                                    {payment === "payment already done" ||
-                                      payment.Pending_Amount === 0 ? (
-                                      <Button
-                                        variant="contained"
+                                                width: "22.8rem",
+                                                height: "3rem",
+                                                marginTop: "-16px",
+                                                marginLeft: "-32px",
+                                                borderRadius: "8px 10px 0 0",
+                                              }}
+                                            >
+                                              <div style={{ display: "flex" }}>
+                                                <Typography
+                                                  align="center"
+                                                  style={{
+                                                    fontSize: "16px",
+                                                    fontWeight: 600,
+                                                    color: "#000000",
+                                                    marginTop: "10px",
+                                                    marginLeft: "15px",
+                                                  }}
+                                                >
+                                                  SERVICE CANCELLATION
+                                                </Typography>
+                                                <Button
+                                                  onClick={handleCloseCancel}
+                                                  sx={{
+                                                    marginLeft: "6rem",
+                                                    color: "#000000",
+                                                    marginTop: "2px",
+                                                  }}
+                                                >
+                                                  <CloseIcon />
+                                                </Button>
+                                              </div>
+                                            </AppBar>
+                                            <Cancellation
+                                              serviceID={serviceID}
+                                              eventID={eventID}
+                                              subSrvID={subSrvID}
+                                              jobClosureStatus={
+                                                jobClosureStatus
+                                              }
+                                              endDateTime={endDateTime}
+                                              onClose={handleCloseCancel}
+                                            />
+                                          </>
+                                        )}
+                                      </Box>
+                                    </Modal>
+
+                                    <Modal
+                                      open={openPayment}
+                                      onClose={handleClosePayment}
+                                      aria-labelledby="parent-modal-title"
+                                      aria-describedby="parent-modal-description"
+                                    >
+                                      <Box
                                         sx={{
-                                          mt: 2,
-                                          ml: 6,
-                                          background: "rgb(52, 123, 137)",
+                                          ...style,
+                                          width: 300,
                                           borderRadius: "10px",
-                                          textTransform: "capitalize",
-                                          "&:hover": {
-                                            backgroundColor: "rgb(52, 123, 137)",
-                                          },
+                                          border: "none",
                                         }}
                                       >
-                                        <CheckCircleOutlineIcon
-                                          sx={{ fontSize: "20px", mr: "2px" }}
-                                        />{" "}
-                                        Payment Completed
-                                      </Button>
-                                    ) : (
-                                      <>
-                                        <AppBar
-                                          position="static"
-                                          style={{
-                                            // background:
-                                            //   "linear-gradient(45deg, #1FD0C4 38.02%, #0E8FE4 100%)",
-                                            background: "rgb(173, 219, 177)",
-
-                                            width: "22.8rem",
-                                            height: "3rem",
-                                            marginTop: "-16px",
-                                            marginLeft: "-32px",
-                                            borderRadius: "8px 10px 0 0",
-                                          }}
-                                        >
-                                          <div style={{ display: "flex" }}>
-                                            <Typography
-                                              align="center"
-                                              style={{
-                                                fontSize: "16px",
-                                                fontWeight: 600,
-                                                color: "#000000",
-                                                marginTop: "10px",
-                                                marginLeft: "15px",
-                                              }}
-                                            >
-                                              PAYMENT DETAILS
-                                            </Typography>
-                                            <Button
-                                              onClick={handleClosePayment}
+                                        {/* {payment.Pending_Amount <= 0 ? ( */}
+                                        {payment === "payment already done" ||
+                                        payment.Pending_Amount === 0 ? (
+                                          <Button
+                                            variant="contained"
+                                            sx={{
+                                              mt: 2,
+                                              ml: 6,
+                                              background: "rgb(52, 123, 137)",
+                                              borderRadius: "10px",
+                                              textTransform: "capitalize",
+                                              "&:hover": {
+                                                backgroundColor:
+                                                  "rgb(52, 123, 137)",
+                                              },
+                                            }}
+                                          >
+                                            <CheckCircleOutlineIcon
                                               sx={{
-                                                marginLeft: "8rem",
-                                                color: "#000000",
-                                                marginTop: "2px",
+                                                fontSize: "20px",
+                                                mr: "2px",
+                                              }}
+                                            />{" "}
+                                            Payment Completed
+                                          </Button>
+                                        ) : (
+                                          <>
+                                            <AppBar
+                                              position="static"
+                                              style={{
+                                                // background:
+                                                //   "linear-gradient(45deg, #1FD0C4 38.02%, #0E8FE4 100%)",
+                                                background:
+                                                  "rgb(173, 219, 177)",
+
+                                                width: "22.8rem",
+                                                height: "3rem",
+                                                marginTop: "-16px",
+                                                marginLeft: "-32px",
+                                                borderRadius: "8px 10px 0 0",
                                               }}
                                             >
-                                              <CloseIcon />
-                                            </Button>
-                                          </div>
-                                        </AppBar>
-                                        <Payment
-                                          eveID={eventID}
-                                          ptnData={ptnRecord}
-                                          pay={payment}
-                                          onServices={onServices}
-                                          walletData={walletData}
-                                        />
-                                      </>
-                                    )}
-                                  </Box>
-                                </Modal>
+                                              <div style={{ display: "flex" }}>
+                                                <Typography
+                                                  align="center"
+                                                  style={{
+                                                    fontSize: "16px",
+                                                    fontWeight: 600,
+                                                    color: "#000000",
+                                                    marginTop: "10px",
+                                                    marginLeft: "15px",
+                                                  }}
+                                                >
+                                                  PAYMENT DETAILS
+                                                </Typography>
+                                                <Button
+                                                  onClick={handleClosePayment}
+                                                  sx={{
+                                                    marginLeft: "8rem",
+                                                    color: "#000000",
+                                                    marginTop: "2px",
+                                                  }}
+                                                >
+                                                  <CloseIcon />
+                                                </Button>
+                                              </div>
+                                            </AppBar>
+                                            <Payment
+                                              eveID={eventID}
+                                              ptnData={ptnRecord}
+                                              pay={payment}
+                                              onServices={onServices}
+                                              walletData={walletData}
+                                            />
+                                          </>
+                                        )}
+                                      </Box>
+                                    </Modal>
 
                                     <Modal
                                       open={openProfessional}
@@ -2606,7 +2660,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                                   style={{
                                                     fontSize: "16px",
                                                     fontWeight: 600,
-                                                     color: "#000000",
+                                                    color: "#000000",
                                                     marginTop: "10px",
                                                     marginLeft: "15px",
                                                   }}
@@ -2699,7 +2753,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                           aria-describedby="parent-modal-description"
                                         >
                                           {totalSessionCount ===
-                                            jobClosureCount ? (
+                                          jobClosureCount ? (
                                             <Box
                                               sx={{
                                                 ...style,
@@ -2803,8 +2857,8 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
             </TableContainer>
 
             <TablePagination
-            // sx={}
-            sx={{overflowY:'hidden'}}
+              // sx={}
+              sx={{ overflowY: "hidden" }}
               rowsPerPageOptions={[5, 10, 25, 100]}
               component="div"
               count={filteredData.length}
@@ -2819,24 +2873,26 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
             <Grid item xs={12} md={8}>
               <TableContainer
                 sx={{
-        maxHeight:
-          filteredData.length === 0 || filteredData.length < 5 ? "50vh" : "unset",
-        display: "flex",
-        flexDirection: "column",
-           
-            overflowY:"hidden",
-      }}
+                  maxHeight:
+                    filteredData.length === 0 || filteredData.length < 5
+                      ? "50vh"
+                      : "unset",
+                  display: "flex",
+                  flexDirection: "column",
+
+                  overflowY: "hidden",
+                }}
               >
                 <Table>
                   <TableHead>
                     <TableRow>
                       <OngoingServiceCard
-                         style={{
-                    background: "rgb(173, 219, 177)",
-                    color: "#423737",
-                    borderRadius: "8px 10px 0 0",
-                    height: "46px",
-                  }}
+                        style={{
+                          background: "rgb(173, 219, 177)",
+                          color: "#423737",
+                          borderRadius: "8px 10px 0 0",
+                          height: "46px",
+                        }}
                       >
                         <CardContent
                           style={{
@@ -2863,7 +2919,10 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                           </Typography>
                         </CardContent>
                         <CardContent
-                          style={{ flex: 1.5, borderRight: "1px solid #FFFFFF" }}
+                          style={{
+                            flex: 1.5,
+                            borderRight: "1px solid #FFFFFF",
+                          }}
                         >
                           <Typography variant="subtitle2">
                             Start Time
@@ -2889,7 +2948,9 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                             borderRight: "1px solid #FFFFFF",
                           }}
                         >
-                          <Typography variant="subtitle2">Map Marker</Typography>
+                          <Typography variant="subtitle2">
+                            Map Marker
+                          </Typography>
                         </CardContent>
                       </OngoingServiceCard>
                     </TableRow>
@@ -2906,25 +2967,25 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                       </TableRow>
                     ) : (
                       sessionData
-                  .slice(
-                    page2 * rowsPerPage2,
-                    page2 * rowsPerPage2 + rowsPerPage2
-                  )
+                        .slice(
+                          page2 * rowsPerPage2,
+                          page2 * rowsPerPage2 + rowsPerPage2
+                        )
                         .map((row, index) => (
                           <TableRow key={row.agg_sp_dt_eve_poc_id}>
-                            <OngoingServiceCard 
-                             style={{ height: "3rem" }}
-                          sx={{
-                            background: "#f1f1f1",
-                            borderLeft: "4px solid transparent",
-                            transition: "all 0.3s ease-in-out",
-                            cursor: "pointer",
-                            "&:hover": {
-                              borderLeft: "4px solid rgb(19 166 31)",
-                              borderRight: "4px solid rgb(19 166 31)",
-                              transform: "scale(1)",
-                            },
-                          }}
+                            <OngoingServiceCard
+                              style={{ height: "3rem" }}
+                              sx={{
+                                background: "#f1f1f1",
+                                borderLeft: "4px solid transparent",
+                                transition: "all 0.3s ease-in-out",
+                                cursor: "pointer",
+                                "&:hover": {
+                                  borderLeft: "4px solid rgb(19 166 31)",
+                                  borderRight: "4px solid rgb(19 166 31)",
+                                  transform: "scale(1)",
+                                },
+                              }}
                             >
                               <CardContent style={{ flex: 1.5 }}>
                                 <Typography variant="body2">
@@ -2959,24 +3020,25 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                               {row.Session_status === "In route" ? (
                                 <CardContent style={{ flex: 0.8 }}>
                                   <LocationOnIcon
-                                    style={{ color: "#1976d2", cursor: "pointer" }}
+                                    style={{
+                                      color: "#1976d2",
+                                      cursor: "pointer",
+                                    }}
                                     onClick={() => {
                                       const lat = row.latitude;
                                       const lng = row.longitude;
-                                      const profId = row.srv_prof_id_id?.srv_prof_id;
+                                      const profId =
+                                        row.srv_prof_id_id?.srv_prof_id;
 
                                       setSelectedMapData({ lat, lng, profId });
                                     }}
                                   />
                                 </CardContent>
-                              )
-                                :
-                                (
-                                  <CardContent style={{ flex: 0.8 }}>
-                                    -
-                                  </CardContent>
-                                )
-                              }
+                              ) : (
+                                <CardContent style={{ flex: 0.8 }}>
+                                  -
+                                </CardContent>
+                              )}
                             </OngoingServiceCard>
                           </TableRow>
                         ))
@@ -2984,16 +3046,16 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                   </TableBody>
                 </Table>
               </TableContainer>
- <TablePagination
- sx={{overflowY:'hidden'}}
-          rowsPerPageOptions={[5, 10, 25, 100]}
-          component="div"
-          count={sessionData.length}
-          rowsPerPage={rowsPerPage2}
-          page={page2}
-          onPageChange={handleChangePage2}
-          onRowsPerPageChange={handleChangeRowsPerPage2}
-        />
+              <TablePagination
+                sx={{ overflowY: "hidden" }}
+                rowsPerPageOptions={[5, 10, 25, 100]}
+                component="div"
+                count={sessionData.length}
+                rowsPerPage={rowsPerPage2}
+                page={page2}
+                onPageChange={handleChangePage2}
+                onRowsPerPageChange={handleChangeRowsPerPage2}
+              />
             </Grid>
 
             <Grid item xs={12} md={4}>
@@ -3018,21 +3080,21 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
       </Box>
       <Footer />
 
-
       <Snackbar
-  open={snackbarOpen}
-  autoHideDuration={3000}
-  onClose={() => setSnackbarOpen(false)}
-  anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
->
-  <Alert
-    onClose={() => setSnackbarOpen(false)}
-    severity={snackbarSeverity}
-    sx={{ width: "100%" }}
-  >
-    {snackbarMessage}
-  </Alert>
-</Snackbar>
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          variant="filled"
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
