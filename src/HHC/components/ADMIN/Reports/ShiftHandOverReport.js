@@ -25,6 +25,7 @@ import {
 import { styled } from '@mui/system';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import HRNavbar from '../../HR/HRNavbar';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const EnquiryCard = styled(Card)({
     display: 'flex',
@@ -118,6 +119,50 @@ const ShiftHandoverReport = () => {
         setLoading(false);
     };
 
+    const handleDownload = async () => {
+        if (!filterStartDate || !filterEndDate) {
+            alert("Please select both Start Date and End Date before downloading.");
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            const url = `${port}/web/download_tasks_excel/?start_date=${filterStartDate}&end_date=${filterEndDate}&Status=${filterStatus}`;
+
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to download file");
+            }
+
+            // Convert response to Blob for file download
+            const blob = await response.blob();
+            const urlBlob = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = urlBlob;
+
+            // Suggested filename
+            link.download = `Shift_Handover_Report_${filterStartDate}_to_${filterEndDate}.xlsx`;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            window.URL.revokeObjectURL(urlBlob);
+        } catch (error) {
+            console.error("Error downloading Excel file:", error);
+            alert("Error downloading the file. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <>
             <HRNavbar />
@@ -146,7 +191,9 @@ const ShiftHandoverReport = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell><strong>Sr No</strong></TableCell>
+                                        <TableCell><strong>Status</strong></TableCell>
                                         <TableCell><strong>Added By</strong></TableCell>
+                                        <TableCell><strong>Date</strong></TableCell>
                                         <TableCell><strong>Remark</strong></TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -154,7 +201,9 @@ const ShiftHandoverReport = () => {
                                     {remarks.map((item, index) => (
                                         <TableRow key={item.tr_id}>
                                             <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{item.is_done === true ? "Completed" : "Pending"}</TableCell>
                                             <TableCell>{item.added_by}</TableCell>
+                                            <TableCell>{item.added_date}</TableCell>
                                             <TableCell>{item.remark}</TableCell>
                                         </TableRow>
                                     ))}
@@ -168,68 +217,67 @@ const ShiftHandoverReport = () => {
             </Modal>
 
             <Box sx={{ flexGrow: 1, mt: 13.8, ml: 1, mb: 2, mr: 1 }}>
-                <Stack
-                    direction={isSmallScreen ? "column" : "row"}
-                    spacing={1}
-                    alignItems={isSmallScreen ? "flex-start" : "center"}
-                    sx={{
-                        pt: 1,
-                        width: "100%",
-                        justifyContent: "space-between",
-                        flexWrap: "wrap",
-                    }}
-                >
-                    <Stack direction={isSmallScreen ? "column" : "row"} spacing={1} alignItems="center">
-                        <Typography
-                            style={{
-                                fontSize: 16,
-                                fontWeight: 600,
-                                marginLeft: "10px",
-                            }}
-                            color="text.secondary"
-                            gutterBottom
-                        >
-                            SHIFT HANDOVER REPORT
-                        </Typography>
+                <Stack direction={isSmallScreen ? "column" : "row"} spacing={1} alignItems="center">
+                    <Typography
+                        style={{
+                            fontSize: 16,
+                            fontWeight: 600,
+                            marginLeft: "10px",
+                        }}
+                        color="text.secondary"
+                        gutterBottom
+                    >
+                        SHIFT HANDOVER REPORT
+                    </Typography>
 
-                        <TextField
-                            type="date"
-                            size="small"
-                            label="Start Date"
-                            InputLabelProps={{ shrink: true }}
-                            value={filterStartDate}
-                            onChange={(e) => setFilterStartDate(e.target.value)}
-                        />
-                        <TextField
-                            type="date"
-                            size="small"
-                            label="End Date"
-                            InputLabelProps={{ shrink: true }}
-                            value={filterEndDate}
-                            onChange={(e) => setFilterEndDate(e.target.value)}
-                        />
-                        <TextField
-                            select
-                            size="small"
-                            label="Status"
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            sx={{ width: "150px" }}
-                        >
-                            <MenuItem value={1}>Completed</MenuItem>
-                            <MenuItem value={2}>Pending</MenuItem>
-                        </TextField>
+                    <TextField
+                        type="date"
+                        size="small"
+                        label="Start Date"
+                        InputLabelProps={{ shrink: true }}
+                        value={filterStartDate}
+                        onChange={(e) => setFilterStartDate(e.target.value)}
+                    />
+                    <TextField
+                        type="date"
+                        size="small"
+                        label="End Date"
+                        InputLabelProps={{ shrink: true }}
+                        value={filterEndDate}
+                        onChange={(e) => setFilterEndDate(e.target.value)}
+                    />
+                    <TextField
+                        select
+                        size="small"
+                        label="Status"
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        sx={{ width: "150px" }}
+                    >
+                        <MenuItem value={1}>Completed</MenuItem>
+                        <MenuItem value={2}>Pending</MenuItem>
+                    </TextField>
 
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleSearch}
-                            sx={{ height: "40px" }}
-                        >
-                            Search
-                        </Button>
-                    </Stack>
+                    {/* 🔍 Search Button */}
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSearch}
+                        sx={{ height: "40px" }}
+                    >
+                        Search
+                    </Button>
+
+                    {/* ⬇️ Download Button */}
+                    <IconButton
+                        color="primary"
+                        onClick={() => handleDownload()}
+                        sx={{ height: "40px" }}
+                    >
+                        <DownloadIcon />
+                    </IconButton>
                 </Stack>
+
 
                 <TableContainer sx={{ height: profRequest.length < 5 ? "60vh" : "auto" }}>
                     <Table>
