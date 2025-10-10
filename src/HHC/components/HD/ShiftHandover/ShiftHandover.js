@@ -94,7 +94,7 @@ const ShiftHandover = () => {
     const getProfRequest = async () => {
         try {
             setLoading(true);
-            const taskType = filterStatus; 
+            const taskType = filterStatus;
             const stDate = filterStartDate || new Date().toISOString().slice(0, 10);
             const edDate = filterEndDate || new Date().toISOString().slice(0, 10);
 
@@ -130,7 +130,7 @@ const ShiftHandover = () => {
 
     useEffect(() => {
         getProfRequest();
-    }, [filterStartDate, filterEndDate, filterStatus]); 
+    }, [filterStartDate, filterEndDate, filterStatus]);
 
     const handleAddShift = () => {
         const isAdding = profRequest.some(row => row.isNew);
@@ -306,7 +306,9 @@ const ShiftHandover = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableCell><strong>Sr No</strong></TableCell>
+                                        <TableCell><strong>Status</strong></TableCell>
                                         <TableCell><strong>Added By</strong></TableCell>
+                                        <TableCell><strong>Date</strong></TableCell>
                                         <TableCell><strong>Remark</strong></TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -314,7 +316,9 @@ const ShiftHandover = () => {
                                     {remarks.map((item, index) => (
                                         <TableRow key={item.tr_id}>
                                             <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{item.is_done === true ? "Completed" : "Pending"}</TableCell>
                                             <TableCell>{item.added_by}</TableCell>
+                                            <TableCell>{item.added_date}</TableCell>
                                             <TableCell>{item.remark}</TableCell>
                                         </TableRow>
                                     ))}
