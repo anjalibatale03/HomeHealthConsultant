@@ -4,7 +4,7 @@ import { useAuth } from "./components/Context/ContextAPI";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Drawer from "@mui/material/Drawer";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+
 import {
   Box,
   Typography,
