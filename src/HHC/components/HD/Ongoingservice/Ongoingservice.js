@@ -1438,7 +1438,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                               alignItems: "left",
                             }}
                           >
-                            <OngoingServiceCard  style={{ height: "3rem" }}
+                            <OngoingServiceCard  style={{ height: "4rem" }}
                                  sx={{
                             background: "#f1f1f1",
                             borderLeft: "4px solid transparent",
@@ -1456,10 +1456,11 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                 </Typography>
                               </CardContent>
                               <CardContent
-                               style={{ flex: 2.2 }}
+                               style={{ flex: 2 }}
                               >
                                 <Typography
                                   variant="body2"
+                                  textAlign="left"
                                   onClick={() => {
                                     eventIDRequest(row.eve_id);
                                     handleOpenDetails();
@@ -1480,7 +1481,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                   />
                                 </Modal>
                               </CardContent>
-                              <CardContent style={{ flex: 1.6 }}>
+                              <CardContent style={{ flex: 1.8 }}>
                                 <Typography
                                   variant="body2"
                                   textAlign="left"
@@ -1571,6 +1572,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                               <CardContent style={{ flex: 1.6 }}>
                                 <Typography
                                   variant="body2"
+                                  textAlign="left"
                                   onClick={() => {
                                     eventIDRequest(
                                       row.eve_id,
@@ -1649,39 +1651,45 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                                 </Modal>
                               </CardContent>
 
-                             <CardContent style={{ flex: 2, minWidth: 0 }}>
+<CardContent
+  sx={{
+    flex: 2,
+    minWidth: 0,
+    display: "flex",
+    alignItems: "center",
+    paddingY: 0.5, // small vertical balance
+  }}
+>
   <Typography
     variant="body2"
     textAlign="left"
     sx={{
-      whiteSpace: "normal",          
-      wordBreak: "break-word",     
-      overflowWrap: "break-word",    
-      lineHeight: 1.4
+      whiteSpace: "pre-wrap",      // allows normal wrapping + line breaks
+      wordBreak: "break-word",     // handles long words
+      overflowWrap: "anywhere",    // ensures even unbreakable strings wrap
+      lineHeight: 1.4,
+      width: "100%",
     }}
   >
-    {row.job_closure &&
-                                    row.job_closure.service_professional
-                                    ? `${row.job_closure.service_professional}`
-                                    : ""}
+    {row?.job_closure?.service_professional || ""}
   </Typography>
 </CardContent>
 
-                              <CardContent style={{ flex: 1.4 }}>
+                              <CardContent style={{ flex: 2 }}>
                                 <Typography variant="body2" textAlign="left">
                                   {row.service ? row.service.service : ""}
                                 </Typography>
                               </CardContent>
 
                               <CardContent style={{ flex: 1.5 }}>
-                                <Typography variant="body2">
+                                <Typography variant="body2"  textAlign="left">
                                   {formatDate(
                                     row.service ? row.service.start_date : ""
                                   )}
                                 </Typography>
                               </CardContent>
                               <CardContent style={{ flex: 1.5 }}>
-                                <Typography variant="body2">
+                                <Typography variant="body2" textAlign="left">
                                   {formatDate(
                                     row.service ? row.service.end_date : ""
                                   )}
@@ -1800,7 +1808,7 @@ const [snackbarOpen, setSnackbarOpen] = useState(false);
                               </Modal>
 
                               <CardContent style={{ flex: 1 }}>
-                                <Typography variant="body2">
+                                <Typography variant="body2 " textAlign="left">
                                   {row.job_closure
                                     ? row.job_closure.job_closure_count
                                     : ""}

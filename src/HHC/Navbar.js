@@ -1,53 +1,50 @@
-import React, { useState, useEffect } from 'react'
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import Avatar from '@mui/material/Avatar';
-import Header from './Header';
-import Drawer from '@mui/material/Drawer';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./components/Context/ContextAPI";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Drawer from "@mui/material/Drawer";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import {
+  Box,
+  Typography,
+  Modal,
+  Stack,
+  Button,
+  useMediaQuery,
+  IconButton,
+  Menu,
+  MenuItem,
+  Avatar,
+  Grid,
+  TextField,
+} from "@mui/material";
+import Header from "./Header";
+import Footer from "./Footer";
 import Logo from "./assets/spero_logo.png";
 import SOS from "./assets/sos.png";
-import { Button } from '@mui/material';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
-import Footer from "./Footer"
-import { useNavigate } from "react-router-dom";
-import Modal from '@mui/material/Modal';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
-import CloseIcon from '@mui/icons-material/Close';
-import Stack from '@mui/material/Stack';
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
+import CloseIcon from "@mui/icons-material/Close";
 import "./Navbar.css";
-import { useAuth } from './components/Context/ContextAPI';
+import HRHeader from "./components/HR/HRHeader";
 
 export default function Navbar() {
-
-  const userGroup = localStorage.getItem('user_group');
-  console.log('user_groupuser_groupuser_group', userGroup);
-
+  const userGroup = localStorage.getItem("user_group");
+  console.log("user_groupuser_groupuser_group", userGroup);
 
   const navigate = useNavigate();
   const { handleAuthLogout } = useAuth();
   const port = process.env.REACT_APP_API_KEY;
-  const accessToken = localStorage.getItem('token');
-  const addedby = localStorage.getItem('clg_id');
-  const group = localStorage.getItem('user_group');
-  if (group) {
-    console.log("Group IDDDDDDDDDDDD", group);
-  } else {
-    console.log("No consultant ID found.");
-  }
-  const accessHospitalName = localStorage.getItem('hospitalName');
-  const accessHospitalID = localStorage.getItem('hospitalID') || 0;
+  const accessToken = localStorage.getItem("token");
+  const addedby = localStorage.getItem("clg_id");
+
+  const accessHospitalName = localStorage.getItem("hospitalName");
+  const accessHospitalID = localStorage.getItem("hospitalID") || 0;
 
   const [hospital, setHospital] = useState([]);
   const [selectedHospital, setSelectedHospital] = useState(0);
@@ -55,27 +52,30 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenHosp, setIsModalOpenHosp] = useState(false);
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   const [state, setState] = useState({ right: false });
   const [sosData, setSOSData] = useState([]);
-  const [profID, setProfID] = useState('');
-  const [remark, setRemark] = useState('');
-  const [remarkError, setRemarkError] = useState({ remark: '' });
+  const [profID, setProfID] = useState("");
+  const [remark, setRemark] = useState("");
+  const [remarkError, setRemarkError] = useState({ remark: "" });
 
-  const userPicture = localStorage.getItem('user-image');
-  const userName = localStorage.getItem('user-name');
-  const userLastName = localStorage.getItem('user-lname');
-  const userDesignation = localStorage.getItem('user-designation');
-  const userEmail = localStorage.getItem('user-email');
-  const userPhone = localStorage.getItem('user-phone');
-  const userAddress = localStorage.getItem('user-loc');
-  const userID = localStorage.getItem('clg_id');
+  const userPicture = localStorage.getItem("user-image");
+  const userName = localStorage.getItem("user-name");
+  const userLastName = localStorage.getItem("user-lname");
+  const userDesignation = localStorage.getItem("user-designation");
+  const userEmail = localStorage.getItem("user-email");
+  const userPhone = localStorage.getItem("user-phone");
+  const userAddress = localStorage.getItem("user-loc");
+  const userID = localStorage.getItem("clg_id");
 
   // const [loggingOut, setLoggingOut] = useState(false);
 
   const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
       return;
     }
 
@@ -86,10 +86,10 @@ export default function Navbar() {
     const newErrors = {};
 
     if (!remark) {
-      newErrors.remark = 'Remark is required';
+      newErrors.remark = "Remark is required";
     }
     setRemarkError(newErrors);
-    return Object.values(newErrors).some((error) => error !== '');
+    return Object.values(newErrors).some((error) => error !== "");
   };
 
   const handleChange = (event) => {
@@ -113,13 +113,13 @@ export default function Navbar() {
   };
 
   function formatTime(originalTime) {
-    return new Date(originalTime).toLocaleString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      // timeZone: 'UTC', 
+    return new Date(originalTime).toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      // timeZone: 'UTC',
     });
   }
 
@@ -128,8 +128,8 @@ export default function Navbar() {
       try {
         const res = await fetch(`${port}/web/select_hospital_name`, {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
           },
         });
         const data = await res.json();
@@ -146,10 +146,10 @@ export default function Navbar() {
     const response = await fetch(`${port}/web/select_hospital_name`, {
       method: "POST",
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ "hosp_id": selectedHospital })
+      body: JSON.stringify({ hosp_id: selectedHospital }),
     });
     if (!response.ok) {
       console.error(`HTTP error! Status: ${response.status}`);
@@ -157,8 +157,8 @@ export default function Navbar() {
     }
     const result = await response.json();
     console.log("Selected Hospital data", result);
-    localStorage.setItem('hospitalID', result.hosp_id);
-    localStorage.setItem('hospitalName', result.hospital_name);
+    localStorage.setItem("hospitalID", result.hosp_id);
+    localStorage.setItem("hospitalName", result.hospital_name);
     window.location.reload();
   };
 
@@ -171,16 +171,19 @@ export default function Navbar() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ "refresh": localStorage.getItem('refresh'), "clg_id": userID, })
+        body: JSON.stringify({
+          refresh: localStorage.getItem("refresh"),
+          clg_id: userID,
+        }),
       });
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       // const result = await response.json();
-      localStorage.removeItem('hospitalID');
-      localStorage.removeItem('hospitalName');
-      localStorage.removeItem('refresh');
-      localStorage.removeItem('access');
+      localStorage.removeItem("hospitalID");
+      localStorage.removeItem("hospitalName");
+      localStorage.removeItem("refresh");
+      localStorage.removeItem("access");
       localStorage.clear();
       navigate("/");
       handleAuthLogout();
@@ -202,7 +205,7 @@ export default function Navbar() {
 
     const cleanup = () => {
       handleLogout();
-      window.removeEventListener('beforeunload', cleanup);
+      window.removeEventListener("beforeunload", cleanup);
     };
 
     // window.addEventListener('beforeunload', cleanup);
@@ -218,11 +221,36 @@ export default function Navbar() {
         await handleLogout();
       }
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
+
+  // const [loggingOut,setLoggingOut] = useState(false);
+
+  // useEffect(() => {
+  //   function handleBeforeUnload(event: BeforeUnloadEvent) {
+  //     event.preventDefault();
+  //     event.returnValue = '';
+  //     handleLogout({ logoutParams: {returnTo: window.location.origin} });
+  //     return '';
+  //   };
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload, {capture: true});
+
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload, {capture: true});
+  //   };
+  // }, []);
+
+  // window.addEventListener("beforeunload", function (e) {
+  //   if (!loggingOut) {
+  //     e.preventDefault(); // Cancel the default behavior of the event
+  //     handleLogout(); // Call the logout function
+  //     e.returnValue = ''; // Set a custom message to display (optional)
+  //   }
+  // });
 
   // window.addEventListener("beforeunload", function (e) {
   //   if (!loggingOut) {
@@ -236,19 +264,18 @@ export default function Navbar() {
     try {
       const res = await fetch(`${port}/web/sos_detls/`, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
         },
       });
       const data = await res.json();
       // console.log("SOS Emergency Calls.........", data);
       // setSOSData(data);
-      if (data.msg === 'No Data Found') {
+      if (data.msg === "No Data Found") {
         setSOSData([]);
       } else {
         setSOSData(data);
       }
-
     } catch (error) {
       console.error("Error fetching SOS Emergency:", error);
     }
@@ -261,31 +288,31 @@ export default function Navbar() {
   }, [accessToken]);
 
   const sosIDRequest = (sosId) => {
-    const selectedProf = sosData.find(item => item.sos_id === sosId);
+    const selectedProf = sosData.find((item) => item.sos_id === sosId);
     if (selectedProf) {
       // console.log("Selected Prof SOS ID:", selectedProf.sos_id);
       setProfID(selectedProf.sos_id);
-      setRemark('');
+      setRemark("");
     }
   };
 
   async function handleSubmitSOS(event) {
     event.preventDefault();
     handleEmptyRemark();
-    const added = parseInt(addedby, 10);;
+    const added = parseInt(addedby, 10);
     const requestData = {
       sos_id: profID,
       action_status: 2,
       last_modified_by: added,
-      last_modified_date: '',
+      last_modified_date: "",
       sos_remark: remark,
     };
-    console.log("SOS data", requestData)
+    console.log("SOS data", requestData);
     try {
       const response = await fetch(`${port}/web/sos_detls/`, {
         method: "PUT",
         headers: {
-          "Authorization": `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
@@ -302,42 +329,73 @@ export default function Navbar() {
     }
   }
 
+  const formatLastName = (lastName) => {
+    if (!lastName || lastName === "null" || lastName === "undefined") {
+      return "";
+    }
+    return lastName;
+  };
+
+  const navVariants = {
+    hidden: { opacity: 0, y: -40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
   return (
     <>
       <Box
         // sx={{
         //   flexGrow: 1,
         // }}
+
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
-          width: '100%',
+          width: "100%",
           zIndex: 1000,
-          backgroundColor: "#F2F2F2",
+          // backgroundColor: "#F9FAFB",
         }}
         className="navbar-body"
       >
-        <AppBar position="static" style={{
-          background: 'linear-gradient(45deg, #1FD0C4 38.02%, #0E8FE4 100%)',
-          height: '3rem'
-        }}>
-          <Toolbar variant='dense' sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <AppBar
+          position="static"
+          style={{
+            background:
+              "linear-gradient(90deg, rgb(123 110 110) 0%, rgb(94, 126, 158) 100%)",
+            // background:
+            //   "linear-gradient(90deg, rgb(156 140 140) 0%, rgb(94 126 158) 100%)",
+
+            height: "3rem",
+          }}
+        >
+          <Toolbar
+            variant="dense"
+            sx={{ display: "flex", justifyContent: "space-between" }}
+          >
             {/* <img style={{ height: '36px', width: '76px', marginTop: "2px", marginLeft: "-12px", color: "#ffffff" }} src={Logo} alt="Spero" /> */}
 
             {!isSmallScreen && (
               <>
                 <div style={{ display: "flex" }}>
-                  <Typography variant="h6" component="div" align="left"
+                  <Typography
+                    variant="h6"
+                    component="div"
+                    align="left"
                     sx={{
                       flexGrow: 1,
-                      fontFamily: 'sans-serif',
+                      fontFamily: "sans-serif",
                       fontWeight: 600,
-                      fontStyle: 'normal',
-                      color: 'inherit',
+                      fontStyle: "normal",
+                      color: "inherit",
                       marginLeft: "12px",
-                      textDecoration: 'none',
-                    }}>
-                    Spero Home Healthcare Services
+                      textDecoration: "none",
+                      color: "white",
+                    }}
+                  >
+                    Spero Home Healthcare Private Limited
                   </Typography>
                   {/* <Typography variant="subtitile2" component="div" align="center"
                     sx={{
@@ -353,14 +411,21 @@ export default function Navbar() {
               </>
             )}
             {auth && (
-              <Stack direction='row'
+              <Stack
+                direction="row"
                 // spacing={1}
                 justifyContent="flex-end"
-                alignItems={isSmallScreen ? 'center' : 'stretch'}
+                alignItems={isSmallScreen ? "center" : "stretch"}
                 sx={{ mr: -3 }}
               >
-                <div style={{ marginBottom: isSmallScreen ? "10px" : "0px", marginTop: isSmallScreen ? "0px" : "20px" }}>
-                  Welcome, {userName} {group === 'Consultant' ? "" : userLastName}
+                <div
+                  style={{
+                    marginBottom: isSmallScreen ? "10px" : "0px",
+                    marginTop: isSmallScreen ? "0px" : "20px",
+                  }}
+                >
+                  {/* Welcome, {userName} {userLastName ? ` ${userLastName}` : ""} */}
+                  Welcome, {userName} {formatLastName(userLastName)}
                 </div>
                 <IconButton
                   size="large"
@@ -371,56 +436,148 @@ export default function Navbar() {
                   color="inherit"
                   sx={{ mr: -3 }}
                 >
-                  <Avatar alt="Shamal Bhagat" src="/static/images/avatar/2.jpg" />
+                  <Avatar
+                    alt="Shamal Bhagat"
+                    src="/static/images/avatar/2.jpg"
+                  />
                 </IconButton>
-                <Button
-                  onClick={toggleDrawer(true)}
-                ><img src={SOS} alt="SOS" style={{ height: "45px", marginBottom: "3px" }} /></Button>
+                <Button onClick={toggleDrawer(true)}>
+                  <img
+                    src={SOS}
+                    alt="SOS"
+                    style={{ height: "45px", marginBottom: "3px" }}
+                  />
+                </Button>
                 <Drawer
                   anchor="right"
                   open={state.right}
                   onClose={toggleDrawer(false)}
                   PaperProps={{
                     style: {
-                      height: '92%',
+                      height: "92%",
                       borderRadius: "5px",
-                      marginTop: "2px"
+                      marginTop: "2px",
                     },
                   }}
                 >
-                  <AppBar position="static" style={{
-                    background: 'linear-gradient(45deg, #1FD0C4 38.02%, #328EDF 100%)',
-                    width: '20rem',
-                    height: '3rem',
-                    // borderRadius: "8px 10px 0 0",
-                  }}>
+                  <AppBar
+                    position="static"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, rgb(123 110 110) 0%, rgb(94, 126, 158) 100%)",
+                      width: "20rem",
+                      height: "3rem",
+                      // borderRadius: "8px 10px 0 0",
+                    }}
+                  >
                     <div style={{ display: "flex" }}>
-                      <Typography align="left" style={{ fontSize: "16px", fontWeight: 600, color: "#FFFFFF", marginTop: "10px", marginLeft: "18px" }}>SOS Requests</Typography>
-                      <Button onClick={toggleDrawer(false)} sx={{ marginLeft: "8rem", color: "#FFFFFF", marginTop: "2px", }}><CloseIcon /></Button>
+                      <Typography
+                        align="left"
+                        style={{
+                          fontSize: "16px",
+                          fontWeight: 600,
+                          color: "#FFFFFF",
+                          marginTop: "10px",
+                          marginLeft: "18px",
+                        }}
+                      >
+                        SOS Requests
+                      </Typography>
+                      <Button
+                        onClick={toggleDrawer(false)}
+                        sx={{
+                          marginLeft: "8rem",
+                          color: "#FFFFFF",
+                          marginTop: "2px",
+                        }}
+                      >
+                        <CloseIcon />
+                      </Button>
                     </div>
 
-                    <div style={{ marginTop: "25px", marginLeft: "20px", marginRight: "20px", marginBottom: "10px" }}>
+                    <div
+                      style={{
+                        marginTop: "25px",
+                        marginLeft: "20px",
+                        marginRight: "20px",
+                        marginBottom: "10px",
+                      }}
+                    >
                       {sosData.map((item, index) => (
                         <div key={index}>
                           <Grid item xs={12}>
-                            <Grid container style={{ justifyContent: "space-between" }}>
-                              <Typography inline variant="body2" color="text.secondary">Name</Typography>
-                              <Typography inline variant="subtilte2" color="text.primary"
+                            <Grid
+                              container
+                              style={{ justifyContent: "space-between" }}
+                            >
+                              <Typography
+                                inline
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                Name
+                              </Typography>
+                              <Typography
+                                inline
+                                variant="subtilte2"
+                                color="text.primary"
                                 onClick={() => sosIDRequest(item.sos_id)}
                                 style={{ cursor: "pointer" }}
-                              >{item ? item.srv_prof_id : ""}</Typography>
+                              >
+                                {item ? item.srv_prof_id : ""}
+                              </Typography>
                             </Grid>
-                            <Grid container style={{ justifyContent: "space-between", marginTop: "2px" }}>
-                              <Typography variant='body2' color="text.secondary">Contact Number</Typography>
-                              <Typography variant='subtilte2' color="text.primary">+91 {item ? item.srv_prof_con : ""}</Typography>
+                            <Grid
+                              container
+                              style={{
+                                justifyContent: "space-between",
+                                marginTop: "2px",
+                              }}
+                            >
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                Contact Number
+                              </Typography>
+                              <Typography
+                                variant="subtilte2"
+                                color="text.primary"
+                              >
+                                +91 {item ? item.srv_prof_con : ""}
+                              </Typography>
                             </Grid>
-                            <Grid container style={{ justifyContent: "space-between", marginTop: "1px" }}>
-                              <Typography variant='body2' sx={{ color: "#f44336" }}>Date & Time</Typography>
-                              <Typography variant='body2' sx={{ color: "#f44336" }}>{formatTime(item ? item.last_modified_date : "")}</Typography>
+                            <Grid
+                              container
+                              style={{
+                                justifyContent: "space-between",
+                                marginTop: "1px",
+                              }}
+                            >
+                              <Typography
+                                variant="body2"
+                                sx={{ color: "#f44336" }}
+                              >
+                                Date & Time
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{ color: "#f44336" }}
+                              >
+                                {formatTime(
+                                  item ? item.last_modified_date : ""
+                                )}
+                              </Typography>
                             </Grid>
                             {profID === item.sos_id && (
                               <>
-                                <Grid item xs={12} container spacing={1} sx={{ mt: 0.5 }}>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  container
+                                  spacing={1}
+                                  sx={{ mt: 0.5 }}
+                                >
                                   <Grid item lg={9} sm={9} xs={9}>
                                     <TextField
                                       required
@@ -428,21 +585,28 @@ export default function Navbar() {
                                       id="sos_remark"
                                       name="sos_remark"
                                       value={remark}
-                                      onChange={(e) => setRemark(e.target.value)}
-                                      placeholder='Remark'
+                                      onChange={(e) =>
+                                        setRemark(e.target.value)
+                                      }
+                                      placeholder="Remark"
                                       size="small"
                                       fullWidth
                                       error={!!remarkError.remark}
                                       helperText={remarkError.remark}
                                       sx={{
-                                        '& input': {
-                                          fontSize: '14px',
+                                        "& input": {
+                                          fontSize: "14px",
                                         },
                                       }}
                                     />
                                   </Grid>
                                   <Grid item lg={3} sm={3} xs={3}>
-                                    <Button variant="contained" onClick={handleSubmitSOS}><CheckOutlinedIcon /></Button>
+                                    <Button
+                                      variant="contained"
+                                      onClick={handleSubmitSOS}
+                                    >
+                                      <CheckOutlinedIcon />
+                                    </Button>
                                   </Grid>
                                 </Grid>
                               </>
@@ -456,39 +620,54 @@ export default function Navbar() {
                 </Drawer>
 
                 <Menu
-                  sx={{ mt: '45px' }}
+                  sx={{ mt: "45px" }}
                   id="menu-appbar"
                   anchorEl={anchorEl}
                   anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
+                    vertical: "top",
+                    horizontal: "right",
                   }}
                   keepMounted
                   transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
+                    vertical: "top",
+                    horizontal: "right",
                   }}
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={handleProfile} ><PersonOutlineIcon style={{ fontSize: "20px", marginRight: "10px" }} />Profile</MenuItem>
+                  <MenuItem onClick={handleProfile}>
+                    <PersonOutlineIcon
+                      style={{ fontSize: "20px", marginRight: "10px" }}
+                    />
+                    Profile
+                  </MenuItem>
                   {/* <MenuItem onClick={handleHospital}><DomainAddOutlinedIcon style={{ fontSize: "20px", marginRight: "10px" }} />Hospital</MenuItem> */}
-                  <MenuItem onClick={handleLogout}><PowerSettingsNewIcon style={{ fontSize: "20px", marginRight: "10px" }} />Logout</MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <PowerSettingsNewIcon
+                      style={{ fontSize: "20px", marginRight: "10px" }}
+                    />
+                    Logout
+                  </MenuItem>
                 </Menu>
 
                 <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                  <Box sx={{
-                    width: 280, height: 200, p: 2, position: 'absolute',
-                    top: '28%',
-                    left: '86%',
-                    transform: 'translate(-50%, -50%)',
-                    // bgcolor: 'background.paper',
-                    bgcolor: '#F5F5F5',
-                    borderRadius: '8px',
-                    '@media (max-width: 600px)': {
-                      left: '50%',
-                    },
-                  }}>
+                  <Box
+                    sx={{
+                      width: 280,
+                      height: 200,
+                      p: 2,
+                      position: "absolute",
+                      top: "28%",
+                      left: "86%",
+                      transform: "translate(-50%, -50%)",
+                      // bgcolor: 'background.paper',
+                      bgcolor: "#F5F5F5",
+                      borderRadius: "8px",
+                      "@media (max-width: 600px)": {
+                        left: "50%",
+                      },
+                    }}
+                  >
                     <div style={{ display: "flex" }}>
                       <IconButton
                         size="large"
@@ -498,19 +677,37 @@ export default function Navbar() {
                         //onClick={handleMenu}
                         color="inherit"
                       >
-                        <Avatar alt="Shamal Bhagat" src="/static/images/avatar/2.jpg" />
+                        <Avatar
+                          alt="Shamal Bhagat"
+                          src="/static/images/avatar/2.jpg"
+                        />
                       </IconButton>
-                      <Typography variant="subtitle2" sx={{ mt: 2 }}>{userName} {userLastName} <br />Healthcare Attendent</Typography><br />
+                      <Typography variant="subtitle2" sx={{ mt: 2 }}>
+                        {userName} {userLastName} <br />
+                        Healthcare Attendent
+                      </Typography>
+                      <br />
                       {/* <Typography variant="bdoy2">{userDesignation}</Typography> */}
                     </div>
 
                     <br />
-                    <div class="contact-info"><EmailOutlinedIcon sx={{ color: "#69A5EB" }} /><Typography variant="body2">{userEmail}</Typography></div><br />
-                    <div class="contact-info"><LocalPhoneOutlinedIcon sx={{ color: "#69A5EB" }} /><Typography variant="body2">{userPhone}</Typography></div><br />
-                    <div class="contact-info"><LocationOnOutlinedIcon sx={{ color: "#69A5EB" }} /><Typography variant="body2">{userAddress}</Typography></div>
+                    <div class="contact-info">
+                      <EmailOutlinedIcon sx={{ color: "#69A5EB" }} />
+                      <Typography variant="body2">{userEmail}</Typography>
+                    </div>
+                    <br />
+                    <div class="contact-info">
+                      <LocalPhoneOutlinedIcon sx={{ color: "#69A5EB" }} />
+                      <Typography variant="body2">{userPhone}</Typography>
+                    </div>
+                    <br />
+                    <div class="contact-info">
+                      <LocationOnOutlinedIcon sx={{ color: "#69A5EB" }} />
+                      <Typography variant="body2">{userAddress}</Typography>
+                    </div>
                   </Box>
                 </Modal>
-              </Stack >
+              </Stack>
             )}
           </Toolbar>
         </AppBar>
@@ -518,12 +715,18 @@ export default function Navbar() {
           <Header />
         </div> */}
 
-        <div>
+        <div style={{ marginTop: 0 }}>
           {/* <HRHeader /> */}
-          {userGroup !== "HHC_Analytics" && userGroup !== "M_DASH" && <Header />}
+          {/* {userGroup !== "HHC_Analytics" || userGroup !== "M_DASH" && <Header />} */}
+          {/* {userGroup !== "HHC_Analytics"  && <Header />} */}
+          {userGroup !== "HHC_Analytics" && userGroup !== "M_DASH" && (
+            <Header />
+          )}
 
+          {/* || userGroup !== "M_DASH"   */}
         </div>
       </Box>
+
       {/* <div style={{ marginTop: 55, }}>
           <Header />
         </div> */}

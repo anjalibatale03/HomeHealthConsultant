@@ -30,6 +30,7 @@ import DatePicker, { Calendar, DateObject } from "react-multi-date-picker";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import CloseIcon from "@mui/icons-material/Close";
+import { motion } from "framer-motion";
 // import CallerDetails from "./Addservice/CallerInfo";
 // import ServiceInfo from './Addservice/ServiceInfo';
 import smile from "../../assets/smile.png";
@@ -42,6 +43,8 @@ import moment from "moment";
 import dayjs from "dayjs";
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import BlockIcon from '@mui/icons-material/Block';
+import DrIcon from "../../assets/DrIcon.png";
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -2803,220 +2806,417 @@ const Addservice = () => {
       <Box sx={{ flexGrow: 1, mt: 14.6, mb: 3, ml: 1, mr: 1 }}>
         <Grid item xs={12} container spacing={1} sx={{ pt: 1 }}>
           {/* Previous Caller, Service and Payment Details */}
-          <Grid item lg={3} md={3} xs={12}>
-            <Grid item md={6} lg={12}>
-              <Card
-                sx={{ minWidth: 200 }}
+            <Grid item lg={3} md={3} xs={12}>
+            {/* If no callerDetails, show big welcome card only */}
+
+            {!callerDetails ? (
+              <motion.div
+                initial={{ rotateY: 180, opacity: 0, scale: 0.8 }}
+                animate={{ rotateY: 0, opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 1,
+                  ease: [0.22, 1, 0.36, 1], // More elastic/spring-like feel
+                }}
                 style={{
-                  background:
-                    "linear-gradient(90deg, #C5EEEC 20%, #D0E3F3 100%)",
-                  boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
-                  borderRadius: "10px",
+                  perspective: 1200, // try smaller for more natural depth
+                  transformStyle: "preserve-3d",
+                  willChange: "transform", // hint for smoother GPU animation
+                  backfaceVisibility: "hidden", // prevents flicker when rotating
+                  width: "100%",
                 }}
               >
-                <CardContent>
-                  <Stack direction="row" alignItems="left" gap={10}>
-                    <PersonOutlineSharpIcon />
-                    <Typography
-                      sx={{ fontSize: 16, fontWeight: 600 }}
-                      gutterBottom
-                    >
-                      Caller Details
-                    </Typography>
-                  </Stack>
-                  {callerDetails ? (
-                    <>
-                      <Typography sx={{ fontSize: 14 }} gutterBottom>
-                        Name: {callerDetails.caller_fullname}
-                      </Typography>
-                      <Typography sx={{ fontSize: 14 }} gutterBottom>
-                        Contact: {callerDetails.phone}
-                      </Typography>
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        style={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <Typography
-                          variant="subtitle2"
-                          sx={{ fontSize: 14 }}
-                          gutterBottom
-                        >
-                          Welcome to Spero Homehealthcare
-                          {/* 😊 */}
-                        </Typography>
+                <Grid item md={6} lg={12}>
+                  <Card
+                    sx={{
+                      minWidth: 240,
+                      height: 580,
+                      background:
+                        "linear-gradient(135deg, #B8EAF2 0%, #D7E7F5 100%)",
+                      backdropFilter: "blur(12px)",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.1)",
+                      borderRadius: "16px",
+                      // p: 4,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      // mb: 2,
+                    }}
+                  >
+                    <CardContent>
+                      <Box sx={{ mb: 1, mt: "-7em" }}>
                         <img
-                          src={smile}
-                          alt=""
+                          src={DrIcon}
+                          alt="Healthcare Team"
                           style={{
-                            width: "22px",
-                            height: "22px",
-                            marginLeft: "2px",
+                            maxWidth: "28em",
+                            height: "60vh",
+                            borderRadius: "8px",
                           }}
                         />
-                      </div>
-                      <Typography sx={{ fontSize: 14 }} gutterBottom>
-                        Name & Contact
-                      </Typography>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item md={6} lg={12}>
-              <Card
-                sx={{ minWidth: 200, mt: 1 }}
-                style={{
-                  background:
-                    "linear-gradient(90deg, #C5EEEC 0%, #D0E3F3 100%)",
-                  boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
-                  borderRadius: "10px",
-                }}
-              >
-                <CardContent>
-                  <Stack direction="row" alignItems="left" gap={8}>
-                    <FavoriteBorderOutlinedIcon />
-                    <Typography
-                      sx={{ fontSize: 16, fontWeight: 600 }}
-                      gutterBottom
-                    >
-                      Previous Services
-                    </Typography>
-                  </Stack>
-
-                  {prePatient && prePatient.service ? (
-                    <>
-                      <Typography sx={{ fontSize: 14 }} gutterBottom>
-                        {prePatient.service}
-                      </Typography>
-                      <Typography sx={{ fontSize: 12 }}>
-                        {formattedDateRange}
-                      </Typography>
-                    </>
-                  ) : (
-                    <Typography sx={{ fontSize: 14 }} gutterBottom>
-                      Service Name
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item md={6} lg={12}>
-              <Card
-                sx={{ minWidth: 200, mt: 1 }}
-                style={{
-                  background:
-                    "linear-gradient(90deg, #C5EEEC 0%, #D0E3F3 100%)",
-                  boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
-                  borderRadius: "10px",
-                }}
-              >
-                <CardContent>
-                  <Stack direction="row" alignItems="left" gap={8}>
-                    <CreditCardOutlinedIcon />
-                    <Typography
-                      sx={{ fontSize: 16, fontWeight: 600 }}
-                      gutterBottom
-                    >
-                      Payment Status
-                    </Typography>
-                  </Stack>
-
-                  {prePayment ? (
-                    <Typography sx={{ fontSize: 14 }} gutterBottom>
-                      Pending Amount: {prePayment.Remaining_payment}
-                    </Typography>
-                  ) : (
-                    <Typography sx={{ fontSize: 14 }} gutterBottom>
-                      Pending Amount: 0
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item md={6} lg={12}>
-              <Card
-                sx={{ minWidth: 200, mt: 1 }}
-                style={{
-                  background:
-                    "linear-gradient(90deg, #C5EEEC 0%, #D0E3F3 100%)",
-                  boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
-                  borderRadius: "10px",
-                }}
-              >
-                <CardContent
-                  sx={{
-                    height: "9.2rem",
-                    // overflowY: "scroll",
-                    // overflowX: "hidden",
-                    // scrollbarWidth: 'thin',
-                    // '&::-webkit-scrollbar': {
-                    //     width: '0.2em',
-                    // },
-                    // '&::-webkit-scrollbar-track': {
-                    //     background: "#DCDCDE",
-                    // },
-                    // '&::-webkit-scrollbar-thumb': {
-                    //     backgroundColor: '#7AB8EE',
-                    // },
-                    // '&::-webkit-scrollbar-thumb:hover': {
-                    //     background: '#7AB8FF'
-                    // }
-                  }}
-                >
-                  <Stack direction="row" alignItems="left" gap={10}>
-                    <StarOutlineOutlinedIcon />
-                    <Typography
-                      sx={{ fontSize: 16, fontWeight: 600 }}
-                      gutterBottom
-                    >
-                      Feedback
-                    </Typography>
-                  </Stack>
-
-                  {feedback ? (
-                    <>
+                      </Box>
                       <Typography
-                        sx={{ fontSize: 14, color: "#D62E4B" }}
-                        gutterBottom
+                        align="center"
+                        sx={{
+                          fontWeight: 700,
+                          color: "#1976d2",
+                          fontSize: "2rem",
+                          fontFamily: "sans-serif",
+                          lineHeight: 1.3,
+                          mb: 1,
+                        }}
                       >
-                        {generateRatingIcons(feedback.answer)}
-                      </Typography>
-                      <Typography variant="body2">
+                        Welcome to Spero
                         <br />
-                        {'"' +
-                          (feedback.comment ||
-                            "No feedback received from the patient.") +
-                          '"'}
+                        Home Healthcare
                       </Typography>
-                    </>
-                  ) : (
-                    <>
                       <Typography
-                        sx={{ fontSize: 14, color: "#D62E4B" }}
-                        gutterBottom
+                        variant="subtitle1"
+                        sx={{
+                          fontWeight: 700,
+                          color: "black",
+                          mb: 1,
+                          fontSize: "16px",
+                          fontFamily: "sans-serif",
+                        }}
                       >
-                        <FavoriteBorderIcon />
-                        <FavoriteBorderIcon />
-                        <FavoriteBorderIcon />
-                        <FavoriteBorderIcon />
-                        <FavoriteBorderIcon />
+                        While I breathe, I hope
                       </Typography>
-                      <Typography variant="body2">
-                        <br />
-                        {
-                          '"We are waiting for your valuable feedback, stay happy and healthy :)"'
-                        }
-                      </Typography>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </motion.div>
+            ) : (
+              <>
+                <Grid item md={6} lg={12}>
+                  <motion.div
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                    style={{ width: "100%" }}
+                  >
+                    <Card
+                      sx={{ minWidth: 200, height: "100%" }}
+                      style={{
+                        background:
+                          "linear-gradient(90deg, #C5EEEC 20%, #D0E3F3 100%)",
+                        boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                        borderRadius: "10px",
+                        height: "100%",
+                      }}
+                    >
+                      <CardContent>
+                        {/* Header */}
+                        <Box sx={{ position: "relative", mb: 1 }}>
+                          {/* Left-aligned icon */}
+                          <PersonOutlineSharpIcon
+                            sx={{
+                              position: "absolute",
+                              left: 0,
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              color: "#1976d2",
+                            }}
+                          />
+
+                          {/* Centered heading */}
+                          <Typography
+                            sx={{
+                              textAlign: "center",
+                              fontSize: 16,
+                              fontWeight: 600,
+                            }}
+                          >
+                            Caller Details
+                          </Typography>
+                        </Box>
+
+                        {/* Caller info */}
+                        {callerDetails ? (
+                          <>
+                            <Typography sx={{ fontSize: 14 }} gutterBottom>
+                              Name: {callerDetails.caller_fullname}
+                            </Typography>
+                            <Typography sx={{ fontSize: 14 }} gutterBottom>
+                              Contact: {callerDetails.phone}
+                            </Typography>
+                          </>
+                        ) : (
+                          <>
+                            {/* Centered welcome message with smile */}
+                            <Box
+                              display="flex"
+                              justifyContent="center"
+                              alignItems="center"
+                              mb={1}
+                            >
+                              <Typography
+                                variant="subtitle2"
+                                sx={{ fontSize: 14 }}
+                                gutterBottom
+                              >
+                                Welcome to Spero Homehealthcare
+                              </Typography>
+                              <Box
+                                component="img"
+                                src={smile}
+                                alt="🙂"
+                                sx={{
+                                  width: 22,
+                                  height: 22,
+                                  ml: 1,
+                                }}
+                              />
+                            </Box>
+
+                            <Typography
+                              sx={{ fontSize: 14 }}
+                              gutterBottom
+                              textAlign="center"
+                            >
+                              Name & Contact
+                            </Typography>
+                          </>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </Grid>
+
+                <Grid item md={6} lg={12}>
+                  <motion.div
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.9, delay: 0.2, ease: "easeOut" }}
+                    style={{ width: "100%" }}
+                  >
+                    <Card
+                      sx={{ minWidth: 200, mt: 1 }}
+                      style={{
+                        background:
+                          "linear-gradient(90deg, #C5EEEC 0%, #D0E3F3 100%)",
+                        boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                        borderRadius: "10px",
+                        height: "100%",
+                      }}
+                    >
+                      <CardContent>
+                        {/* Heading with icon left, title center */}
+                        <Box sx={{ position: "relative", mb: 1 }}>
+                          <FavoriteBorderOutlinedIcon
+                            sx={{
+                              position: "absolute",
+                              left: 0,
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              color: "#D62E4B",
+                            }}
+                          />
+                          <Typography
+                            sx={{
+                              textAlign: "center",
+                              fontSize: 16,
+                              fontWeight: 600,
+                            }}
+                          >
+                            Previous Services
+                          </Typography>
+                        </Box>
+
+                        {/* Conditional service info */}
+                        {prePatient && prePatient.service ? (
+                          <>
+                            <Typography sx={{ fontSize: 14 }} gutterBottom>
+                              {prePatient.service}
+                            </Typography>
+                            <Typography sx={{ fontSize: 12 }}>
+                              {formattedDateRange}
+                            </Typography>
+                          </>
+                        ) : (
+                          <Typography sx={{ fontSize: 14 }} gutterBottom>
+                            Service Name
+                          </Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </Grid>
+
+                <Grid item md={6} lg={12}>
+                  <motion.div
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                    style={{ width: "100%" }}
+                  >
+                    <Card
+                      sx={{ minWidth: 200, mt: 1 }}
+                      style={{
+                        background:
+                          "linear-gradient(90deg, #C5EEEC 0%, #D0E3F3 100%)",
+                        boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                        borderRadius: "10px",
+                        height: "100%",
+                      }}
+                    >
+                      <CardContent>
+                        {/* Heading with left icon and centered title */}
+                        <Box sx={{ position: "relative", mb: 1 }}>
+                          {/* Icon fixed to the left */}
+                          <CreditCardOutlinedIcon
+                            sx={{
+                              position: "absolute",
+                              left: 0,
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              color: "#1976d2",
+                            }}
+                          />
+
+                          {/* Title centered */}
+                          <Typography
+                            sx={{
+                              textAlign: "center",
+                              fontSize: 16,
+                              fontWeight: 600,
+                            }}
+                          >
+                            Payment Status
+                          </Typography>
+                        </Box>
+
+                        {/* Payment details */}
+                        <Typography sx={{ fontSize: 14 }} gutterBottom>
+                          Pending Amount: {prePayment?.Remaining_payment || 0}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </Grid>
+
+                <Grid item md={6} lg={12}>
+                  <motion.div
+                    initial={{ opacity: 0, x: -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                    style={{ width: "100%" }}
+                  >
+                    <Card
+                      sx={{ minWidth: 200, mt: 1, height: "100%" }}
+                      style={{
+                        background:
+                          "linear-gradient(90deg, #C5EEEC 0%, #D0E3F3 100%)",
+                        boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                        borderRadius: "10px",
+                        height: "100%",
+                      }}
+                    >
+                      <CardContent
+                        sx={{
+                          height: "11.5rem",
+                          overflowY: "auto",
+                          pr: 1,
+                          scrollbarWidth: "thin",
+                          "&::-webkit-scrollbar": {
+                            width: "0.3em",
+                          },
+                          "&::-webkit-scrollbar-track": {
+                            background: "#F0F0F0",
+                          },
+                          "&::-webkit-scrollbar-thumb": {
+                            backgroundColor: "#90caf9",
+                            borderRadius: "4px",
+                          },
+                          "&::-webkit-scrollbar-thumb:hover": {
+                            background: "#64b5f6",
+                          },
+                        }}
+                      >
+                        {/* Header: Icon Left, Title Center */}
+                        <Box sx={{ position: "relative", mb: 2 }}>
+                          <StarOutlineOutlinedIcon
+                            sx={{
+                              color: "#000",
+                              position: "absolute",
+                              left: 0,
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                            }}
+                          />
+                          <Typography
+                            sx={{
+                              textAlign: "center",
+                              fontSize: 16,
+                              fontWeight: 600,
+                            }}
+                          >
+                            Feedback
+                          </Typography>
+                        </Box>
+
+                        {/* Feedback Content */}
+                        {feedback ? (
+                          <>
+                            <Typography
+                              sx={{
+                                fontSize: 14,
+                                color: "#D62E4B",
+                                mb: 1,
+                                textAlign: "center",
+                              }}
+                            >
+                              {generateRatingIcons(feedback.rating)}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontStyle: "italic",
+                                color: "#444",
+                                textAlign: "center",
+                              }}
+                            >
+                              "
+                              {feedback.comment ||
+                                "No feedback received from the patient."}
+                              "
+                            </Typography>
+                          </>
+                        ) : (
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            alignItems="center"
+                            justifyContent="center"
+                            textAlign="center"
+                            sx={{ mt: 3 }}
+                          >
+                            <Typography
+                              sx={{ fontSize: 14, color: "#D62E4B", mb: 1 }}
+                            >
+                              {[...Array(5)].map((_, i) => (
+                                <FavoriteBorderIcon key={i} fontSize="small" />
+                              ))}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontStyle: "italic",
+                                color: "#444",
+                              }}
+                            >
+                              "We are waiting for your valuable feedback, stay
+                              happy and healthy :)"
+                            </Typography>
+                          </Box>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </Grid>
+              </>
+            )}
           </Grid>
 
           {/* Caller and Patient Details */}

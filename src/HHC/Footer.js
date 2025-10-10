@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Logo from "./assets/spero_logo_3.png";
+import Logo from "./assets/spero_logo_new.png";
 
 export default function Navbar() {
   const isSmallScreen = useMediaQuery('(max-width:600px)');
@@ -17,19 +17,19 @@ export default function Navbar() {
         bottom: 0,
         width: '100%',
         zIndex: 1000,
-        backgroundColor: '#D8D8D8',
+        background: 'linear-gradient(90deg, rgb(123, 110, 110) 0%, rgb(94, 126, 158) 100%)',
         color: '#fff',
         display: "flex",
       }}
     >
-      <img style={{ height: '30px', width: '76px', marginTop: "2px", marginLeft: "15px", color: "#ffffff" }} src={Logo} alt="Spero" />
+      <img style={{ height: '35px', width: '70px', marginTop: "2px", marginLeft: "15px", color: "#ffffff" }} src={Logo} alt="Spero" />
 
       <Typography variant="subtitle2" component="div" align="center"
         sx={{
           flexGrow: 1,
           fontFamily: 'sans-serif',
           fontStyle: 'normal',
-          color: 'black',
+          color: 'white',
           textDecoration: 'none',
           marginTop: '4px'
         }}>
