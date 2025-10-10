@@ -19,7 +19,8 @@ import {
   Stack,
   Button,
   InputBase,
-  IconButton
+  IconButton,
+  InputAdornment
 } from "@mui/material";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
@@ -31,6 +32,11 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import CloseIcon from "@mui/icons-material/Close";
 import { motion } from "framer-motion";
+import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
+import PersonIcon from "@mui/icons-material/Person";
+import CallIcon from "@mui/icons-material/Call";
+import GroupIcon from "@mui/icons-material/Group";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 // import CallerDetails from "./Addservice/CallerInfo";
 // import ServiceInfo from './Addservice/ServiceInfo';
 import smile from "../../assets/smile.png";
@@ -104,9 +110,16 @@ const Addservice = () => {
 
   const location = useLocation();
   const eventValue = location.state?.eventValue;
-  const { selectedCallEnq, enquiryDates } = location.state || {};
-  console.log(selectedCallEnq, 'selectedCallEnq');
-  console.log(enquiryDates, 'enquiryDates');
+const { selectedCallEnq, enquiryDates } = location.state || {};
+  console.log(selectedCallEnq, "selectedCallEnq");
+  console.log(enquiryDates, "enquiryDates");
+
+  const callTy = location.state?.selectedCall;
+  console.log("cay...", callTy);
+  console.log("Event Value from Enquiry...", eventValue);
+
+
+  
 
   console.log("Event Value from Enquiry...", eventValue);
 
@@ -1468,10 +1481,9 @@ const Addservice = () => {
     };
     getState();
   }, []);
-
-  useEffect(() => {
-    if (state.length > 0 && !selectedState) {
-      setSelectedState(state[0].state_id);
+ useEffect(() => {
+    if (Array.isArray(state) && state.length > 1 && !selectedState) {
+      setSelectedState(state[1].state_id); // ✅ select second item
     }
   }, [state, selectedState]);
 
@@ -2159,7 +2171,7 @@ const Addservice = () => {
     }
   }
 
-  async function handleSubmit(event, actionType) {
+ async function handleSubmit(event, actionType) {
     event.preventDefault();
     // const hasEmptyFields = handleEmptyField();
     let hasEmptyFields = true;
@@ -2438,6 +2450,9 @@ const Addservice = () => {
       requestData.end_time = endTime;
       requestData.prof_prefered = selectedProfGender;
       requestData.remark = remark;
+        requestData.discount_value = requestData.discount_value
+        ? requestData.discount_value
+        : discountValue;
     } else {
       requestData.cc_id = selectedCare
       requestData.srv_id = selectedService;
@@ -3222,11 +3237,18 @@ const Addservice = () => {
           {/* Caller and Patient Details */}
           <Grid item lg={6} md={6} xs={12}>
             <Card
-              sx={{
+            sx={{
                 width: "100%",
                 borderRadius: "10px",
-                bgColor: "white",
-                boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                // bgcolor: "white",
+                backgroundColor: "#f1f1f1",
+                boxShadow: "0 4px 10px rgba(173, 216, 210, 0.25)",
+                // borderTop: isClicked ? "none" : "6px solid grey		", // ✅ top border
+                borderTop: "3px solid #b65b5b",
+                // transition: "all 0.3s ease",
+                // "&:hover": {
+                //   transform: "scale(1.01)",
+                // },
               }}
             >
               <CardContent>
@@ -3271,10 +3293,22 @@ const Addservice = () => {
                           ? phoneNumberError || errors.phoneNumber || ""
                           : ""
                       }
-                      inputProps={{
-                        minLength: 10,
-                        maxLength: 10,
+                     InputProps={{
+                        startAdornment: (
+                          <PhoneAndroidIcon
+                            sx={{
+                              color: "grey",
+                              mr: 1,
+                              position: "absolute",
+                              right: "10px",
+                            }}
+                          />
+                        ),
                       }}
+                       inputProps={{
+                                minLength: 10,
+                                maxLength: 10,
+                              }}
                       sx={{
                         "& input": {
                           fontSize: "14px",
@@ -3311,6 +3345,19 @@ const Addservice = () => {
                         InputLabelProps={{
                           shrink: true,
                         }}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="end">
+                              <PersonIcon
+                                sx={{
+                                  color: "grey",
+                                  position: "absolute",
+                                  right: "10px",
+                                }}
+                              />
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     </Grid>
                   ) : enqToServiceClr ? (
@@ -3344,6 +3391,19 @@ const Addservice = () => {
                         InputLabelProps={{
                           shrink: true,
                         }}
+                         InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="end">
+                              <PersonIcon
+                                sx={{
+                                  color: "grey",
+                                  position: "absolute",
+                                  right: "10px",
+                                }}
+                              />
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     </Grid>
                   ) : srvExtendClr ? (
@@ -3374,6 +3434,19 @@ const Addservice = () => {
                         }}
                         InputLabelProps={{
                           shrink: true,
+                        }}
+                         InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="end">
+                              <PersonIcon
+                                sx={{
+                                  color: "grey",
+                                  position: "absolute",
+                                  right: "10px",
+                                }}
+                              />
+                            </InputAdornment>
+                          ),
                         }}
                       />
                     </Grid>
@@ -3408,6 +3481,19 @@ const Addservice = () => {
                             fontSize: "14px",
                           },
                         }}
+                           InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="end">
+                              <PersonIcon
+                                sx={{
+                                  color: "grey",
+                                  position: "absolute",
+                                  right: "10px",
+                                }}
+                              />
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     </Grid>
                   )}
@@ -3417,7 +3503,13 @@ const Addservice = () => {
                       <Grid item lg={6} sm={6} xs={12}>
                         <TextField
                           required
-                          id="purp_call_id"
+                          
+                          
+
+
+
+
+
                           name="purp_call_id"
                           select
                           label="Select Call Type"
@@ -3429,6 +3521,11 @@ const Addservice = () => {
                             "& input": {
                               fontSize: "14px",
                             },
+                          }}
+                          InputProps={{
+                            startAdornment: (
+                              <CallIcon sx={{ color: "grey", mr: 1 }} />
+                            ),
                           }}
                           SelectProps={{
                             MenuProps: {
@@ -3469,6 +3566,11 @@ const Addservice = () => {
                             "& input": {
                               fontSize: "14px",
                             },
+                          }}
+                          InputProps={{
+                            startAdornment: (
+                              <GroupIcon sx={{ color: "grey", mr: 1 }} />
+                            ),
                           }}
                           SelectProps={{
                             MenuProps: {
@@ -3498,7 +3600,13 @@ const Addservice = () => {
                       <Grid item lg={6} sm={6} xs={12}>
                         <TextField
                           required
-                          id="purp_call_id"
+                          
+                          
+
+
+
+
+
                           name="purp_call_id"
                           select
                           label="Select Call Type"
@@ -3520,6 +3628,11 @@ const Addservice = () => {
                                 },
                               },
                             },
+                          }}
+                           InputProps={{
+                            startAdornment: (
+                              <CallIcon sx={{ color: "grey", mr: 1 }} />
+                            ),
                           }}
                         >
                           {call.map((option) => (
@@ -3550,6 +3663,11 @@ const Addservice = () => {
                             "& input": {
                               fontSize: "14px",
                             },
+                          }}
+                          InputProps={{
+                            startAdornment: (
+                              <GroupIcon sx={{ color: "grey", mr: 1 }} />
+                            ),
                           }}
                           SelectProps={{
                             MenuProps: {
@@ -3598,6 +3716,11 @@ const Addservice = () => {
                               fontSize: "14px",
                             },
                           }}
+                           InputProps={{
+                            startAdornment: (
+                              <CallIcon sx={{ color: "grey", mr: 1 }} />
+                            ),
+                          }}
                           SelectProps={{
                             MenuProps: {
                               PaperProps: {
@@ -3638,6 +3761,11 @@ const Addservice = () => {
                               fontSize: "14px",
                             },
                           }}
+                          InputProps={{
+                            startAdornment: (
+                              <GroupIcon sx={{ color: "grey", mr: 1 }} />
+                            ),
+                          }}
                           SelectProps={{
                             MenuProps: {
                               PaperProps: {
@@ -3668,12 +3796,15 @@ const Addservice = () => {
 
             {/* Patient Details */}
             <Card
-              sx={{
+             sx={{
                 width: "100%",
+                height: "auto",
                 borderRadius: "10px",
                 bgColor: "white",
                 marginTop: "8px",
                 boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                borderTop: "3px solid #00c2ff",
+                backgroundColor: "#f1f1f1",
               }}
             >
               <CardContent>
@@ -4482,10 +4613,7 @@ const Addservice = () => {
                                       ? ""
                                       : ptnNumberError || errors.ptnNumber
                                   }
-                                  inputProps={{
-                                    minLength: 10,
-                                    maxLength: 10,
-                                  }}
+                                 
                                   sx={{
                                     "& input": {
                                       fontSize: "14px",
@@ -4523,6 +4651,7 @@ const Addservice = () => {
                                   InputLabelProps={{
                                     shrink: true,
                                   }}
+                                   
                                 />
                               </Grid>
                             </Grid>
@@ -5046,6 +5175,19 @@ const Addservice = () => {
                               fontSize: "14px",
                             },
                           }}
+                           InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="end">
+                              <PersonIcon
+                                sx={{
+                                  color: "grey",
+                                  position: "absolute",
+                                  right: "10px",
+                                }}
+                              />
+                            </InputAdornment>
+                          ),
+                        }}
                           error={enqToServicePtn ? false : !!errors.ptnName}
                           helperText={enqToServicePtn ? "" : errors.ptnName}
                         />
@@ -5879,6 +6021,19 @@ const Addservice = () => {
                               fontSize: "14px",
                             },
                           }}
+                           InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="end">
+                              <PersonIcon
+                                sx={{
+                                  color: "grey",
+                                  position: "absolute",
+                                  right: "10px",
+                                }}
+                              />
+                            </InputAdornment>
+                          ),
+                        }}
                           error={srvExtendPtn ? false : !!errors.ptnName}
                           helperText={srvExtendPtn ? "" : errors.ptnName}
                         />
@@ -6716,6 +6871,19 @@ const Addservice = () => {
                               fontSize: "14px",
                             },
                           }}
+                           InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="end">
+                              <PersonIcon
+                                sx={{
+                                  color: "grey",
+                                  position: "absolute",
+                                  right: "10px",
+                                }}
+                              />
+                            </InputAdornment>
+                          ),
+                        }}
                           error={!!errors.ptnName}
                           helperText={errors.ptnName}
                         // error={enqToServicePtn ? false : !!errors.ptnName}
@@ -7514,9 +7682,11 @@ const Addservice = () => {
             <Card
               sx={{
                 width: "100%",
+                height: "100%",
                 borderRadius: "10px",
-                bgColor: "white",
                 boxShadow: "4px 4px 10px 7px rgba(135, 135, 135, 0.05)",
+                borderTop: "3px solid rgb(43, 126, 32)",
+                backgroundColor: "#f1f1f1",
               }}
             >
               <CardContent>

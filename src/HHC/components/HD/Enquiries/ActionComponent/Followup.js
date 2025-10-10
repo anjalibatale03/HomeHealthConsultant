@@ -7,170 +7,118 @@ import {
   MenuItem,
   Snackbar,
   Alert,
-  Typography,
 } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { useNavigate } from "react-router-dom";
-import { getCurrentDateString } from "../../../Utils/ValidationUtils";
 import { getCurrentDateTimeString } from "../../../Utils/ValidationUtils";
 
 const followup = [
-  {
-    value: "1",
-    label: "Keep in Followup",
-  },
-  {
-    value: "2",
-    label: "Cancel",
-  },
-  {
-    value: "3",
-    label: "Create Service",
-  },
+  { value: "1", label: "Keep in Followup" },
+  { value: "2", label: "Cancel" },
+  { value: "3", label: "Create Service" },
 ];
 
 const followup1 = [
-  {
-    value: "1",
-    label: "Keep in Followup",
-  },
-  {
-    value: "2",
-    label: "Cancel",
-  },
+  { value: "1", label: "Keep in Followup" },
+  { value: "2", label: "Cancel" },
 ];
 
 const cancelby = [
-  {
-    value: "1",
-    label: "Spero",
-  },
-  {
-    value: "2",
-    label: "Customer",
-  },
+  { value: "1", label: "Spero" },
+  { value: "2", label: "Customer" },
 ];
 
 const Followup = ({ sendData, enqData, onClose, flag }) => {
   const port = process.env.REACT_APP_API_KEY;
   const accessToken = localStorage.getItem("token");
   const addedby = localStorage.getItem("clg_id");
-  console.log("hiiiiiiii", flag);
 
   const navigate = useNavigate();
 
   const [value, setValue] = useState("1");
   const [selectedOption, setSelectedOption] = useState("");
-  const [selectedFollow, setSelectedFollow] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [remark, setRemark] = useState("");
   const [addedBy, setAddedBy] = useState("");
   const [cancelReason, setCancelReason] = useState([]);
   const [selectedCancelReason, setSelectedCancelReason] = useState("");
   const [selectedReasonID, setSelectedReasonID] = useState("");
-  // const [eventID, setEventID] = useState('')
   const [followCount, setFollowCount] = useState(0);
   const [followDateTime, setFollowDateTime] = useState("");
   const [followRemark, setFollowRemark] = useState("");
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const [errors, setErrors] = useState({ followRemark: "" });
 
   const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
+    if (reason === "clickaway") return;
     setOpenSnackbar(false);
   };
 
-  console.log("Follow up count......", followCount);
-  console.log("Previos Followup Records......", sendData);
-  console.log("event id", enqData);
-
   function formatDateTime(dateString) {
-    if (!dateString) {
-      return ""; // Handle null or undefined values
-    }
+    if (!dateString) return "";
     const date = new Date(dateString);
-    const options = {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
+    const options = { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" };
     return date.toLocaleString("en-US", options);
   }
 
   useEffect(() => {
     if (sendData.length > 0) {
       const firstItem = sendData[0];
-      const formattedDateTime = firstItem.follow_up_date_time || "";
-      const remark = firstItem.previous_follow_up_remark || "";
-      const follwup = firstItem.follow_up_count || 0;
-      // const addedBy = firstItem.added_by?.name || '';
-      const addedBy = firstItem.added_by_name || "";
-      setDateTime(formattedDateTime);
-      setRemark(remark);
-      setFollowCount(follwup);
-      setAddedBy(addedBy);
+      setDateTime(firstItem.follow_up_date_time || "");
+      setRemark(firstItem.previous_follow_up_remark || "");
+      setFollowCount(firstItem.follow_up_count || 0);
+      setAddedBy(firstItem.added_by_name || "");
     }
   }, [sendData]);
 
   useEffect(() => {
+    if (!selectedReasonID) return;
+
     const getCancelReason = async () => {
-      if (selectedReasonID) {
-        console.log("Cancel BY .....", selectedReasonID);
-        try {
-          // const res = await fetch(`${port}/web/cancellation_reason_follow_up_list/${selectedReasonID}`);
-          const res = await fetch(
-            `${port}/web/cancellation_reason_follow_up_list/${selectedReasonID}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          const data = await res.json();
-          console.log("Cancel by with Reason.........", data);
-          setCancelReason(data);
-        } catch (error) {
-          console.error("Error fetching PCancel by with Reason:", error);
-        }
+      try {
+        const res = await fetch(`${port}/web/cancellation_reason_follow_up_list/${selectedReasonID}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await res.json();
+        setCancelReason(data);
+      } catch (error) {
+        console.error("Error fetching cancel reasons:", error);
       }
     };
     getCancelReason();
   }, [selectedReasonID]);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleChange = (event, newValue) => setValue(newValue);
+  const handleDropdownChange = (event) => setSelectedOption(event.target.value);
+  const handleReasonChange = (event) => setSelectedReasonID(event.target.value);
+  const handleCancelReasonChange = (event) => setSelectedCancelReason(event.target.value);
+
+  const handleValidation = () => {
+    const newErrors = {};
+    if (!followRemark || followRemark.trim().length < 15) {
+      newErrors.followRemark = "Remark must be at least 15 characters long.";
+      setSnackbarMessage(newErrors.followRemark);
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  //Cancel Reason change Logic
-  const handleReasonChange = (event) => {
-    setSelectedReasonID(event.target.value);
-  };
-
-  //Followup change Logic
-  const handleDropdownFollowupChange = (event) => {
-    setSelectedFollow(event.target.value);
-  };
-
-  //TextField change Logic
-  const handleDropdownChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
-
-  const handleCancelReasonChange = (event) => {
-    setSelectedCancelReason(event.target.value);
-  };
-
-  async function handleFollowupSubmit(event) {
+  const handleFollowupSubmit = async (event) => {
     event.preventDefault();
+    if (!handleValidation()) return;
+
     const requestData = {
       flag_id: flag,
       event_id: enqData,
@@ -180,63 +128,37 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
       previous_follow_up_remark: followRemark,
       added_by: addedby,
     };
-    console.log("POST API Hitting......", requestData);
+
     try {
       const response = await fetch(`${port}/web/Add_follow_up/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
         body: JSON.stringify(requestData),
       });
-      if (!response.ok) {
-        console.error(`HTTP error! Status: ${response.status}`);
-        return;
-      }
-      const result = await response.json();
-      console.log("Keep in Follow up data", result);
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      await response.json();
+      setSnackbarMessage("Followup submitted successfully!");
+      setSnackbarSeverity("success");
       setOpenSnackbar(true);
-      setSnackbarMessage("Data submitted successfully!");
-      // onClose();
-      window.location.reload();
-      // navigate('/service');
+
+      setTimeout(() => {
+  onClose && onClose();
+}, 1000);
+      // onClose && onClose();
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.error(error);
+      setSnackbarMessage("Failed to submit followup!");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
     }
-  }
-
-  const [errors, setErrors] = useState({
-    followRemark: "",
-  });
-
-  const handleEmptyFieldService = () => {
-    const newErrors = {};
-
-    if (!followRemark) {
-      newErrors.followRemark = "Remark is required";
-    }
-    setErrors(newErrors);
-    return Object.values(newErrors).some((error) => error !== "");
   };
 
-  async function handleCancelSubmit(event) {
+  const handleCancelSubmit = async (event) => {
     event.preventDefault();
-    const hasEmptyFields = handleEmptyFieldService();
-
-    if (hasEmptyFields) {
-      setOpenSnackbar(true);
-      setSnackbarMessage("Please fill all required details.");
-      return;
-    }
-
-    if (followRemark.trim().length < 15) {
-      setErrors({
-        followRemark: "Remark must be at least 15 characters long.",
-      });
-      return;
-    }
+    if (!handleValidation()) return;
 
     const requestData = {
       flag_id: flag,
@@ -246,190 +168,164 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
       canclation_reason: selectedCancelReason,
       previous_follow_up_remark: followRemark,
     };
-    console.log("POST API Hitting......", requestData);
+
     try {
       const response = await fetch(`${port}/web/cancel_follow_up/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
         body: JSON.stringify(requestData),
       });
-      if (!response.ok) {
-        console.error(`HTTP error! Status: ${response.status}`);
-        return;
-      }
-      const result = await response.json();
-      console.log("Cancel Service data", result);
-      setOpenSnackbar(true);
-      if (flag == 2) {
-        setSnackbarMessage("Service cancelled successfully!");
-      } else {
-        setSnackbarMessage("Enquiry cancelled successfully!");
-      }
-      // onClose();
-      window.location.reload();
-      // navigate('/service');
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
-  }
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      await response.json();
 
-  async function handleCreateServiceSubmit(event) {
+      setSnackbarSeverity("success");
+      setSnackbarMessage(flag === 2 ? "Service cancelled successfully!" : "Enquiry cancelled successfully!");
+      setOpenSnackbar(true);
+      // onClose && onClose();
+      setTimeout(() => {
+  onClose && onClose();
+}, 1000);
+    } catch (error) {
+      console.error(error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Failed to cancel!");
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleCreateServiceSubmit = async (event) => {
     event.preventDefault();
+    if (!handleValidation()) return;
+
     const requestData = {
       event_id: enqData,
       follow_up: selectedOption,
       previous_follow_up_remark: followRemark,
     };
-    console.log("POST API Hitting......", requestData);
+
     try {
       const response = await fetch(`${port}/web/create_service_follow_up/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
         body: JSON.stringify(requestData),
       });
-      if (!response.ok) {
-        console.error(`HTTP error! Status: ${response.status}`);
-        return;
-      }
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const result = await response.json();
-      console.log("Enquiry converted to service", result);
-      setOpenSnackbar(true);
+
+      setSnackbarSeverity("success");
       setSnackbarMessage("Service converted from enquiry!");
-      const eventValue = result.event_id;
-      const eventID = result.event_id;
-      const eventPlanID = result.plan_of_care;
-      const callerID = result.caller_id;
-      const patientID = result.agg_sp_pt_id;
-      // setTimeout(() => {
-      //     // navigate('/addservice', { state: { eventValue } });
-      //     navigate('/viewservice', {
-      //         state: {
-      //             eventValue,
-      //             selectedCall: 2,
-      //             // patientID: patientValue,
-      //             // callerID: callerValue,
-      //             // eventPlanID: eventPlanValue,
-      //             eventID: eventValue,
-      //         }
-      //     });
-      // }, 2000);   
+      setOpenSnackbar(true);
+
+      const { event_id, plan_of_care, caller_id, agg_sp_pt_id } = result;
       setTimeout(() => {
         navigate("/addservice", {
           state: {
             selectedCall: 2,
-            eventID,
-            eventPlanID,
-            callerID,
-            patientID,
+            eventID: event_id,
+            eventPlanID: plan_of_care,
+            callerID: caller_id,
+            patientID: agg_sp_pt_id,
           },
         });
       }, 2000);
-      // navigate('/addservice', { state: { eventValue } });
-      // onClose();
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.error(error);
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Failed to create service!");
+      setOpenSnackbar(true);
     }
-  }
+  };
 
   return (
     <Box sx={{ marginTop: "2px" }}>
       <TabContext value={value}>
         <Box
           sx={{
-            // typography: "body1",
-            // background: "#F2F2F2",
             bgcolor: "#f1f1f1",
             borderRadius: "10px",
             width: "100%",
             height: "3rem",
             display: "flex",
             justifyContent: "center",
-            marginLeft: "8px",
-            marginRight: "8px",
-            justifyItems: "center",
             alignItems: "center",
-            padding: "0px",
           }}
         >
-          <TabList
-            className="tab-root"
-            onChange={handleChange}
-            textColor="#51DDD4"
-            sx={{ position: "relative",background:"transparent" }}
-            TabIndicatorProps={{
-              style: {
-                background: "rgb(186, 241, 248)",
-                height: "36px",
-                marginBottom: "6px",
-                borderRadius: "5px",
-              },
-            }}
-          >
-            <Tab
-              label={
-                <span
-                  style={{
-                    fontSize: "15px",
-                    textTransform: "capitalize",
-                    color: value === "1" ? "#004D40" : "#888",
-                  }}
-                >
-                  Previous Followup
-                </span>
-              }
-              value="1"
-              sx={{ position: "relative", zIndex: 1 }}
-            />
-            <Tab
-              label={
-                <span
-                  style={{
-                    fontSize: "15px",
-                    textTransform: "capitalize",
-                    color: value === "2" ? "#004D40" : "#888",
-                  }}
-                >
-                  Add Followup
-                </span>
-              }
-              value="2"
-              sx={{ position: "relative", zIndex: 1 }}
-            />
-          </TabList>
+<TabList
+  onChange={handleChange}
+  sx={{
+    position: "relative",
+    background: "transparent",
+    display: "flex",
+    justifyContent: "space-between",
+    p: 0,
+    m: 0,
+  }}
+  TabIndicatorProps={{
+    style: {
+      background: "rgb(186, 241, 248)",
+      height: "36px",
+      borderRadius: "5px",
+      bottom: "6px",
+    },
+  }}
+>
+  <Tab
+    label="Previous Followup"
+    value="1"
+    sx={{
+      fontSize: "15px",
+      color: "#888",
+      textTransform: "none",
+      fontWeight: 500,
+      "&.Mui-selected": {
+        color: "#000",
+      },
+      minHeight: "36px",
+      minWidth: 0,
+      px: 2,
+    }}
+  />
+  <Tab
+    label="Add Followup"
+    value="2"
+    sx={{
+      fontSize: "15px",
+      color: "#888",
+      textTransform: "none",
+      fontWeight: 500,
+      "&.Mui-selected": {
+        color: "#000",
+      },
+      minHeight: "36px",
+      minWidth: 0,
+      px: 2,
+    }}
+  />
+</TabList>
+
+
+
         </Box>
-        <Box sx={{ width: "100%", typography: "body1", marginTop: "-10px" }}>
+
+        <Box sx={{ width: "100%", marginTop: "-10px" }}>
           <TabPanel value="1">
-            <Grid container spacing={2} sx={{ marginTop: "1px" }}>
-              <Grid item lg={12} sm={12} xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
                 <TextField
-                  id="outlined-satrt-date-time"
                   label="Follow up Date"
                   size="small"
                   value={formatDateTime(dateTime)}
-                  // value={dateTime}
                   fullWidth
-                  sx={{
-                    "& input": {
-                      fontSize: "14px",
-                    },
-                  }}
-                  // InputLabelProps={{
-                  //     shrink: true,
-                  // }}
                 />
               </Grid>
-
-              <Grid item lg={12} sm={12} xs={12} style={{ marginTop: "15px" }}>
+              <Grid item xs={12}>
                 <TextField
-                  id="outlined-multiline-static"
                   label="Remark"
                   placeholder="write remark here"
                   size="small"
@@ -437,59 +333,28 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
                   fullWidth
                   multiline
                   rows={2}
-                  sx={{
-                    "& input": {
-                      fontSize: "14px",
-                    },
-                  }}
                 />
               </Grid>
-
-              <Grid item lg={12} sm={12} xs={12} style={{ marginTop: "15px" }}>
-                <TextField
-                  id="outlined-multiline-static"
-                  label="Added by"
-                  size="small"
-                  value={addedBy}
-                  fullWidth
-                  sx={{
-                    "& input": {
-                      fontSize: "14px",
-                    },
-                  }}
-                />
+              <Grid item xs={12}>
+                <TextField label="Added by" size="small" value={addedBy} fullWidth />
               </Grid>
             </Grid>
           </TabPanel>
+
           <TabPanel value="2">
-            <Grid container spacing={2} sx={{ marginTop: "1px" }}>
-              <Grid item lg={12} sm={12} xs={12}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
                 <TextField
                   required
-                  id="outlined-select-follow-up"
                   select
                   label="Follow up"
-                  name="follow_up"
                   value={selectedOption}
                   onChange={handleDropdownChange}
                   size="small"
                   fullWidth
-                  sx={{
-                    textAlign: "left",
-                    "& input": {
-                      fontSize: "14px",
-                    },
-                  }}
                 >
-                  {/* {followup.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))} */}
                   {(flag === 1 ? followup : followup1)
-                    .filter(
-                      (option) => !(followCount === 2 && option.value === "1")
-                    )
+                    .filter((option) => !(followCount === 2 && option.value === "1"))
                     .map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
@@ -499,141 +364,81 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
               </Grid>
 
               {selectedOption === "2" && (
-                <Grid item lg={12} sm={12} xs={12}>
-                  <TextField
-                    required
-                    id="cancel_by"
-                    name="cancel_by"
-                    select
-                    label="Cancel by"
-                    size="small"
-                    fullWidth
-                    value={selectedReasonID}
-                    onChange={handleReasonChange}
-                    sx={{
-                      textAlign: "left",
-                      "& input": {
-                        fontSize: "14px",
-                      },
-                    }}
-                  >
-                    {cancelby.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
+                <>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      select
+                      label="Cancel by"
+                      size="small"
+                      fullWidth
+                      value={selectedReasonID}
+                      onChange={handleReasonChange}
+                    >
+                      {cancelby.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      select
+                      label="Cancellation Reason"
+                      size="small"
+                      value={selectedCancelReason}
+                      onChange={handleCancelReasonChange}
+                      fullWidth
+                    >
+                      {cancelReason.map((option) => (
+                        <MenuItem key={option.cancelation_reason_id} value={option.cancelation_reason_id}>
+                          {option.cancelation_reason}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                </>
               )}
 
-              {selectedOption === "2" && (
-                <Grid item lg={12} sm={12} xs={12}>
+              {selectedOption === "1" && (
+                <Grid item xs={12}>
                   <TextField
                     required
-                    id="canclation_reason"
-                    name="canclation_reason"
-                    select
-                    label="Cancellation Reason"
-                    size="small"
-                    value={selectedCancelReason}
-                    onChange={handleCancelReasonChange}
-                    fullWidth
-                    sx={{
-                      textAlign: "left",
-                      "& input": {
-                        fontSize: "14px",
-                      },
-                    }}
-                    SelectProps={{
-                      MenuProps: {
-                        PaperProps: {
-                          style: {
-                            maxHeight: "200px",
-                            maxWidth: "200px",
-                          },
-                        },
-                      },
-                    }}
-                  >
-                    {cancelReason.map((option) => (
-                      <MenuItem
-                        key={option.cancelation_reason_id}
-                        value={option.cancelation_reason_id}
-                        sx={{ fontSize: "14px" }}
-                      >
-                        {option.cancelation_reason}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-              )}
-
-              <Grid item lg={12} sm={12} xs={12}>
-                {selectedOption === "1" ? (
-                  <TextField
-                    required
-                    id="follow_up_date_time"
                     label="Follow up Date Time"
                     type="datetime-local"
-                    // type="date"
-                    name="follow_up_date_time"
-                    value={followDateTime}
-                    onChange={(e) => setFollowDateTime(e.target.value)}
                     size="small"
                     fullWidth
-                    sx={{
-                      "& input": {
-                        fontSize: "14px",
-                      },
-                    }}
-                    inputProps={{
-                      min: getCurrentDateTimeString(),
-                      // min: getCurrentDateString(),
-                    }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                    value={followDateTime}
+                    onChange={(e) => setFollowDateTime(e.target.value)}
+                    inputProps={{ min: getCurrentDateTimeString() }}
+                    InputLabelProps={{ shrink: true }}
                   />
-                ) : null}
-              </Grid>
+                </Grid>
+              )}
 
-              <Grid item lg={12} sm={12} xs={12}>
+              <Grid item xs={12}>
                 <TextField
                   required
-                  id="previous_follow_up_remark"
                   label="Remark"
                   placeholder="write remark here"
                   size="small"
-                  name="previous_follow_up_remark"
-                  value={followRemark}
-                  onChange={(e) => setFollowRemark(e.target.value)}
                   fullWidth
                   multiline
                   rows={2}
-                  sx={{
-                    "& input": {
-                      fontSize: "14px",
-                    },
-                  }}
+                  value={followRemark}
+                  onChange={(e) => setFollowRemark(e.target.value)}
                   error={!!errors.followRemark}
-                  helperText={
-                    errors.followRemark ||
-                    "Remark must be at least 15 characters"
-                  }
+                  helperText={errors.followRemark || "Remark must be at least 15 characters"}
                 />
               </Grid>
 
-              <Grid item lg={12} sm={12} xs={12}>
+              <Grid item xs={12}>
                 {selectedOption === "2" ? (
                   <Button
                     variant="contained"
-                    sx={{
-                      m: 1,
-                      width: "30ch",
-                      backgroundColor: "rgb(52, 123, 137)",
-                      borderRadius: "12px",
-                      textTransform: "capitalize",
-                    }}
+                    sx={{ m: 1, width: "30ch", backgroundColor: "rgb(52,123,137)", borderRadius: "12px" }}
                     onClick={handleCancelSubmit}
                   >
                     {flag !== 2 ? "Close Enquiry" : "Close Service"}
@@ -641,13 +446,7 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
                 ) : selectedOption === "3" ? (
                   <Button
                     variant="contained"
-                    sx={{
-                      m: 1,
-                      width: "30ch",
-                      backgroundColor: "rgb(52, 123, 137)",
-                      borderRadius: "12px",
-                      textTransform: "capitalize",
-                    }}
+                    sx={{ m: 1, width: "30ch", backgroundColor: "rgb(52,123,137)", borderRadius: "12px" }}
                     onClick={handleCreateServiceSubmit}
                   >
                     Go to Service
@@ -655,35 +454,20 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
                 ) : (
                   <Button
                     variant="contained"
-                    sx={{
-                      m: 1,
-                      width: "30ch",
-                      backgroundColor: "rgb(52, 123, 137)",
-                      borderRadius: "12px",
-                      textTransform: "capitalize",
-                    }}
+                    sx={{ m: 1, width: "30ch", backgroundColor: "rgb(52,123,137)", borderRadius: "12px" }}
                     onClick={handleFollowupSubmit}
                   >
                     Keep in Followup
                   </Button>
                 )}
               </Grid>
-
-              <Snackbar
-                open={openSnackbar}
-                autoHideDuration={6000}
-                onClose={handleSnackbarClose}
-              >
-                <Alert
-                  variant="filled"
-                  onClose={handleSnackbarClose}
-                  severity="success"
-                  sx={{ width: "18rem", ml: 1, mb: 10 }}
-                >
-                  {snackbarMessage}
-                </Alert>
-              </Snackbar>
             </Grid>
+
+            <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleSnackbarClose}>
+              <Alert variant="filled" onClose={handleSnackbarClose} severity={snackbarSeverity}>
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
           </TabPanel>
         </Box>
       </TabContext>
