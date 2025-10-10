@@ -254,6 +254,7 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            mr: 3,
           }}
         >
 <TabList
@@ -265,10 +266,19 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
     justifyContent: "space-between",
     p: 0,
     m: 0,
+    height: "100%", width: "100%",
+    borderRadius: "10px",
+    "& .MuiTabs-flexContainer": { height: "100%" },
+    "& .MuiTab-root": { height: "100%" },
+    "& .Mui-selected": { background: "transparent" },
+    
+    px: 1,
+
   }}
   TabIndicatorProps={{
     style: {
-      background: "rgb(186, 241, 248)",
+      background: "transparent",
+      border: "2px solid rgba(120, 217, 236, 1)",
       height: "36px",
       borderRadius: "5px",
       bottom: "6px",
@@ -285,6 +295,7 @@ const Followup = ({ sendData, enqData, onClose, flag }) => {
       fontWeight: 500,
       "&.Mui-selected": {
         color: "#000",
+        background: "transparent",
       },
       minHeight: "36px",
       minWidth: 0,
