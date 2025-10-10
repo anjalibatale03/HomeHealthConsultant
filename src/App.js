@@ -64,7 +64,7 @@ import ManageReports from "./HHC/components/Attendance/ManageReports";
 import ProfessionalDetails from "./HHC/components/ADMIN/HCM/ProfessionalDetails";
 import SystemUser from "./HHC/components/HR/SystemUser/SystemUser";
 import Header from "./HHC/components/Clinical/Header";
-import ManageInventory from "./HHC/components/InventoryModule/ManageInventory";
+// import ManageInventory from "./HHC/components/InventoryModule/ManageInventory";
 import HrDashboard from "./HHC/components/HrPartner/Dashboard/HrDashboard";
 import ManageProfessionals from "./HHC/components/HrPartner/Professionals/ManageProfessionals";
 import AddProfPartner from "./HHC/components/HrPartner/Professionals/AddProfPartner";
@@ -73,7 +73,7 @@ import Servicedetails from "./HHC/components/HrPartner/ServiceDetails/Servicedet
 import Home from "./HHC/components/HHC_Analytics/Home";
 import { Insurance } from "./HHC/components/ADMIN/HCM/Insurance/Insurance";
 import ClosureRevalidation from "./HHC/components/ADMIN/HCM/ClosureRevalidation/ClosureRevalidation";
-import Telemedicine from "./HHC/components/Clinical/ClinicalComponents/Telemedicine";
+// import Telemedicine from "./HHC/components/Clinical/ClinicalComponents/Telemedicine";
 import ClosureDetails from "./HHC/components/Clinical/ClosureDetails";
 import MM2Dashboard from "./HHC/components/M2Dashboard/MM2Dashboard";
 import ConsultantList from "./HHC/components/ADMIN/HCM/Consultant/ConsultantList";
@@ -81,7 +81,7 @@ import Clinicalgov from "./HHC/components/ADMIN/ClinicalNew/Clinicalgov";
 import Refund from "./HHC/components/ADMIN/Refund/Refund";
 import PhysioMiles from "./HHC/components/ADMIN/PhysioMilestone/PhysioMiles";
 
-import Physio from "./HHC/components/Physio/Physio";
+// import Physio from "./HHC/components/Physio/Physio";
 import SupervisorVisitor from "./HHC/components/ADMIN/Supervisorvistior/SupervisorVisitor";
 
 import AddPhysioMiles from "./HHC/components/ADMIN/PhysioMilestone/AddPhysioMiles";
@@ -92,8 +92,8 @@ import RefundReports from "./HHC/components/ADMIN/Reports/RefunReports";
 import PatientFeedbackReport from "./HHC/components/ADMIN/Reports/Patientfeedback/PatientFeedbackReport";
 import ProfessionalFeedbackReport from "./HHC/components/ADMIN/Reports/ProfessionalFeedbackReport";
 import HD_Dashboard from "./HHC/components/HD/HD_Dashboard/HD_Dashboard";
-import LongTearmForm from "./HHC/components/ADMIN/HCM/LongtermForm/LongtermForm";
-import MedicalForm from "./HHC/components/ADMIN/HCM/LongtermForm/MedicalForm";
+// import LongTearmForm from "./HHC/components/ADMIN/HCM/LongtermForm/LongtermForm";
+// import MedicalForm from "./HHC/components/ADMIN/HCM/LongtermForm/MedicalForm";
 import ShiftHandover from "./HHC/components/HD/ShiftHandover/ShiftHandover";
 
 
@@ -391,13 +391,13 @@ function App() {
               path="/hhc/hcm/manage professional"
               element={<DemoPurpose />}
             />
-            <Route path="/hhc/hcm/Long Term Form" element={<LongTearmForm />} />
+            {/* <Route path="/hhc/hcm/Long Term Form" element={<LongTearmForm />} /> */}
             <Route
               path="/hhc/hcm/manage system users"
               element={<DemoPurpose />}
             />
             <Route
-              path="/hhc/hcm/manage availability"
+              path="/hhc/hcm/manage availability" 
               element={<DemoPurpose />}
             />
             <Route
@@ -446,12 +446,12 @@ function App() {
             {/* clinical governance */}
             {/* <Route exact path="/hhc/clinical" element={<Header />} /> */}
             <Route exact path="/hhc/clinical" element={<Clinicalgov />} />
-            <Route path="/hhc/clinical/telemed" element={<Telemedicine />} />
+            {/* <Route path="/hhc/clinical/telemed" element={<Telemedicine />} /> */}
             {/* Inventory module */}
-            <Route
+            {/* <Route
               path="/hhc/inventory/manageinventory"
               element={<ManageInventory />}
-            />
+            /> */}
             {/* <Route path="/hhc/attendance/attendance-dashboard" element={<AtteDashboard />} />
             <Route path="/hhc/attendance/manage report" element={<ManageReports />} /> */}
             <Route path="*" element={<NotFound />} />
@@ -488,7 +488,7 @@ function App() {
             <Route path="/MM2Dashboard" element={<MM2Dashboard />} />
             <Route path="/hhc/refund" element={<Refund />} />
             {/* Physio */}
-            <Route path="/physio" element={<Physio />} />
+            {/* <Route path="/physio" element={<Physio />} /> */}
             <Route exact path="/hhc/ClinicalNew" element={<Clinicalgov />} />
             <Route
               exact
@@ -510,7 +510,7 @@ function App() {
               element={<PhysioMiles />}
             ></Route>
             <Route path="/AddPhysioMiles" element={<AddPhysioMiles />}></Route>
-            <Route path="/long-term-form" element={<MedicalForm />}></Route>
+            {/* <Route path="/long-term-form" element={<MedicalForm />}></Route> */}
           </Routes>
         </div>
       </BrowserRouter>
