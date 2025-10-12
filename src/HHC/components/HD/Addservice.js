@@ -2552,7 +2552,8 @@ const { selectedCallEnq, enquiryDates } = location.state || {};
                 flag: 1,
                 selectedCall: selectedCall,
                 srvExtendSrvPurpId: srvExtendSrvPurpId,
-                selectedCallEnq: selectedCallEnq
+                selectedCallEnq: selectedCallEnq,
+                callTy: callTy,
               },
             });
           }, 2000);
@@ -2644,7 +2645,8 @@ const { selectedCallEnq, enquiryDates } = location.state || {};
                 eventPlanID: eventPlanValue,
                 eventID: eventValue,
                 srvExtendSrvPurpId: srvExtendSrvPurpId,
-                selectedCallEnq: selectedCallEnq
+                selectedCallEnq: selectedCallEnq,
+                callTy: callTy,
               },
             });
           }, 2000);
