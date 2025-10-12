@@ -8416,7 +8416,8 @@ const { selectedCallEnq, enquiryDates } = location.state || {};
                           containerStyle={{
                             width: "100%"
                           }}
-                          minDate={minDate}
+                          // minDate={minDate}
+                            minDate={new Date(new Date().setHours(0, 0, 0, 0))} 
                           render={(value, openCalendar) => (
                             <TextField
                               onClick={openCalendar}

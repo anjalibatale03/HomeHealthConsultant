@@ -288,23 +288,24 @@ const ServiceRequest = () => {
   //     return false;
   // });
 
-  const filteredData = serviceRequest.filter((item) => {
-    const isDateMatch =
-      !selectedDate ||
-      (item.event_start_date && item.event_start_date.includes(selectedDate));
-    const isServiceMatch =
-      !selectedService ||
-      (item.service_name &&
-        item.service_name
-          .toLowerCase()
-          .includes(selectedService.toLowerCase()));
-    const isCallerStatusMatch =
-      !selectedCallerStatus ||
-      selectedCallerStatus === 5 ||
-      item.caller_status === selectedCallerStatus;
+const filteredData = (serviceRequest || []).filter((item) => {
+  const isDateMatch =
+    !selectedDate ||
+    (item.event_start_date && item.event_start_date.includes(selectedDate));
+  const isServiceMatch =
+    !selectedService ||
+    (item.service_name &&
+      item.service_name
+        .toLowerCase()
+        .includes(selectedService.toLowerCase()));
+  const isCallerStatusMatch =
+    !selectedCallerStatus ||
+    selectedCallerStatus === 5 ||
+    item.caller_status === selectedCallerStatus;
 
-    return isDateMatch && isServiceMatch && isCallerStatusMatch;
-  });
+  return isDateMatch && isServiceMatch && isCallerStatusMatch;
+});
+
 
   const getEventIDRequest = (eveId, paydone) => {
     const selectedRequest = serviceRequest.find(

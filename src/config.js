@@ -29,14 +29,14 @@ const getCurrentConfig = () => {
 //   };
 // };
 
-if (hostname === "http://122.176.232.35:" && port === "8080") {
+if (hostname === "http://122.176.232.35:" && port === "8060") {
     return {
-      port: "http://122.176.232.35:8080",
+      port: "http://122.176.232.35:8060",
     };
   }
 
   return {
-    port: "http://122.176.232.35:8080",
+    port: "http://122.176.232.35:8060",
   };
 };
 

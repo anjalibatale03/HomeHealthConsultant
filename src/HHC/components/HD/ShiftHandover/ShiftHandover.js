@@ -462,23 +462,20 @@ const ShiftHandover = () => {
                                                         </CardContent>
                                                         <CardContent style={{ flex: 1 }}>
                                                             {row.isNew ? (
-                                                                <TextField
-                                                                    sx={{ width: "170px" }}
-                                                                    type="datetime-local"
-                                                                    size="small"
-                                                                    value={
-                                                                        row.date_time ||
-                                                                        new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
-                                                                            .toISOString()
-                                                                            .slice(0, 16)
-                                                                    }
-                                                                    onChange={(e) => handleRowChange(index, "date_time", e.target.value)}
-                                                                    inputProps={{
-                                                                        max: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
-                                                                            .toISOString()
-                                                                            .slice(0, 16),
-                                                                    }}
-                                                                />
+                                                               <TextField
+  sx={{ width: 200 }}
+  type="datetime-local"
+  size="small"
+  value={
+    row.date_time ||
+    new Date().toISOString().slice(0, 16) // default current datetime in ISO
+  }
+  onChange={(e) => handleRowChange(index, "date_time", e.target.value)}
+  inputProps={{
+    max: new Date().toISOString().slice(0, 16), // restrict to current time
+  }}
+/>
+
                                                             ) : (
                                                                 <Typography variant="body2">{row.date_time}</Typography>
                                                             )}
