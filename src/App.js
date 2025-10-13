@@ -80,7 +80,10 @@ import ConsultantList from "./HHC/components/ADMIN/HCM/Consultant/ConsultantList
 import Clinicalgov from "./HHC/components/ADMIN/ClinicalNew/Clinicalgov";
 import Refund from "./HHC/components/ADMIN/Refund/Refund";
 import PhysioMiles from "./HHC/components/ADMIN/PhysioMilestone/PhysioMiles";
-
+import TermsCondition from "./HHC/components/PrivacyPolicy/TermsCondition";
+import CancellationRefundPolicy from "./HHC/components/PrivacyPolicy/CancellationRefundPolicy";
+import ContactInfo from "./HHC/components/PrivacyPolicy/ContactInfo";
+import AboutUs from "./HHC/components/PrivacyPolicy/AboutUs";
 // import Physio from "./HHC/components/Physio/Physio";
 import SupervisorVisitor from "./HHC/components/ADMIN/Supervisorvistior/SupervisorVisitor";
 
@@ -95,6 +98,7 @@ import HD_Dashboard from "./HHC/components/HD/HD_Dashboard/HD_Dashboard";
 // import LongTearmForm from "./HHC/components/ADMIN/HCM/LongtermForm/LongtermForm";
 // import MedicalForm from "./HHC/components/ADMIN/HCM/LongtermForm/MedicalForm";
 import ShiftHandover from "./HHC/components/HD/ShiftHandover/ShiftHandover";
+import PrivacyPolicy from "./HHC/components/PrivacyPolicy/PrivacyPolicy";
 
 
 function App() {
@@ -397,7 +401,7 @@ function App() {
               element={<DemoPurpose />}
             />
             <Route
-              path="/hhc/hcm/manage availability" 
+              path="/hhc/hcm/manage availability"
               element={<DemoPurpose />}
             />
             <Route
@@ -510,6 +514,12 @@ function App() {
               element={<PhysioMiles />}
             ></Route>
             <Route path="/AddPhysioMiles" element={<AddPhysioMiles />}></Route>
+            <Route path="/TermsandConditions" element={<TermsCondition />}></Route>
+            <Route path="/CancellationRefundPolicy" element={<CancellationRefundPolicy />}></Route>
+            <Route path="/Contact-Info" element={<ContactInfo />}></Route>
+            <Route path="/About-Us" element={<AboutUs />}></Route>
+            <Route path="/Privacy-Policy" element={<PrivacyPolicy />}></Route>
+
             {/* <Route path="/long-term-form" element={<MedicalForm />}></Route> */}
           </Routes>
         </div>

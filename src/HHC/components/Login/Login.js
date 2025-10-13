@@ -71,7 +71,7 @@ export default function Login() {
           setShowExistErrorAlert(true);
           setTimeout(() => setShowExistErrorAlert(false), 3000);
         } else {
-           setSuccessAlert(true);
+          setSuccessAlert(true);
           console.log("Login Credentials.....", data);
           localStorage.setItem("token", data.token.access);
           localStorage.setItem("refresh", data.token.refresh);
@@ -97,47 +97,47 @@ export default function Login() {
             JSON.stringify(data.token.permissions)
           );
           localStorage.setItem("companyID", data.token.colleague.prof_compny);
-setTimeout(() => {
-          if (data.token.user_group === "hd") {
-            navigate("/dashboard");
-            handleAuth();
-            window.location.reload();
-          } else if (data.token.user_group === "HR") {
-            navigate("/hr/manage profiles");
-          } else if (data.token.user_group === "M_DASH") {
-            navigate("/MM2Dashboard");
-          } else if (data.token.user_group === "HR Partner") {
-            navigate("/hr partner/manage professionals");
-          } else if (data.token.user_group === "ADMIN") {
-            navigate("/hhc/dashboard");
-          } else if (data.token.user_group === "ACCOUNT") {
-            navigate("/hhc/account/dashboard");
-          } else if (data.token.user_group === "REPORTS") {
-            navigate("/reports/dashboard");
-          } else if (data.token.user_group === "HOSPITAL") {
-            navigate("/hospital/dashboard");
-          } else if (data.token.user_group === "ATTENDANCE") {
-            navigate("/attendance/attendance-view");
-          } else if (data.token.user_group === "MANAGEMENT") {
-            navigate("/management/management-dashboard");
-          }
-          // else if (data.token.user_group === "clincal_gov") {
-          //     navigate("/hhc/clinical");
-          // }
-          else if (data.token.user_group === "clincal_gov") {
-            // navigate("/hhc/clinical");
-            navigate("/hhc/clinical/closure");
-          } else if (data.token.user_group === "HHC_Analytics") {
-            navigate("/analytics/home");
-          } else if (data.token.user_group === "physio") {
-            navigate("/physio");
-          } else if (data.token.user_group === "physioMilestone") {
-            navigate("/physioMilestone");
-          }
-          }, 2000); 
-          
+          setTimeout(() => {
+            if (data.token.user_group === "hd") {
+              navigate("/dashboard");
+              handleAuth();
+              window.location.reload();
+            } else if (data.token.user_group === "HR") {
+              navigate("/hr/manage profiles");
+            } else if (data.token.user_group === "M_DASH") {
+              navigate("/MM2Dashboard");
+            } else if (data.token.user_group === "HR Partner") {
+              navigate("/hr partner/manage professionals");
+            } else if (data.token.user_group === "ADMIN") {
+              navigate("/hhc/dashboard");
+            } else if (data.token.user_group === "ACCOUNT") {
+              navigate("/hhc/account/dashboard");
+            } else if (data.token.user_group === "REPORTS") {
+              navigate("/reports/dashboard");
+            } else if (data.token.user_group === "HOSPITAL") {
+              navigate("/hospital/dashboard");
+            } else if (data.token.user_group === "ATTENDANCE") {
+              navigate("/attendance/attendance-view");
+            } else if (data.token.user_group === "MANAGEMENT") {
+              navigate("/management/management-dashboard");
+            }
+            // else if (data.token.user_group === "clincal_gov") {
+            //     navigate("/hhc/clinical");
+            // }
+            else if (data.token.user_group === "clincal_gov") {
+              // navigate("/hhc/clinical");
+              navigate("/hhc/clinical/closure");
+            } else if (data.token.user_group === "HHC_Analytics") {
+              navigate("/analytics/home");
+            } else if (data.token.user_group === "physio") {
+              navigate("/physio");
+            } else if (data.token.user_group === "physioMilestone") {
+              navigate("/physioMilestone");
+            }
+          }, 2000);
+
         }
-        
+
       }
     } catch (error) {
       console.error("Error during API call:", error);
@@ -167,19 +167,18 @@ setTimeout(() => {
             <img
               src={logo}
               alt=""
-             style={{ 
-    height: "110px", 
-    width: "160px", 
-    // boxShadow: "0 4px 8px rgba(0,0,0,0.3)", 
-    borderRadius: "8px" // optional: thoda curve look ke liye
-  }} 
+              style={{
+                height: "110px",
+                width: "160px",
+                borderRadius: "8px"
+              }}
             />
           )}
           {successAlert && (
-  <Alert severity="success" variant="filled">
-    Login Successful! Redirecting...
-  </Alert>
-)}
+            <Alert severity="success" variant="filled">
+              Login Successful! Redirecting...
+            </Alert>
+          )}
           {/* <Typography variant='h6' sx={{ m: 2 }}>HD LOGIN</Typography> */}
           {showErrorAlert && (
             <Alert severity="error" variant="filled">
@@ -255,20 +254,20 @@ setTimeout(() => {
               placeholder="Enter Password"
               type={showPassword ? "text" : "password"}
               name="password"
-              
+
               onChange={onchange}
               required
               error={passwordError}
               helperText={passwordError && "Password is required"}
             />
- <Button
-  onClick={() => setShowPassword(!showPassword)}
-   edge="end"
-    size="small"
-  startIcon={showPassword ? <VisibilityOff /> : <Visibility />}
->
-  {/* {showPassword ? "Hide" : "Show"} */}
-</Button>
+            <Button
+              onClick={() => setShowPassword(!showPassword)}
+              edge="end"
+              size="small"
+              startIcon={showPassword ? <VisibilityOff /> : <Visibility />}
+            >
+              {/* {showPassword ? "Hide" : "Show"} */}
+            </Button>
           </Box>
           {passwordError && (
             <Typography variant="body2" color="error" textAlign="left">
@@ -285,7 +284,7 @@ setTimeout(() => {
               backgroundColor: "#69DAC3",
               borderRadius: "6px",
               textTransform: "capitalize",
-               color: "black",
+              color: "black",
             }}
             onClick={handleChange}
             disabled={loading}
@@ -299,6 +298,81 @@ setTimeout(() => {
           {isSmallScreen ? (
             <img src={logo} alt="" style={{ height: "70px", width: "120px" }} />
           ) : null}
+
+          <Box
+            sx={{
+              mt: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            {/* Row 1 */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: "3.8em",
+                gap: { xs: 2.5, md: 2.5 },
+                flexWrap: "wrap",
+              }}
+            >
+              {[
+                { label: "Terms & Condition", path: "/TermsandConditions" },
+                { label: "Refund & Cancellation", path: "/CancellationRefundPolicy" },
+                { label: "Contact Us", path: "/Contact-Info" },
+                { label: "About Us", path: "/About-Us" },
+                { label: "Privacy & Policy", path: "/Privacy-Policy" },
+              ].map((item, index) => (
+                <Typography
+                  key={index}
+                  variant="body1"
+                  sx={{
+                    fontSize: { xs: 12, md: 14 },
+                    position: "relative",
+                    color: "#444",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      color: "#0072BC",
+                      transform: "translateY(-2px)",
+                    },
+                    "&::after": {
+                      content: '""',
+                      position: "absolute",
+                      bottom: -3,
+                      left: 0,
+                      width: "0%",
+                      height: "2px",
+                      bgcolor: "#69DAC3",
+                      borderRadius: 1,
+                      transition: "width 0.3s ease",
+                    },
+                    "&:hover::after": {
+                      width: "100%",
+                    },
+                  }}
+                  onClick={() => navigate(item.path)}
+                >
+                  {item.label}
+                </Typography>
+              ))}
+            </Box>
+
+            {/* Decorative Divider */}
+            {/* <Box
+              sx={{
+                width: 120,
+                height: 3,
+                borderRadius: 2,
+                background: "linear-gradient(90deg, #69DAC3, #3DDAD7)",
+                mt: 2,
+              }}
+            /> */}
+          </Box>
+
         </div>
       </div>
     </>
